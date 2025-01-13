@@ -1,0 +1,104 @@
+# EIP7702 Guide
+
+## Intro - Why EIP7702
+EIP7702 is an upcoming upgrade to EVM chains which will enable wallets to convert their user EOAs to Smart Accounts. By 
+upgrading the users to Smart Accounts, users will gain many meaningful UX upgrades:
+
+- Ability to sponsor user gas
+- Ability for users to pay for gas in ERC20 tokens
+- Ability to batch execute transactions
+
+### Biconomy Unique Advantages 
+
+Biconomy has built a comprehensive suite for wallets to upgrade their users to Smart Accounts, built on top of our 
+Modular Execution Environment and Bundler/Paymaster infrastructure. Biconomy is unique among EIP7702 infrastructure 
+providers by offering:
+
+- Ability to pay for gas across multiple chain (e.g. user has USDC on Optimism, uses that to pay for transaction execution on Base)
+- Ability to batch execute multiple transactions across multiple chains with a single user signature
+- Ability to use intent-based execution for extremely fast liquidity fronting
+
+:::info
+If you're a wallet team looking for an EIP7702 strategy - [Contact Us](https://google.com)
+:::
+
+## Quickstart Guide for Developers
+
+::::steps
+#### Install Packages
+Install AbstractJS TypeScript SDK and viem 
+
+```bash
+npm install @biconomy/abstractjs viem
+```
+
+#### Sign a wallet authorization
+In order add Smart Account capabilities to an EOA account, you must sign an authorization specifying which
+Smart Account address will be "installed" on the EOA address. In order to save on gas costs, you will be setting
+the authorization to a singleton contract - which means that no new contracts will need to be deployed.  
+
+
+```ts
+// This is the address of the EOA to which 
+// address we'll be "installing" the smart account to.
+const eoa = privateKeyToAccount('0xPrivateKey')
+
+// Create an instance of a viem wallet client and extend it with the 
+// required eip7702 actions.
+const walletClient = createWalletClient({
+  chain: odysseyTestnet,
+  account: eoa,
+  transport: http(),
+}).extend(eip7702Actions())
+
+const authorization = await walletClient.signAuthorization({
+  // Address of the Nexus Proxy Singleton
+  contractAddress: nexusProxyAddress 
+})
+```
+
+#### Initialize the Modular Execution Environment
+
+```ts
+const meeClient = createMeeClient({
+  nodeUrl: 'https://mee-node.biconomy.io'
+})
+```
+
+#### Set up the Smart Account
+Initialize the Smart Account you will be using for delegation. In this case, we'll
+be using Biconomy Nexus.
+
+```ts
+const account = await toMultichainNexusAccount({
+  chains: [odysseyTestnet],
+  signer: eoa,
+  // Override the address of the account to the EOA address
+  address: eoa.address
+})
+```
+
+#### Execute a Supertransaction
+
+```ts
+const quote = await getQuote(meeClient, {
+  instructions: [
+    {
+      calls: [
+        { to: zeroAddress, gasLimit: 100_000n, value: 0n }
+      ],
+      chainId: optimism.id
+    }
+  ],
+  feeToken: mcUSDC.on(optimism.id)
+})
+
+const hash = await executeQuote(meeSerivice, quote)
+```
+
+::::
+
+
+
+
+

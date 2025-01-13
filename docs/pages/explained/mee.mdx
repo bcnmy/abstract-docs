@@ -1,0 +1,139 @@
+
+
+# Modular Execution Environment (MEE)
+
+
+
+## Intro 
+:::danger
+The Biconomy MEE stack is still undergoing audits and will be in production at the end of Q1/25. 
+:::
+
+The Ethereum and EVM community has widely adopted the ERC4337 Account Abstraction standard, with multiple teams 
+developing execution environments based on the ERC4337 Bundler and Paymaster specifications. 
+
+This standard enables developers to sponsor gas for their users, enables users to pay for gas in ERC20 tokens and 
+enables batch execution of multiple actions (on a single chain) with a single user signature. 
+
+However, as the Ethereum
+ecosystem started developing in a rollup-centric direction, the complexities of managing user balances across multiple
+blockchains or building frontends which interact with contracts on multiple blockchains meant that the ERC4337 Bundler
+and Paymaster infrastructure started to be insufficient. 
+
+This is why, at Biconomy, we build the Modular Execution Environment. It's a new execution environment, based on the 
+ERC4337 Smart Account stack and powered by ERC7579 Modular Smart Account standard. It's been built from the ground up
+to enable developers to effortlessly build apps which combine users, funds and contracts across multiple blockchains.
+
+
+## Modular Execution Environment
+
+Our Modular Execution Environment, powered by the permisionless [Biconomy Network](https://asd.com), enables developers 
+to build fully chain-abstracted user experiences and to effortlessly build apps which access users, funds and liquidity 
+across multiple blockchains.
+
+### Supertransaction
+
+The base of MEE is the Supertransaction data model. Supertransactions enable developers to encode multiple transactions and
+intents into a single data model. This entire complex series of instructions is represented by a single `hash`. By signing
+the Supertransaction hash - the user permits all of those instructions to be executed by MEE Nodes. 
+
+![Supertx](https://d3e0luujhwn38u.cloudfront.net/resized/1gCQ1yzpbiG5ncnAOaw-lAm8ZuFQN1jwvSWfn5lka1Q/s:3200/plain/s3://typefully-user-uploads/img/original/186833/ab861f2c-6080-4fca-862c-26d256b75099.png)
+
+### Multichain Gas Abstraction
+The execution fee for the entire Supertransaction, no matter how many chains it's executed on, can be paid on a single 
+chain. This means you can:
+
+- Pay for execution on one chain with tokens on another (e.g. Pay for tx on Optimsim with USDC on Base)
+- Have a single gas tank for transaction sponsorships across all chains (e.g. Gas tank on Polygon sponsoring transactions on Base and Arbitrum)
+
+### Intents and transactions
+Intent based execution has enabled instant cross-chain liqudity fronting. If a user has funds on Optimsim and Base, but needs
+to call a contract on Polygon - they can use intent networks and solvers to quickly move the funds to the target chain. 
+
+MEEs enable users to combine intents (for quickly getting funds on the target chains) with transactions (for precisely
+defining which contacts to call on the target chain)
+
+### Multichain Orchestration
+MEE enables the execution of multiple transactions on multiple chains - with a single user signature. The developer simply
+needs to encode a series of transactions which need to be executed - e.g. Swap USDT to USDC on Polygon, bridge USDC to Base
+and, once it arrives, use the exact amount which arrived to supply to a Morpho Lending Pool. The entire transaction is 
+automatically orchestrated by the MEE network.
+
+## Compatibility 
+
+:::info
+**Note**
+
+If you're already building with ERC4337 - transitioning to
+MEE is effotless and requries no code changes on your side. You can simply add MEE execution where it fits, while keeping
+the ERC4337 code base in the same project. You can add MEE to projects powered by both Biconomy or alternative ERC4337 infra
+providers. 
+:::
+
+## Code Highlight - Orchestrating A Multichain Transaction with Cross-Chain Gas Abstraction
+
+This is an example of a Supertransaction enabled by the Modular Execution Environment. This operation will:
+
+1. Pull funds from multiple chains to a single target chain
+2. Wait for all the funds to arrive on the target chain
+3. Automatically orchestrate a batch execution of `approve` + `supply`
+
+This entire Supertransaction is permitted by a single signature from the user and is automtatically
+orchestrated and executed by our MEE infrastructure.
+
+
+MEE will make sure that all the conditions are met on the destination chain before proceeding to execute the 
+approve and supply transactions, there is no manual management of transaction dependencies by the developer
+
+:::info
+This is not a full code example. To start implementing plase refer to [MEE Quickstart](./mee/mee) or 
+[AA Quickstart](./legacy/quickstart). Not sure where to start? Read our [Choosing Infrastructure Guice](./mee/mee)
+:::
+```typescript
+// Move user funds from multiple chains to a single
+// destination chain and execute a supply to AAVE on that
+// chain. All executed with a single signature.
+const sTx = supertransaction({
+  account: mcNexus, // Multichain Smart Account
+  feeToken: mcUSDC.on(base), // Pay gas with USDC on Base
+  instructions: [
+    // Encode liquidity fronting from multiple chains
+    await requireERC20Balance({ 
+      token: mcUSDC,
+      chain: optimism,
+      providedAmount: supplyAmount
+    }),
+    // Approve USDC to AAVE
+    mcUSDC.write({
+      chain: optimism,
+      functionName: 'approve',
+      args: [
+        mcAAVE.deploymentOn(optimism),
+        inTimeBalanceOf(mcUSDC) // Adjust for slippage with bridging
+      ]
+    }),
+    // Supply to AAVE
+    mcAAVE.write({
+      chain: optimism,
+      functionName: 'supply',
+      args: [
+        mcUSDC.addressOn(optimism),
+        inTimeBalanceOf(mcUSDC),
+        zeroAddress,
+        0
+      ]
+    })
+  ]
+})
+
+// Execute with a single user signature
+const result = await meeService.execute(
+    await signMeeQuote({
+        executionMode: 'direct-to-mee',
+        quote,
+        signer
+    })
+);
+
+console.log("Supertransaction hash:", result.hash);
+```

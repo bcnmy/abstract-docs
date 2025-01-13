@@ -1,0 +1,113 @@
+# Modules
+
+Modules are designed to extend the functionality of smart contract accounts in a consistent and predictable manner. This guide explains how modules work and how to interact with them in the SDK.
+
+## Module Extension Pattern
+
+The SDK uses a module extension pattern to maintain efficient bundle sizes and enable tree-shaking. Here's why:
+
+- **Tree-shaking Optimization**: If all module actions were included in the base NexusClient, your bundle would include code for every possible module, even ones you don't use.
+- **Flexible Integration**: Developers can choose which modules to include, reducing bundle size by only importing needed functionality.
+- **Type Safety**: Each module extension adds its own type definitions, providing proper TypeScript support for module-specific actions.
+
+For example, instead of:
+```typescript
+// ❌ This would include ALL module code in your bundle
+const nexusClient = createNexusClient({
+  // config
+  modules: [sessionsModule, securityModule, otherModules...]
+});
+```
+
+We use:
+```typescript
+// ✅ Only the sessions module code is included
+const nexusClient = await createNexusClient({ /* config */ });
+const sessionNexusClient = nexusClient.extend(smartSessionCreateActions(sessionsModule));
+```
+
+## General Module Interaction Pattern
+
+Interacting with a module typically follows these steps:
+
+1. **Create the module**
+2. **Install the module**
+3. **Extend the Nexus client with module-specific actions**
+4. **Use the module's functionality**
+
+## Step-by-Step Guide
+
+### 1. Create the module
+
+Use the appropriate `to[ModuleName]` function to create a module instance:
+
+```typescript
+const myModule = to[ModuleName]({
+  account: nexusClient.account,
+  signer: eoaAccount,
+  moduleInitArgs: {
+    // Module-specific initialization arguments
+  }
+})
+```
+
+### 2. Install the module
+
+Install the module on your Nexus client's smart contract account:
+
+```typescript
+const hash = await nexusClient.installModule({
+  module: myModule.moduleInitData
+});
+
+// Wait for the installation to be confirmed
+const { success } = await nexusClient.waitForUserOperationReceipt({ hash });
+```
+
+### 3. Extend the Nexus client
+
+Extend your Nexus client with module-specific actions:
+
+```typescript
+const extendedNexusClient = nexusClient.extend([ModuleName]Actions(myModule));
+```
+
+### 4. Use the module's functionality
+
+Use the extended Nexus client to interact with the module's features:
+
+```typescript
+const result = await extendedNexusClient.[moduleSpecificAction]({
+  // Action-specific parameters
+});
+```
+
+## Example: Multisig Module
+
+Here's an example of how to use the Smart Sessions module:
+
+```typescript
+// 1. Create the module
+const ownableModule = toOwnableValidator({
+  account: nexusClient.account,
+  signer: account,
+  moduleInitArgs: {
+    threshold: 1n,
+    owners: [publicKey]
+  }
+})
+
+// 2. Install the module
+const hash = await nexusClient.installModule({
+  module: ownableModule.moduleInitData
+})
+
+// 3. Extend the Nexus client
+const ownableDanClient = nexusClient
+  .extend(ownableActions(ownableModule))
+
+// 4. Use the module's functionality
+const newSignature = await ownableNexusClient.prepareSignatures({
+  signatures: ["0x...", "0x..."]
+})
+```

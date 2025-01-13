@@ -1,0 +1,36 @@
+## Bundlers and Paymasters
+
+Our battle-tested legacy infrastructure eliminates core friction points in blockchain interaction. Through batch
+execution, users can conveniently perform multiple operations in a single transaction - whether that's approving
+and swapping tokens or executing a complex DeFi strategy, all with just one signature. 
+
+By enabling gas sponsorships,
+companies can now fully cover their users' transaction costs, creating truly frictionless Web3 experiences.
+Users also gain the flexibility to pay gas fees in any ERC20 token they already hold, removing the traditional
+requirement to maintain native token balances across chains. The stack seamlessly integrates with all major
+smart account providers, letting developers enhance their existing infrastructure while delivering these
+powerful benefits to their users without disruptive changes to their codebase.
+
+
+## Code highlight - Executing a Sponsored Transaction
+
+```ts
+const bundlerUrl = "https://bundler.biconomy.io/api/v3/84532/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44";
+const paymasterUrl = "https://paymaster.biconomy.io/api/v2/84532/F7wyL1clz.75a64804-3e97-41fa-ba1e-33e98c2cc703";
+
+const nexusClient = await createNexusClient({
+    signer: account,
+    chain: baseSepolia,
+    transport: http(),
+    bundlerTransport: http(bundlerUrl),
+    paymaster: createBicoPaymasterClient({paymasterUrl})
+}); // [!code focus:7]
+
+// Execute a gas sponsored transaction
+const hash = await nexusClient.sendTransaction({ calls:  
+    [{to : '0xf5715961C550FC497832063a98eA34673ad7C816', value: parseEther('0')}] },
+); 
+console.log("Transaction hash: ", hash) 
+const receipt = await nexusClient.waitForTransactionReceipt({ hash });
+
+```
