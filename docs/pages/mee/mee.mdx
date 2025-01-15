@@ -1,106 +1,75 @@
-# Modular Execution Environment (MEE): Collaborative Supertransaction Execution
+# Modular Execution Environments & Supertransactions (MEEs)
+MEEs represent a breakthrough in onchain execution, replacing the ERC4337 Bundler & Paymaster stack through Smart Accounts integration.
 
-## Overview
-The Modular Execution Environment (MEE) enables multiple independent providers to collaboratively execute different parts of a single Supertransaction. This distributed approach allows specialized providers to handle the components they excel at, creating an efficient, scalable, and trustless execution network.
 
-## Collaborative Execution Model
+## Smart Accounts
+Smart Contract Accounts (SCAs) are programmable blockchain accounts offering custom execution logic, contrasting with 
+traditional External Owned Accounts (EOAs). They provide enhanced security through validation rules, 
+automated management with spending limits and recovery mechanisms, batched transactions, and gas fee abstraction. 
 
-### Supertransaction Decomposition
-A single Supertransaction can contain:
-- Multiple precise transactions across different chains
-- Intent-based operations requiring optimization
-- Bridge operations between chains
-- Complex token swaps and movements
+SCAs can enforce daily spending limits, require multi-signature approval, and automatically reject blacklisted addresses, making them valuable for both individual and organizational use.
 
-Each of these components can be executed by different specialized providers within the MEE network.
+## Bundlers and Paymasters
+The ERC4337 stack's Bundlers and Paymasters have revolutionized onchain UX by enabling gas sponsorship, ERC20 token gas payments, and Account Module functionality.
 
-### Example Collaboration Flow
-Consider a Supertransaction that:
-1. Swaps tokens on Optimism
-2. Bridges assets to Base
-3. Deposits into a lending protocol
+If you're interested in using the Biconomy Bundler & Paymaster infra, please click [here](/legacy/overview)
+### Problems with Bundlers and Paymasters
+#### Multichain Execution
+While ERC4337 infrastructure exists across hundreds of EVM chains, it lacks interoperability. Bundlers and Paymasters are chain-specific, preventing cross-chain operations.
 
-The MEE enables:
-- Provider A (Optimism Bundler) to handle the swap
-- Provider B (Intent Solver) to manage the cross-chain transfer
-- Provider C (Base Bundler) to complete the deposit
-All working together to execute different parts of the same Supertransaction.
+#### Intents
+Traditional bridge limitations with finality and chain reordering led to the development of Intent-based execution. This system uses Fillers to front capital on destination chains before finality, charging a fee while assuming reorg risk. Current Bundler and Paymaster infrastructure cannot handle Intents or interact with Solvers.
 
-## Provider Specialization
+## Multichain Execution with Transactions and Intents
 
-### Types of Specialists
+Modular Execution Environments (MEEs) are able to execute multiple transactions on multiple chains with a single user signature. They're also able to 
+combine intent-based and transaction-based execution. 
 
-1. **Bundlers**
-   - Focus on specific blockchain networks
-   - Optimize gas usage and timing
-   - Maintain efficient node infrastructure
+### Supertransaction
 
-2. **Intent Solvers**
-   - Find optimal execution paths
-   - Compete for best execution prices
-   - Handle complex token routes
+MEEs are powered by an innovative data model - called a `Supertransaction`. A Supertransaction contains instructions for executing multiple transactions
+across different chains. The Supertransaction is executed by one or more MEE Nodes. 
 
-3. **Cross-chain messaging providers & Provers**
-   - Send messages across chains for composability
-   - Prove state of one chain to a call on another chain
+#### Cross-chain gas
+The cost of execution for the entire Supertransaction, no matter how many chains it's being 
+executed on - can be paid on a single chain. This enables native cross-chain gas sponsorships and paying for execution on one chain, with tokens on another.
 
-## Trustless Coordination
+#### Merkle Tree
+All of the instructions within the Supertransaction can be represented by a single hash - called the Supertransaction hash. This hash is derived by hashing the 
+individual instructions within the Supertransaction and putting them as leafs of a Merkle Tree. The root hash of that Merkle Tree is the Supertransaction hash.
 
-### Execution Protocol
-- MEE coordinates provider actions
-- Each step is cryptographically verified
-- Smart contracts enforce proper sequencing
-- Automatic provider selection based on capabilities
+![Supertransaction](https://i.imgur.com/AxGcTiJ.jpeg)
 
-### Provider Auctions
-- Providers compete for execution rights
-- Performance metrics determine selection
-- Reputation system builds trust
-- Natural price discovery for services
+### MEE Node
 
-## Horizontal Scalability Benefits
+An MEE Node is a Node which can execute and orchestrate instructions within a Supertransaction. The MEE Node has 
+two primary roles:
 
-### Network Effects
-- Each new provider adds specialized capacity
-- Network capability grows with provider diversity
-- Natural load distribution across specialists
-- Enhanced execution options
+#### 1. Execution
+The MEE Node acts like a multichain Bundler and Paymaster in one. It's able to execute transactions onchain and pay for users
+gas. The Key difference is that the MEE Node can do this across multiple blockchains.
 
-### Parallel Processing
-- Multiple providers execute simultaneously
-- Different parts of Supertransactions run in parallel
-- Cross-chain operations handled concurrently
-- Optimal resource utilization
+If there are some instructions within a Supertransaction that are on chains which the specific MEE Node doesn't support, it 
+can allways collaborate with another MEE Node to execute that part of the Supertransaction. 
 
-## Security and Reliability
+This is called _Collaborative 
+Execution_ and it's what enables Modular Execution Environments, such as the [Biconomy Network](/mee/mee) to effortlessly
+scale across thousands for rollups and appchains.
 
-### Decentralized Execution
-- No single point of control
-- Multiple providers ensure redundancy
-- Automatic failover options
-- Geographic distribution of providers
+#### 2. Orchestration
+When working in multichain environments, just executing the instructions is not enough. Multichain actions are 
+_asynchronous_ by default which means that the MEE Node needs to know how to _orchestrate_ the intents and transactions
+in the correct sequence. 
 
-### Verification Layer
-- Each execution step is verified
-- Cross-provider actions are validated
-- Smart contract enforced security
-- Cryptographic proof of execution
+The Biconomy MEE Node has a built-in orchestrator which is able to intelligently deduce dependencies between transactions
+by checking the necessary conditions for transaction execution. 
 
-## Economic Model
+:::info[Example]
+For example. If a transaction is to supply 1000 USDC to a Morpho Valut on Optimism, but the funds must first arrive via an Intent 
+which moves the funds from Base, the MEE Node will wait for the execution of the Optimism transaction until the funds have arrived.
+:::
 
-### Provider Incentives
-- Rewards based on execution contribution
-- Specialization increases efficiency
-- Competition drives better service
-- Natural market for capabilities
-
-### User Benefits
-- Optimal execution through specialization
-- Lower costs through provider competition
-- Enhanced reliability through redundancy
-- Better outcomes through expertise
-
-## Real-World Impact
-The collaborative execution model enables complex, multi-chain operations that would be impossible for any single provider to execute efficiently. By allowing specialists to handle different parts of a Supertransaction, the MEE creates a more efficient, reliable, and scalable blockchain interaction layer.
-
-Would you like me to elaborate on any aspect of the collaborative execution model?
+:::success[Scalable Orchestration]
+The Biconomy MEE Node is able to orchestrate an arbitrary amount of transactions across an arbitraty amount of chains. Need to orchestrate
+a 300 transaction sequence across 15 different chains? The MEE Node can do it automatically.
+:::

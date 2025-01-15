@@ -20,7 +20,7 @@ funds will be consumed by the Fusion transaction as well as all of the instructi
 
 
 ::::steps
-#### Transfer funds to Companion Account
+#### Transfer Funds to Companion Account
 The user encodes a Fusion formatted transaction which transfers the amount of funds required for the execution of the 
 desired action to the Companion Account address. (e.g. transfer 1000 USDC to Companion account)
 
@@ -34,7 +34,7 @@ EOA
 ::::
 
 
-#### Single signature execution 
+#### Single Signature Execution 
 
 The real magic of the Fusion Module comes from an innovative transaction encoding scheme, all of those transactions to be
 executed with a single user signature. 
@@ -49,18 +49,18 @@ overview of the steps needed to enable gas abstraction, gas sponsorhips and batc
 Our EIP7702 stack uses the advanced Biconomy Modular Execution Environment as the backbone, offering notable benefits 
 compared to alternatives using the Bundler/Paymaster stack. 
 
-### Benefits 
+### Biconomy MEE Stack Benefits for EIP7702 Integrators
 
-- **Multichain gas sponsoships**
+#### **Multichain Gas Sponsorships**
 
   Use a single gas tank to sponsor user transactions across all supported blockchains.
 
-- **Multichain gas abstraction**
+#### **Multichain Gas Abstraction**
 
   Use native or ERC20 tokens on any chain to pay for transaction execution on any other chain. E.g. pay for 
   a transaction on Optimism with USDC on Arbitrum.
 
-- **Unfied balances**
+#### **Unfied Balances**
 
   Treat user balances across multiple chains as a single balance. When users wish to execute an action on one chain
   the Biconomy MEE infrastructure will enable you to encode a Suprtransaction which pulls their funds from multiple

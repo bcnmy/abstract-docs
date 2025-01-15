@@ -1,0 +1,113 @@
+# Execute an Intent
+
+With AbstractJS - developers can move funds from one chain to anohter by using bridges
+or intents. AbstractJS also provides the ability to mix-and-match bridges and
+intents in the same [Supertransaction]() - giving developers unparalleled 
+flexibility when moving customer funds from one chain to another.
+
+## Using Bridges
+
+When using a brige, the developer will specify exactly how they want their funds
+to move between chains:
+
+- Which bridge (or bridge aggregator) to use
+- How much to supply on which chain
+- To which chain they want their funds bridged
+- Which token they want to use on the source chain
+- Which token they want to use on the destination chain
+
+:::info[Using Bridges with AbstractJS]
+AbstractJS has utility functions for interacting with both bridges and intents.
+To use bridge-based execution, read our guide for [AbstractJS Bridging Plugins]()
+:::
+
+## Using Intents
+
+When specifying an intent, the developer simply needs to say:
+
+- How much tokens they want on what chain.
+
+
+An example of using a intent with `AbstractJS` is:
+
+::::steps
+#### Prepare an intent
+
+Use the built-in utility function `prepareIntent` to prepare the 
+required transactions for executing the intent. This function will
+use all of the chains with which the `account` was initialized and
+calculate the cheapest way to use 100 USDC and get them to Optimism
+
+```ts
+const intent = await prepareIntent({
+  account: mcNexus,
+  amount: parseUnits('100', 6),
+  toChain: optimism,
+  token: mcUSDC
+})
+```
+
+#### Prepare post-intent actions
+
+Often times, after an intent has been executed - the user wants to 
+execute additional actions. For this example, we'll use supplying to 
+AAVE as an example.
+
+First, instantiate the AAVE contract:
+
+```ts
+const mcAAVE = getMultichainContract({
+  abi: parseAbi([
+      "function supply(address asset, uint256 amount, address onBehalfOf, uint16 referralCode)",
+  ]),
+  deployments: [
+      ["0x794a61358D6845594F94dc1DB02A252b5b4814aD", optimism.id],
+  ],
+});
+```
+
+Then, encode the `approve` and `supply` functions to be executed on 
+the AAVE contract on Optimism:
+
+```ts
+const supplyToAaveOp: Instruction[] = [
+  // Approve USDC to AAVE
+  mcUSDC.on(optimism.id).approve({
+    args: [
+      mcUSDC.addressOn(optimism.id),
+      parseUnits('99', 6)
+    ],
+    gasLimit: 100_000n
+  }),
+  // Call `Supply` on AAVE
+  mcAAVE.on(optimism.id).supply({
+    args: [
+      mcUSDC.addressOn(optimism.id),
+      parseUnits('99', 6),
+      zeroAddress,
+      0
+    ],
+    gasLimit: 100_000n
+  })
+]
+```
+
+Then, encode a `Supertransaction` containing the instructions from the 
+intent and the instructions for supplying to AAVE:
+
+```ts
+const superTx: SuperTransaction = {
+  instructions: [
+    intent,
+    ...supplyToAaveOp
+  ],
+  feeToken: toFeeToken({
+    chain: optimism,
+    token: mcUSDC
+  })
+}
+```
+
+::::
+
+

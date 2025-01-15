@@ -1,0 +1,176 @@
+# Use a Unified Multichain Balance
+
+Today, users are interacting with multiple blockchains and it's 
+quite often that their balances are spread across all of those chains.
+
+Supertransactions provide apps with the ability to *unify* the user
+balances across all of those chains and access them as if they're 
+on the target chain.
+
+## Prerequisites
+
+::::steps
+#### Install required dependencies
+
+```bash
+npm install @biconomy/abstractjs viem
+```
+
+#### Initialize a Multichain Account
+
+AbstractJS has a utility type called `MultichainAccount` which 
+simplifies the Deployments and interactions for Smart Accounts
+deployed across multiple blockchains. 
+
+To learn more, visit: [Learning About Multichain Smart Accounts](/mee/concepts/multichain-smart-account)
+
+```ts
+const privateKey = '0xYour private key'
+const eoa = privateKeyToAccount(privateKey)
+
+const mcNexus = await toMultichainNexusAccount({
+  chains: [optimism, base, polygon, arbitrum],
+  signer: eoa
+})
+```
+
+#### Load a Multichain Contract for the Token
+
+One of the main concepts of AbstractJS is the ability to 
+initialize `MultichainContract` instances. This is an object that
+combines the deployments of a Smart Contract across multiple chains.
+
+This is an example of instantiating a `MultichainContract` for an
+AAVE Pool which is deployed on multiple chains
+```ts
+const mcAavePool = getMultichainContract({
+  abi: aaveV3PoolAbi,
+  deployments: [
+    ['0xAddressOnOp', optimism.id],
+    ['0xAddressOnBase', base.id],
+    // The rest of the chains
+  ]
+})
+```
+
+##### Multichain Token Contract 
+
+For an ERC20 token, we can instantiate the `MultichainContract` instance
+with an `erc20Abi` (exposed by `viem`) as the ABI!
+
+```ts
+const mcUSDC = getMultichainContract({
+  abi: erc20Abi,
+  deployments: [
+    // USDC Deployments on Chains
+  ]
+})
+```
+
+To learn more, visit: [Learning About Multichain Contracts](/mee/concepts/multichain-contract)
+
+
+##### Accessing Common Tokens
+
+To save you the trouble of finding token addresses for every chain
+and every token you use, AbstractJS exports common tokens.
+
+```ts
+import { mcUSDC } from "./utils/tokens";
+
+// Use the exported token multichain contract
+console.log(mcUSDC.addressOn(optimism.id))
+```
+
+
+::::
+
+## Reading a Unified ERC20 Balance
+
+Get the unified token balance across all chains:
+
+```ts
+const balance = await getUnifiedERC20Balance({
+  multichainAccount: mcNexus,
+  multichainERC20: mcUSDC
+})
+
+balance.balance // Total balance across all chains
+balance.breakdown // Breakdown of balances across chains
+balance.decimals // Amount of decimals of the token
+```
+
+:::warning[Choosing chains]
+The `getUnifiedERC20Balance` function uses the list of chains provided
+in the multichain account to fetch the unified balance. If the 
+multichain token instance doesn't have a deployment for some of those
+chains, the function throws an error
+:::
+
+## Requiring a Balance on a Target Chain
+
+Beyond just reading a Unified Balance, `AbstractJS` comes with 
+pre-build utilities for encoding Supertransaction steps which will
+make sure the user has a certain amount of some token on some 
+target chain before executing the desired action. 
+
+Since these instructions will be a part of the same Supertransaction,
+the user will sign just once and all of their balances on all chains
+will be pulled.
+
+### Encoding the required steps
+
+To make sure that the user has `uniBalance` amount of `USDC` on
+`OP Mainnet`, you would write this code:
+
+```ts
+const steps = await requireErc20Balance({
+  account: mcNexus,
+  amount: uniBalance,
+  chain: optimism,
+  token: mcUSDC
+})
+```
+
+The `requireErc20Balance` function will do multiple things:
+
+::::steps
+#### Check target chain balance
+Check if the user has `uniBalance` amount of tokens on `OP Mainnet`
+
+#### Attempt bridging and solving
+If not, try to use solvers and bridges to get the `uniBalance`
+amount of tokens to `OP Mainnet`
+
+#### Throw error if user doesn't have enough
+If the user doesn't have enough tokens across all chains, throw an Error
+
+#### Encode solving and bridging steps
+If the user has enough tokens - encode the steps required to get the tokens to `OP Mainnet`
+as Supertransaction instructions
+::::
+
+### Building a Supertransaction
+
+Then, when you are building your Supertransaction, simply include
+these steps:
+
+```ts
+const superTx: SuperTransaction = {
+  instructions: [
+    // Steps calculated from the requireErc20Balance function
+    ...steps, 
+    mcUSDC.on(optimism.id).transfer({
+      args: [recipient, uniBalance],
+      gasLimit: 100_000n
+    })
+  ],
+  feeToken: toFeeToken({
+    chainId: optimism.id,
+    token: mcUSDC
+  })
+}
+```
+
+
+

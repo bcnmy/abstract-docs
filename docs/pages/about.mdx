@@ -6,16 +6,51 @@ onchain. Since our founding in 2019, we have served millions of users with our r
 audited contracts and efficient and scalable infrastructure. Due to our commitments to reliability, 
 Biconomy has been the choice for leading blockchain companies and protocols.
 
-Through years of R&D and conversations with our customers, Biconomy has developed a comprehensive suite
-of contracts, infrastructure and tooling enabling radical improvements in user experience, cross-chain and
-multichain transaction execution and secure multichain automation for bots and AI agents.
+##### Use Biconomy - The most feature rich and battle tested solution on the market
 
-The modern onchain development environment is increasingly multichain, requries the use of bridges
-and intent solvers or cross-chain messaging providers. User balances are scattered across multiple
-chains, while apps are increasingly being deployed on general-purpose and app specific rollups.
+* **Easy User Onboarding**
+  * Login with [Passkeys]() and [Social Accounts]().
+  * Enable [Account Recovery]()
 
-In such an environment, you need tooling which helps you spend time shipping features, instead of
-wrestling with infrastructure. For a fast and secure path to production - choose the Biconomy stack.
+* **Multichain Gas Abstraction**
+  * Enable users to [share gas across chains]().
+  * Enable [sponsored transactions]() for your users.
+
+* **Chain Abstraction**
+  * Orchestrate [multi-chain transaction sequences]() with a single signature.
+  * Share tokens across chains with [Unified Multichain Balances]()
+
+* **Give smart account capabilities to EOAs**
+  * Enable EOA users to [batch execute transactions](), [share gas across
+  chains]() and [sequence transactions across multiple chains]()
+  * If you're a wallet provider, you can use our [guide] to convert your users
+  to smart accounts with [EIP7702]()
+
+* **Smart Sessions**
+  * [Give account access to bots or AI Agents]() while making sure they can
+  only call the contracts you've approved.
+
+* **Cross-Chain Composability**
+  * Stop cross-chain trasactions failing due to slippage. [Use the exact
+  amount received from solvers and bridges as the input of a function call]().
+  * [Preserve function context]() between multiple transaction calls
+
+##### Compatibility
+
+Biconomy is compatible with all major smart account standars, wallets, 
+solvers, bridges and cross-chain messaging providers:
+
+- ERC4337 & ERC7579 Compatible
+- EIP7702 Ready
+- Works with:
+  - Extension Wallets (MetaMask, Rabby, ...)
+  - Embedded Wallets
+(Privy, Web3Auth, Dynamic, ...)
+
+####
+
+![Stats](https://i.imgur.com/BersdS0.png)
+![Clients](https://i.imgur.com/ZBMC59B.png)
 
 ## AbstractJS - An SDK for Modern Onchain Apps
 
@@ -27,13 +62,19 @@ bundlers and solvers or leverage cross-chain messaging in just a few lines of co
 
 ✔ Effortlessly orchestrate complex multi-chain and chain abstracted flows
 
+✔ Trigger intents, transactions and cross-chain messaging protocols
 
-## Build chain abstracted apps
+## Build Chain Abstracted Apps
 
 The Biconomy stack offers developers the ability to treat multiple blockchains as if
 they're a single execution environment. In a single signature, users can execute transactions
 on multiple chains, move funds from user balances across all chains to where they are needed and
 batch execute transactions.
+
+:::info[Powered by the best infrastructure]
+Biconomy MEE works with industry-leading Intent and Bridging providers like Across, LiFi, Stargate
+and others - providing you with the deepest liqudity, best execution prices and quickest exeuction times.
+:::
 
 ✔ Subsecond cross-chain execution powered by intents and resource locks
 
@@ -43,54 +84,89 @@ batch execute transactions.
 
 ✔ Execute multiple transactions across multiple chains with a single signature
 
-## Cross-chain gas abstraction
+## Use Smart Accounts Directly With EOAs
+
+Biconomy is the only Smart Account provider which has the ability to execute batch
+transactions and multi-chain operations for users who are using only an EOA.
+
+Onboarding users to Smart Accounts has many benefits, but also comes with challenges:
+
+- Smart Accounts are not portable (every app has it's own)
+- When users deposit to Smart Accounts, it fragments their balances
+
+### No Compromises
+
+With the Biconomy Fusion module, you no longer need to decide between EOAs
+and SCAs. The Fusion Module enables EOA users to execute complex multi-step
+multi-chain interactions with just their EOA.
+
+With Fusion, EOA users can:
+- Approve + execute with a signle signature.
+- Bridge + execute on destination chain, with a single signature.
+- Execute hundreds of separate transactions (e.g. bulk send) with a single signature
+- Have their transactions sponsored or pay for gas with ERC20 tokens.
+
+
+:::info[EIP7702]
+The Fusion Module is not a replacement for EIP7702. As wallets will not allow
+apps to upgrade users to EIP7702 and will use their own account standards, the 
+Fusion model is the perfect tool to augment the capabilities of both non-7702 and
+7702 users.
+
+---
+
+If you're looking for EIP7702 information, [read our EIP7702 Guide](/eip7702/wallet-guide)
+:::
+
+## Cross-Chain Gas Abstraction 
 
 Sponsor transactions across multiple chains with a single gas tank (coming soon) or pay for gas
 with native coins or ERC20 tokens across multiple chains (available now) with our multichain native
 infrastructure.
 
-✔ Sponsor gas across multiple chains with a single gas tank
+- Sponsor gas across multiple chains with a single gas tank
 
-✔ Pay for gas in ERC20 tokens, even across chains (e.g. pay for gas on Base with USDC on Optimism)
-
-✔ Pay for gas in native tokens on remote chains (e.g. pay for gas on Polygon with ETH on Arbitrum)
-
+- A user can pay for the execution of a transaction with funds they have on a different chain. 
+For example - pay for the execution of a function on Optimism with USDC on Polygon.
 
 
-## Cross-chain Composability
+## Cross-Chain Composability
 
-Make sure all of your cross-chain flows execute flawlessly by dynamically injecting the exact amount received
-from bridges or solvers into your function parameters. Make failing transactions due to slippage issues a thing of the 
-past. 
+Our Composability stack enables developers to dynamically inject parameters
+into function calls - even when those parameters are not known ahead of time.
 
-Build flows which use the output of one function call as the input of another - without writing smart contracts.
+Examples:
 
-✔ Compose contract calls without writing smart contracts
+- Trigger a Solver and use the received amount on the destination chain
+as the input to a `supply` function on AAVE.
 
-✔ Dynamically inject the exact amount received from bridges into function calls on the target chain 
+- Swap tokens on Uniswap and use the output amount of tokens as the input
+to the next transaction.
+
+- Use a variable from Optimsim as the input parameter of a function call
+on Base. The variable is read at the _exact_ time of execution of the function
+on base.
+
+- Trigger multiple different solvers and bridges and use the cumulative output
+of all of them as the input to a function call on a target chain.
 
 
-## Hybrid Execution - Transactions and Intents
+## Lightspeed Execution With Intents
 
 Onchain execution is becoming heterogenous - with solvers moving funds and accessing liquidity
 across multiple chains in seconds. Transactions, on the other side offer much more flexibility in
 interacting with blockchains. Our stack elegantly combines both transactions and intents into a single
 data object - allowing you to build without compromises.
 
-## Best-in-class EOA Support
+:::info[Deepest liquidity and fastest execution]
+The Biconomy stack is vendor-neutral when it comes to choosing solvers and solver networks. 
 
-Onboarding to smart accounts can be a pain. This is why we have developed the Fusion Module.
-By encoding additional instructions into an EVM transaction, developers are able to encode
-single-signature multi-chain batch execution of transactions - while giving users the benefit
-of using their regular EOA accounts.
+Our SDK
+comes pre-built with pluigns for leading solver and briding provides - such as Across and LiFi - ensuring
+you get the deepest liqudity and best execution prices.
+:::
 
-✔ Batch execute transactions (e.g. approve + swap) with regular EOA accounts with a single signature
-
-✔ Execute complex multi-chain flows with a single signature from regular EOA accounts
-
-✔ Support for gasless batch execution for EOA accounts when working with ERC20Permit compliant tokens
-
-## Industry-leading Modules Support
+## Supercharge your Accounts with Account Modules
 
 From Smart Sessions, Passkeys - to TimeLocks, Multisigs and Resource Locks - Biconomy accounts
 and SDKs are built to enable developers to effortlessly add new functionality to user accounts.

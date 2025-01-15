@@ -1,29 +1,31 @@
-# AbstractJS
+# `AbstractJS` SDK
 
-AbstractJS is the ultimate SDK for building modern onchain solutions, enabling developers to effortlessly build
-apps which leverage chain abstraction, intents, cross-chain messaging and multichain execution.
+`AbstractJS` is the ultimate SDK for building solutions on top of smart accounts, enabling developers to effortlessly build
+apps which leverage:
 
-Built on top of industry-standard `viem` SDK, AbstractJS enables developes to seamlessly interact with the
-Biconomy Modular Execution Environment or ERC4337 Bundler & Paymaster infrastructure.
+- [Account Abstraction]()
+- [Chain Abstraction]()
+- [Gas Sponsorships]()
+- [Cross-Chain Gas Sharing]()
+- [Fast Cross-Chain Exection With Intents]()
+- [Cross-Chain Messaging]()
+- [Multichain Execution.]()
 
-Whether you're building a single chain app looking to leverage the features provided by the ERC4337 Bundler and Paymaster infrastructure, a DeFi automation project
-looking to orchestrate transaction across multiple chains or a UX focused application looking to build with Chain Abstraction
-and Passkeys - AbstractJS will help you move from idea to production in record time.
+Built on top of the industry-standard `viem` SDK, AbstractJS enables developes to seamlessly interact with:
 
-:::info
-AbstractJS is infrastrucure and account neutral. You can use it with Biconomy Nexus account or with alernative
+- Biconomy [Modular Execution Environment](/mee/mee)
+- ERC4337 [Bundler & Paymaster infrastructure](/legacy/overview)
+
+
+:::tip[Open-Source and Vendor Neutral]
+`AbstractJS` is infrastrucure and account neutral. You can use it with [Biconomy Nexus]() account or with alernative
 smart account providers (Safe, Kernel, ...) as well as with a multitude of infrastructure environments such as
-Biconomy MEE or ERC4337 (Biconomy, Pimlico, ...)
+Biconomy MEE or ERC4337 Bundlers & Paymasters (Biconomy, Pimlico, ...)
 :::
 
+:::info
 AbstractJS is open-source and distributed under an MIT licence, with all source files being available on [GitHub](https://google.com)
-
-✔  Use Modular Execution Environments
-
-✔ Use Bundlers and Paymasters
-
-✔  Vendor Neutral
-
+:::
 
 
 ## Manage Smart Accounts
@@ -32,7 +34,8 @@ both Biconomy Nexus account as well as alternative account implementations.
 
 ### Multichain Smart Account Management
 
-AbstractJS comes with pre-built utilities for managaging smart account deployments across multiple chains. 
+Deploying and managing smart account deployments across multiple chains can be a pain.
+AbstractJS comes with buil-in utilities to [handle smart account deployment on multiple chains]()
 
 :::info
 This is not a full code example. To start implementing plase refer to [MEE Quickstart](./mee/mee) or 
@@ -51,9 +54,9 @@ const mcNexus = await toMultichainNexusAccount({
 AbstractJS supports transaction execution through Biconomy Modular Execution Environment or
 through ERC4337 Bundlers and Paymasters.
 
-### Execute transactions through the Modular Execution Environment (MEE)
+### Modular Execution Environment (MEE)
 
-Biconomy Modular Execution Environment (MEE) enables developers to execute complex transaction and intent sequences across 
+Biconomy [Modular Execution Environment]() (MEE) enables developers to execute complex transaction and intent sequences across 
 multiple blockchains with a single user signature.
 
 :::info
@@ -90,9 +93,10 @@ const quote = await getQuote(meeClient, {
 const receipt = await executeQuote(meeClient, { quote })
 ```
 
-### Execute transactions through ERC4337 Bundlers and Paymasters
+### ERC4337 Bundlers and Paymasters
 
-Mix-and-match transactions executed through MEE or through ERC4337 Bundlers and Paymasters.
+Bundlers and Paymasters enable [gas sponsorship](), [paying for gas with ERC20 tokens]()
+and [single-chain batch execution]()
 
 :::info
 This is not a full code example. To start implementing plase refer to [MEE Quickstart](./mee/mee) or 
@@ -138,7 +142,7 @@ const mcAAVE = getMultichainContract({
 });
 ```
 
-### Fetching unified ERC20 Balance
+### Fetching Unified ERC20 Balance
 A single function call to fetch a unified balance across all supported chains
 
 ```ts
@@ -152,16 +156,49 @@ const unifiedBalance = await getUnifiedERC20Balance({
 AbstractJS exposes pre-built plugins for interacting with bridges such as Across or LiFi. Utility functions
 can encode multiple bridging transactions at the same time - when users need to fetch funds from multiple chains.
 
+#### Triggering an Across intent with a built-in plugin
+
+```ts
+import { AcrossPlugin } from "./plugins";
+
+AcrossPlugin.encodeBridgeUserOp({
+  bridgingAmount: parseUnits('10', 6),
+  fromChain: optimism,
+  toChain: base,
+  multichainAccount: mcNexus,
+  multichainToken: mcUSDC
+})
+```
+
+#### Calculating optimal bridging / intent routes
+
+AbstractJS has utilities to help you calculate optimal routes for moving
+funds from one chain to another.
+
+```ts
+buildMultichainBridgingInstructions({
+  amount: parseUnits('10',6),
+  bridgingPlugins: [AcrossPlugin],
+  multichainAccount: mcNexus,
+  toChain: optimism,
+  unifiedBalance: await getUnifiedERC20Balance({
+    multichainAccount: mcNexus,
+    multichainERC20: mcUSDC
+  }),
+  isTxFeePaidWithTokenBeingBridged: false
+})
+```
 
 ## Effortless Single-chain and Multi-chain Orchestration
 
 What used to take thousands of lines of code, can be achieved in a dozen lines of code with AbstractJS. Let's
 check an example of a transaction which:
 
-- Pays for gas with USDC on Base
-- Moves funds from wherever they are to Optimsim
-- Approves AAVE to use USDC on Optimism
-- Supplies to AAVE on Optimsim
+1. Pays for gas with USDC on Base
+2. Moves USDC from multiple chains to Optimsim
+3. Approves AAVE to use USDC on Optimism
+4. Supplies to AAVE on Optimsim
+
 
 ```ts
 const sTx = supertransaction({
@@ -194,12 +231,21 @@ const sTx = supertransaction({
 
 ## Multichain Batch Execution for EOAs
 
-AbstractJS comes with built-in support for the Biconomy Fusion module - enabling developers to execute
+AbstractJS comes with built-in support for the [Biconomy Fusion]() module - enabling developers to execute
 batch transactions across multiple chains from user EOA accounts - with a single signature.
 
-This entire transaction, including an ERC20 transfer, briding and execution on a remote chain would
-be a single onchain transaction, permitted by a single signature - even for users using regular EOA
-accounts.
+The Fusion Module gives regular EOAs the ability to batch execute transactions
+across one or multiple chains, while paying for gas on only one chain!
+
+#### Before Fusion
+❌ Three user signatures <br/>
+❌ User needs to have gas on two chains<br/>
+❌ User needs to wait for the bridge to finish before signing the second tx
+
+#### After Fusion
+✅ One user signature<br/>
+✅ Needs gas on only one chain<br/>
+✅ Set and forget: User signs and all transactions are executed fully
 
 ```ts
 const signedFusionQuote = await signFusionQuote(meeClient, {

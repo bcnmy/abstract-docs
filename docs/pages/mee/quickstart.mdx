@@ -1,38 +1,40 @@
-# Biconomy MEE SDK Implementation Guide
+# Build a Chain Abstracted App
 
 ## Introduction
 
-The Biconomy MEE SDK revolutionizes how we think about cross-chain operations. Imagine being able to gather funds scattered across multiple blockchains and use them in a single operation, all with just one signature. This is now possible through ERC7579-compliant smart accounts and the MEE orchestration service.
+The Biconomy MEE SDK revolutionizes how we think about cross-chain operations. 
+Imagine being able to gather funds scattered across multiple blockchains and use them in a 
+single operation, all with just one signature. 
 
+By leveraging Modular Smart Accounts and the 
+
+### Use Case 
 For example, you might have
 
-- 300 USDC on Optimism,
-- 400 on Polygon
-- 300 on Base
+- `300 USDC` on Optimism,
+- `400 USDC` on Polygon
+- `300 USDC` on Base
 
-but want to supply 1000 USDC to Aave on Arbitrum.
+but want to:
+- supply `1000 USDC` to _Aave_ on Arbitrum.
 
-Traditionally, this would require multiple manual bridge operations, waiting for confirmations, and then interacting with Aave. With AbstractJS and MEE, this becomes a single operation. The MEE service handles all the complexity - it bridges funds from multiple sources simultaneously, waits for all confirmations, and only then executes your Aave supply transaction.
+### Before MEE
+Traditionally, this would require multiple manual bridge operations, waiting for confirmations, and 
+then interacting with Aave. 
 
-:::info
+The user would have to sign multiple transactions, switch networks in-between those 
+transactions and would need to have native or ERC20 tokens available on all chains 
+to pay for gas.
+
+### Modular Execution
+With AbstractJS and MEE, this becomes a single operation. 
+The MEE service handles all the complexity - it bridges funds from multiple sources simultaneously,
+ waits for all confirmations, and only then executes your Aave supply transaction.
+
+:::info[Open-source and vendor neutral]
 MEE has no vendor lock-in - your funds are bridged through existing infrastructure (e.g. LiFi, Across, ...) and you
 can even write custom Bridging Plugins to add support for any bridge, solver or cross-chain messaging provider.
 :::
-
-This orchestration opens up powerful new possibilities. You could
-
-- Automatically move lending positions to the highest-yielding
-  chain by unwinding a position on one chain and rebuilding it on another.
-- Distribute tokens from a single source to multiple destinations across different chains. Perhaps you need to gather liquidity from multiple chains to perform a large DEX trade - the MEE SDK makes this seamless.
-
-The magic happens through the MEE service's intelligent orchestration. When you initiate a transaction, the service:
-
-- Executes all necessary bridges simultaneously
-- Monitors the arrival of funds across chains
-- Automatically proceeds with your intended operation once all prerequisites are met
-
-And because all of this happens through ERC7579-compliant smart accounts, you maintain full security and control while gaining unprecedented cross-chain capabilities.
-Let's dive into how you can implement this in your own applications.
 
 ## Initial Setup & Core Concepts
 
@@ -40,74 +42,78 @@ Let's dive into how you can implement this in your own applications.
 
 Before diving into implementation, it's crucial to understand the two types of accounts you'll be working with:
 
-1. **EOA (Externally Owned Account)**:
+#### **EOA (Externally Owned Account)**:
 
    - This is your traditional private key-controlled account
    - Used ONLY for signing transactions
    - ⚠️ DO NOT store your funds here
 
-2. **Smart Contract Account (SCA)**:
+#### **Smart Contract Account (SCA)**:
    - This is where all your funds MUST be stored
    - All operations happen through this account
    - Generated automatically for each chain
 
-🚨 **CRITICAL WARNING**: Your funds must be on the Smart Contract Account (SCA), not your EOA. Many users make the mistake of sending funds to their EOA - this will not work with the MEE SDK.
+:::danger[🚨 Important]
+Your funds must be on the Smart Contract Account (SCA), not your EOA. 
+Many users make the mistake of sending funds to their EOA - this will not work with the MEE Node. 
+
+---
+
+If you want to enable MEE Features for EOAs, read about the Biconomy [Fusion Module](/fusion/overview)
+:::
 
 ### Installation
 
 First, install the required packages:
 
 ```bash
-npm install @biconomy/experimental-mee viem
+npm install @biconomy/abstractjs viem
 ```
 
 ## Implementation Steps
 
-### 1. Initialize Core Services
+::::steps
 
-First, set up the MEE service which will handle all your cross-chain operations:
+#### Set Up a `MultichainSmartAccount`
 
+AbstractJS comes with a built-in utility function for easier deployment and
+management of Smart Accounts across multiple chains. To learn more about
+`MultichainSmartAccount` click [here](/mee/concepts/multichain-smart-account)
 ```typescript
-const meeService = createMeeService({
-  meeNodeUrl: "https://mee-node.biconomy.io",
-});
+const privateKey = '0xYour private key'
+const eoa = privateKeyToAccount(privateKey)
 
-// Create a signer from your private key
-const signer = privateKeyToAccount(
-  "your-private-key-here" // ⚠️ Never commit this to source control!
-);
-```
-
-### 2. Set Up Multi-Chain Account
-
-Create your Smart Contract Account infrastructure across multiple chains:
-
-```typescript
 const mcNexus = await toMultichainNexusAccount({
   chains: [polygon, optimism, base], // Specify which chains you'll operate on
   signer: signer,
 });
 
-// Get your SCA addresses for each chain
-const optimismAddress = mcNexus.deploymentOn(optimism.id).address;
-const baseAddress = mcNexus.deploymentOn(base.id).address;
-const polygonAddress = mcNexus.deploymentOn(polygon.id).address;
-
-console.log("Your SCA addresses:");
-console.log("Optimism:", optimismAddress);
-console.log("Base:", baseAddress);
-console.log("Polygon:", polygonAddress);
-
-// ⚠️ Remember: Send your funds to these addresses, not your EOA!
+// Get account address.
+// When running this example, you must fund this 
+// address with either native coins or ERC20 tokens.
+mcNexus.deploymentOn(optimism.id).address
 ```
 
-### 3. Initialize Multi-Chain Contracts
+#### Initialize MEE Client
 
-Set up your token and protocol contract interfaces across chains:
+In order to use the MEE Node, we need to establish a connection to it. This
+is done with `createMeeClient`
+
+```typescript
+const client = createMeeClient({
+  account: mcNexus,
+})
+```
+
+#### Initialize Multi-Chain Contracts
+
+AbstractJS comes built-in with a data structure making it easy to work
+with smart contracts deployed across multiple chains. Read about 
+`MultichainContract` [here](/mee/concepts/multichain-contract)
 
 ```typescript
 // Set up USDC across chains
-const xUSDC = getMultichainContract({
+const mcUSDC = getMultichainContract({
   abi: erc20Abi,
   deployments: [
     ["0x0b2c639c533813f4aa9d7837caf62653d097ff85", optimism.id],
@@ -116,7 +122,7 @@ const xUSDC = getMultichainContract({
 });
 
 // Set up AAVE lending pool across chains
-const xAAVE = getMultichainContract({
+const mcAaveV3Pool = getMultichainContract({
   abi: parseAbi([
     "function supply(address asset, uint256 amount, address onBehalfOf, uint16 referralCode)",
   ]),
@@ -127,7 +133,23 @@ const xAAVE = getMultichainContract({
 });
 ```
 
-### 4. Define Your Operation Parameters
+:::tip[Using AbstractJS Exported Token Contracts]
+
+To remove the need for developers to search for contract addresses 
+accross multiple chains, we have exported common ERC20 tokens in
+AbstractJS
+
+---
+```ts
+// Import the USDC Multichain Contract object 
+import { mcUSDC } from "./utils/tokens";
+
+// Use it in your code
+mcUSDC.addressOn(optimism.id)
+```
+:::
+
+#### Define Your Operation Parameters
 
 Set up the parameters for your operations:
 
@@ -140,7 +162,7 @@ const supplyAmount = parseUnits("1", 6); // USDC has 6 decimals
 const zeroAddress = "0x0000000000000000000000000000000000000000";
 ```
 
-### 5. Build and Execute the Supertransaction
+#### Build and Execute the Supertransaction
 
 Now, build your transaction using the fluent builder pattern:
 
@@ -192,13 +214,14 @@ const result = await meeService.execute(
 console.log("Supertransaction hash:", result.hash);
 ```
 
-### 6. Monitor Your Transaction
+#### Monitor Your Transaction
 
 Track your transaction progress at:
 
 ```
 https://meescan.biconomy.io/details/{your-transaction-hash}
 ```
+::::
 
 Replace `{your-transaction-hash}` with `result.hash` from the previous step.
 
