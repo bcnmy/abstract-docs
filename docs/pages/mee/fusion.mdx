@@ -1,0 +1,171 @@
+# Use EOAs Like Smart Accounts
+
+Biconomy has developed a unique solution on the market enabling developers
+to **batch execute transactions**, execute **cross-chain transactions** and **trigger intents**
+for users with EOAs **without upgrading them to smart wallets**
+
+This feature is available for regular users with EOA wallets (such as MetaMask) - without any
+protocol upgrades and without moving users to Smart Accounts. Instant onboarding, zero compromises.
+
+If you want to know how the Fusion Module works under the hood, [read the technical explanation](#advanced-how-does-the-fusion-module-work)
+
+:::tip[Read about our Research]
+If you want to learn how Fusion Transactions work under the hood, read the [explanation](advanced-how-does-the-fusion-module-work)
+
+---
+
+To get an in-depth overview of the Fusion architecture, read our post on [Ethereum Research](https://ethresear.ch/t/fusion-module-7702-alternative-with-no-protocol-changes/20949)
+
+:::
+
+:::info[Fusion and EIP7702]
+Fusion Transactions are **100%** compatible with EIP7702 accounts. In fact, we recommend using Fusion Transactions
+as the ideal solutions for apps interacting with both regular and EIP7702 enabled EOAs!
+
+---
+
+Since *only wallets* will be able to upgrade users to EIP7702 accounts, the developers will be limited by the 
+features provided by the wallets. These will primarily include gasless execution and batch transactions. Additionally - Most
+apps will have a blend of users with and without EIP7702 enabled wallets. 
+
+The `executeFusionTransaction` function in the `AbstractJS` SDK will be able to intelligently switch between using
+EIP7702 exection and regular EOA execution. This means that apps using Fusion transactions will get:
+
+- Same codebase for both EIP7702 enabled and regular EOA users!
+- Additional features offered by Smart Accounts (cross-chain gas sharing, smart sessions, resource locks, ...)
+:::
+
+## Single Signature Approve + Execute for EOAs
+One of the biggest pain points of using EOAs is the requirement to sign two separate transactions `approve` and `execute`, 
+when interacting with a smart contract. Here, we will demonstrate how to supply to AAVE - a transaction which would
+usually require two signatures - with just one signature from the user:
+
+::::steps
+#### Define an Amount to be Used by the Fusion Transaction
+
+Every Fusion Transaction has an exact amount of some `ERC20` token that it will use. This is usually the amount
+that you want to do an action with. In this example, this amount will be the amount that we want to supply to 
+AAVE
+
+```ts
+const amountToSupply = parseUnits('100', 6) // 100 USDC
+```
+
+#### Encode an Approve Call
+We will use the `MultichainSmartContract` utilities in `AbstractJS` to encode
+an approval for AAVE v3 Pool on Optimism to spend the users USDC
+
+```ts [Encode ERC20 Approve Call]
+const approve = mcUSDC.on(optimism.id).approve({
+  args: [
+    mcAaveV3Pool.addressOn(optimism.id), // approve to aave v3 pool contract
+    amountToSupply // amount approved
+  ],
+  gasLimit: 150_000n
+}),
+```
+
+#### Encode a Supply Call
+We'll use the same utilities to encode a supply call to the
+AAVE v3 Contract
+
+```ts [Encode a Supply Call]
+const supply = mcAaveV3Pool.on(optimism.id).supply({
+  args: [
+    mcUSDC.addressOn(optimism.id), // asset to supply
+    amountToSupply, // amount being supplied,
+    mcNexus.signer.address, // benficiary - our EOA address
+    0 // refferal code
+  ],
+  gasLimit: 150_000n
+})
+```
+
+#### Encode a Fusion Transaction
+Now, we will use the `AbstractJS` - `encodeFusionTransacton` function call combine the approve + 
+execute into a single transaction. This function will call the `signer` from the `mcNexus` account,
+use it to sign the [Fusion Transaction]() and commit the transaction onchain. 
+
+It will also pass the additional instructions to the [Biconomy Superbundler]() which will then 
+execute the transaction.
+
+```ts
+const { hash } = 
+  await executeFusionTransaction(meeClient, {
+    chain: optimism, // Chain where the transaction is executed
+    account: mcNexus, // Companion Smart Account
+    token: mcUSDC, // token used by the Fusion Transaction
+    amountUsed: amountToSupply, // Amount of `token` used by the Fusion Transaction
+    instructions: [ 
+      approve, supply // Instructions for the Fusion Transaction
+    ]
+  })
+```
+
+#### Track the Transaction!
+
+That's it - your single signature, multi-step transaction has been executed! Without needing
+to move users to Smart Accounts.
+
+You can track the execution of the trigger transaction by tracking the `hash` on an EVM explorer.
+To track the execution of the additional instructions - you can use the [Biconomy MEE Explorer]()
+
+::::
+
+
+## Single Signature Multi-Chain Sequence with Intents
+
+This is achieved with the innovative [Biconomy Fusion Module](). We'll be using [AbstractJS]() to 
+encode a multi-chain Fusion transaction which will execute with a single user signature.
+
+### Transaction steps:
+::::steps
+#### Executes an Intent
+The first step is executing an intent which will move USDC from Optimism to Base. For this step,
+Biconomy uses industry-leading providers, such as [Across]() or [LiFi]()
+
+#### Approves
+::::
+
+```ts [Fusion Transaction]
+const tx = 
+  await executeFusionTransaction(meeClient, {
+    token: mcUSDC,
+    chain: optimism,
+    account: mcNexus,
+    amountUsed: parseUnits('100', 6),
+    instructions: [
+      await prepareIntent({
+        account: mcNexus,
+        amount: parseUnits('100', 6),
+        toChain: base,
+        token: mcUSDC,
+      }),
+      mc
+    ]
+  })
+```
+
+## Advanced: How Does the Fusion Module Work?
+
+![Fusion Flow](https://i.imgur.com/dVUmznn.png)
+Fusion transactions work by employing a [Companion Smart Account](). This account is invisible to the user
+and is used by the Biconomy [Superbundler]() to execute an arbitrary number of transactions, intents and
+cross-chain operations. 
+
+It achieves this by employing the _Fusion Packing Scheme_ which puts the hash of additional instructions 
+to be executed _after_ the regular `callData` in an EVM transaction. This extra `callData` is ignored by the 
+contract and the EVM transaction is executed normally. 
+
+This first operation in a Fusion transaction is usually a simple `transfer` function which transfers the necessary
+amount of an `ERC20` token to the Companion Account. When the user signs this transaction they are also signing the
+hash which was appended after the regular `callData`. AbstractJS then sends all of the 
+instructions which need to be executed on the Companion account to the The Biconomy [Superbundler](). 
+
+After the `ERC20` token arrives to the Companion account, Tthe Superbundler then calls the `execute` function
+on the Companion smart account to execute additional instructions. The Companion account will not allow any 
+transactions to be executed which were not _explicity_ contained in the hash which was appended after the `callData`
+
+In order to be able to execute those transactions, the `Superbundler` provides the full signed transaction 
+(called the trigger transaction) as the signature to the Companion smart account.
+

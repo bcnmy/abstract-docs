@@ -1,49 +1,113 @@
 # Execute an Intent
 
-With AbstractJS - developers can move funds from one chain to anohter by using bridges
-or intents. AbstractJS also provides the ability to mix-and-match bridges and
-intents in the same [Supertransaction]() - giving developers unparalleled 
-flexibility when moving customer funds from one chain to another.
+## About Intents 
 
-## Using Bridges
+`AbstractJS` enables developers to provide extremely quick chain 
+abstracted experiences to their users by leveraging industry-leading
+intent solvers.
 
-When using a brige, the developer will specify exactly how they want their funds
-to move between chains:
+By encoding an intent into a [Supertransaction](), developers can 
+move funds from one chain to another in record times (even under
+a second), without the user ever needing to see the "bridging"
+operation. `AbstractJS` is able to execute multiple intents, moving
+funds from multiple chains, in a single operation.
 
-- Which bridge (or bridge aggregator) to use
-- How much to supply on which chain
-- To which chain they want their funds bridged
-- Which token they want to use on the source chain
-- Which token they want to use on the destination chain
+## Open, Secure and liquid
 
-:::info[Using Bridges with AbstractJS]
-AbstractJS has utility functions for interacting with both bridges and intents.
-To use bridge-based execution, read our guide for [AbstractJS Bridging Plugins]()
+:::tip
+### No vendor lock-in
+Biconomy [Modular Execution Environment]()
+leverages a vendor-neutral intent model, meaning that developers can 
+choose which provider they're working with. `AbstractJS` comes built-in
+with plugins for triggering the biggest intent providers, giving 
+our users best execution prices and the fastest execution speed.
 :::
 
-## Using Intents
 
-When specifying an intent, the developer simply needs to say:
+:::tip
+### Mix-and-match intent providers
+AbstractJS enables developers to mix-and-match multiple intent
+providers to get the best execution price. 
 
-- How much tokens they want on what chain.
+--- 
 
+For example,
+an optimal route to get 1000 USDC on Optimsim might include 
+moving 600 USDC from Base using [Across]() and moving 400 USDC
+from Polygon using [deBrige](). AbstractJS can encode both of those providers into a single 
+[Supertransaction]() and trigger both of them within a single
+user action.
+:::
 
-An example of using a intent with `AbstractJS` is:
+:::tip
+### Use battle-tested, liqudid protocols
+Whether you need to clear $1 or $1M - `AbstractJS` will find the 
+optimal route for you. Our utility functions quote the most liquid,
+secure and battle tested solutions on the market.
+:::
+
+## Guide
+
+Using Intents in `AbstractJS` is extremely easy, as it comes with 
+utility functions which enable developers to encode intents in just
+a few lines of code.
+
+This guide will explore a case where the developer will use 
+intent based execution to:
+
+- Move USDC to Optimism
+- Supply the received amount to AAVE
+
+For the purposes of this guide, we'll assume that the user 
+doesn't have any funds on Optimism. 
 
 ::::steps
-#### Prepare an intent
+#### Install AbstractJS and viem
 
-Use the built-in utility function `prepareIntent` to prepare the 
-required transactions for executing the intent. This function will
-use all of the chains with which the `account` was initialized and
-calculate the cheapest way to use 100 USDC and get them to Optimism
+```bash [Install AbstractJS]
+npm install @biconomy/abstractjs viem
+```
+
+#### Initialize the infrastructure
+In execute intents, users need to intialize the [`MultichainSmartAccount`](/mee/tutorials/manage-multichain-sca)
+and connect to the Biconomy [Superbundler](). Connecting to the [Superbundler]() is done by creating an 
+[`meeClient`](). To learn more about the setup, read our [Building a Chain Abstracted App]() guide.
+
+```ts [Connect the infrastructure]
+// Initialize the MultichainSmartAccount
+const mcNexus = await toMultichainNexusAccount({
+  chains: [optimism, base, polygon],
+  signer: eoaAccount
+})
+
+// Connect to the Superbundler
+const meeClient = createMeeClient({
+  account: mcNexus
+})
+```
+
+#### Encode an Intent
+
+To encode an intent, simply call the `buildIntent` function
+provided by the SDK. This function will check where your 
+user has funds, and encode the optimal set of instructions
+to move their funds.
+
+:::tip[Intent not Needed]
+If the user has enough funds on the target chain, the `buildIntent`
+function will return an empty instruction set.
+
+---
+
+This behaviour means developers don't have to write if/else
+statements which check whether or not an intent should be triggered
+:::
 
 ```ts
-const intent = await prepareIntent({
-  account: mcNexus,
+const intent = await buildIntent(meeClient, {
+  mcToken: mcUSDC,
   amount: parseUnits('100', 6),
-  toChain: optimism,
-  token: mcUSDC
+  chain: optimism
 })
 ```
 
@@ -53,10 +117,12 @@ Often times, after an intent has been executed - the user wants to
 execute additional actions. For this example, we'll use supplying to 
 AAVE as an example.
 
-First, instantiate the AAVE contract:
+First, instantiate the AAVE contract. This can be done by using the `AbstractJS`
+utility type `MultichainContract` - click [here]() to learn how
+`AbstractJS` multichain utilities simplify the moden onchain DevEx 
 
 ```ts
-const mcAAVE = getMultichainContract({
+const mcAaveV3Pool = getMultichainContract({
   abi: parseAbi([
       "function supply(address asset, uint256 amount, address onBehalfOf, uint16 referralCode)",
   ]),

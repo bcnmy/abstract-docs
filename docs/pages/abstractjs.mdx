@@ -1,19 +1,21 @@
 # `AbstractJS` SDK
 
 `AbstractJS` is the ultimate SDK for building solutions on top of smart accounts, enabling developers to effortlessly build
-apps which leverage:
+user friendly apps which leverage the latest innovations in blockchain execution, including [chain abstraction](),
+[gas sponsorships](), [managing smart account modules]() and much more...
 
-- [Account Abstraction]()
-- [Chain Abstraction]()
-- [Gas Sponsorships]()
-- [Cross-Chain Gas Sharing]()
-- [Fast Cross-Chain Exection With Intents]()
-- [Cross-Chain Messaging]()
-- [Multichain Execution.]()
+Modern onchain app teams work in a multi-chain environment, where they have to interact with multiple chains, bridges and
+intent solvers. `AbstractJS` makes navigating this complex multi-chain hybrid execution environment a breeze, with a rich
+library of **multichain utilities**. These include functions like:
+- [Getting a unified multichain balance](), 
+- [Handling smart account deployments across multiple chains](), 
+- [Executing intents](), 
+- [Effortessly building complex multi-chain sequences](), 
+- [Handling token deployements across multiple chains]()
 
 Built on top of the industry-standard `viem` SDK, AbstractJS enables developes to seamlessly interact with:
 
-- Biconomy [Modular Execution Environment](/mee/mee)
+- Biconomy [Superbundler](/mee/mee) and the [Modular Execution Environment (MEE)]()
 - ERC4337 [Bundler & Paymaster infrastructure](/legacy/overview)
 
 
@@ -27,10 +29,25 @@ Biconomy MEE or ERC4337 Bundlers & Paymasters (Biconomy, Pimlico, ...)
 AbstractJS is open-source and distributed under an MIT licence, with all source files being available on [GitHub](https://google.com)
 :::
 
+# `AbstractJS` Highlight Features
+
+```bash [Install AbstractJS]
+npm install @biconomy/abstractjs viem 
+```
+
+This is a high level overview of the features of `AbstractJS`. To dive straight into coding with the SDK, check our 
+quickstart guides:
+
+- [Building a Chain Abstracted Application](/mee/tutorials/build-chainabstracted-app)
+- [Executing Intents](/mee/tutorials/execute-intent)
+- [Sponsoring a Transaction with Paymasters](/legacy/tutorials/gasless)
+- [Cross-Chain Gas Abstraction](/mee/tutorials/pay-gas-across-chains)
+- [Working With Account Modules](/legacy/modules/validators)
 
 ## Manage Smart Accounts
 AbstractJS enables developers to deploy and manage Modular Smart Accounts. The SDK is vendor neutral and supports 
-both Biconomy Nexus account as well as alternative account implementations. 
+both [Biconomy Nexus]() account as well as other smart account implementations. [Click here]() for a list of supported
+providers.
 
 ### Multichain Smart Account Management
 
@@ -39,7 +56,7 @@ AbstractJS comes with buil-in utilities to [handle smart account deployment on m
 
 :::info
 This is not a full code example. To start implementing plase refer to [MEE Quickstart](./mee/mee) or 
-[AA Quickstart](./legacy/quickstart). Not sure where to start? Read our [Choosing Infrastructure Guice](./mee/mee)
+[AA Quickstart](./legacy/quickstart). Not sure where to start? Read our [Choosing Infrastructure Guide](./mee/mee)
 :::
 ```ts
 // Wraps a Nexus Smart Account deployment on Polygon, Optimism and Base

@@ -1,0 +1,181 @@
+# Build a Chain Abstracted App
+
+For this tutorial, we will be building a chain abstracted app, powered by the Biconomy Modular Execution Environment!
+
+## Core concepts
+
+The app which we build in this guide will leverage all the latest features available in `AbstractJS` SDK and 
+the Biconomy stack! Some highlights:
+
+- Using a [Unified Multichain Balance]()
+- Triggering [Intents]() and Transactions in as single operation
+- Executing [multiple transactions on multiple chains]() with a single signature
+- Using automatic orchestration provided by the Biconomy MEE Node
+
+## Goals
+
+We want to build an app with the following features:
+
+- User sees a unified balance across all chains
+- User can deposit to _any_ AAVE market in a single signature
+- If a user has an already open position on AAVE, they can "rebalance" their position to another chain with a single
+signature.
+
+The entire interface should be extremely straightforward for the user, with no chain switching, bridging or managing gas.
+
+## Building the app
+
+::::steps
+#### Creating a New Project
+
+For this tutorial we'll be using `bun` to create a new project. 
+
+If you don't have `bun`, you can install it by running:
+```bash [Install Bun]
+curl -fsSL https://bun.sh/install | bash
+```
+
+Then create a new project called `chapp-example`
+```bash [Create a new project]
+mkdir chapp-example & cd ./chapp-example & bun init
+```
+
+#### Install Required Dependencies: AbstractJS and Viem
+
+```bash [Install AbstractJS and Viem]
+bun add @biconomy/abstractjs viem
+```
+
+#### Create a TypeScript File
+
+```bash [Create app.ts]
+touch app.ts
+```
+
+#### Connect to the Smart Account
+
+Our chain abstracted app will be powered by the Biconomy [Nexus]() smart account. Since we're working
+in a multichain environment, `AbstractJS` comes with a helpful utility function to manage instances of 
+smart accounts across multiple chains. 
+
+In this example, we'll create a smart account which has an EOA wallet
+as the owner. In order to easily create an EOA for testing purposes,
+we'll create the EOA through a `viem` utility, by providing a private 
+key.
+
+```ts [Create EOA signer]
+const eoa = privateKeyToAccount('0x... Private Key Goes Here')
+```
+
+Then, let's connect to our Smart Account with the utility function:
+
+```ts [Initialize Multichain Smart Account]
+const mcNexus = await toMultichainNexusAccount({
+  chains: [optimism, base, polygon, arbitrum],
+  signer: eoa
+})
+```
+
+:::tip[Automated Account Managemnet]
+You don't have to worry about deploying the user smart accounts. If the 
+smart account is not deployed on chain where you need it, `AbstractJS`
+will automatically encode an instruction which deploys the account and 
+executes the desired transaction together.
+:::
+
+#### Initialize the `meeClient`
+
+In order to execute transactions through the Biconomy [Superbundler](), we need to establish a connection 
+to it. `AbstractJS` makes this easy with a helper function:
+
+```ts [Connect to MEE Node]
+const meeClient = createMeeClient({
+  account: mcNexus
+})
+```
+
+:::tip[Connecting to nodes]
+You can pass an optional `url` paramter in the `createMeeClient` if 
+you want to connect to a custom MEE Node. The SDK defaults to 
+`https://mee-node.biconomy.io`, which is a node hosted by Biconomy.
+:::
+
+#### Fund the Smart Account Address
+
+Fetch the Smart Account address on the chain where you want to 
+fund your wallet. For example, let's fetch the address for `Optimism`
+
+```ts
+console.log(
+  mcNexus.deploymentOn(optimism.id).address
+)
+```
+
+:::tip[Address Derivations]
+AbstractJS uses the `CREATE2` smart account generation in the background
+so the addresses on most chains should be identical. However,
+some chains - like `zkSync` - derive their addresses diferently. We 
+recommend always using the `deploymentOn` function to fetch the 
+address.
+:::
+
+Then send USDC to the Smart Account address! 
+
+:::tip[Using other tokens]
+For the purposes of this tutorial, we'll be working with `USDC`. However, you can work with a different token.
+To check which tokens are supported for gas payments, check out the [MEE Node Dashboard](https://mee-node.biconomy.io/dashboard)
+:::
+
+#### Load the Required Smart Contracts
+
+For this app, we'll need access to three contracts. 
+
+- USDC Token Contract
+- aUSDC Token Contract
+- AAVE V3 Pool Contract
+
+:::tip[Multichain Utilities]
+Lucikly, `AbstractJS` makes working with smart contract instances 
+across multiple chains extremely easy with the built-in `MultichainContract`
+type.
+
+---
+
+To learn about all of the available multichain utilities, click [here]()
+:::
+
+In order to load the `AaveV3Pool` contract, we can simply call the 
+`getMultichainContract` utility function and load it up with the 
+addresses of the AAVE Pool on different chains:
+
+```ts [Multichain Contract]
+const mcAaveV3Pool = getMultichainContract({
+  abi: parseAbi([
+      "function supply(address asset, uint256 amount, address onBehalfOf, uint16 referralCode)",
+  ]),
+  deployments: [
+      ["0x794a61358D6845594F94dc1DB02A252b5b4814aD", optimism.id],
+      ["0xA238Dd80C259a72e81d7e4664a9801593F98d1c5", base.id],
+      ["0x794a61358D6845594F94dc1DB02A252b5b4814aD", polygon.id],
+      ["0x794a61358D6845594F94dc1DB02A252b5b4814aD", arbitrum.id]
+  ],
+});
+```
+
+:::tip[Common Token Exports]
+Finding token addresses across many chains is a pain. This is why `AbstractJS` comes
+with exports for the 100+ biggest ERC20 tokens.
+:::
+
+```ts [Import and Use USDC]
+import { mcuSDC } from "./utils/tokens";
+
+const address = mcUSDC.addressOn(optimism.id)
+
+console.log(address)
+```
+
+#### Get the Unified Multichain Balance
+
+
+::::

@@ -13,10 +13,10 @@ export default defineConfig({
     accentColor: "#ec5d31",
   },
   socials: [
-    { 
-      icon: 'x',
-      link: 'https://x.com/biconomy'
-    }
+    {
+      icon: "x",
+      link: "https://x.com/biconomy",
+    },
   ],
   sidebar: [
     {
@@ -24,23 +24,89 @@ export default defineConfig({
       link: "/about",
     },
     { text: "AbstractJS SDK", link: "/abstractjs" },
-    { text: "Demo Videos", link: ''},
+    { text: "Demo Videos", link: "" },
     {
-      text: "Biconomy Stack Explained",
+      text: "Quickstart Guides",
+      items: [
+        { text: "Core Features" },
+        { text: " Quickstart Guide", link: "/legacy/quickstart" },
+        {
+          text: " Sponsor Gas With Paymasters",
+          link: "/legacy/tutorials/gasless",
+        },
+        {
+          text: " Paying Gas with ERC20 Tokens",
+          link: "/legacy/tutorials/tokenPaymaster",
+        },
+        {
+          text: " Executing Batch Transactions",
+          link: "/legacy/tutorials/batch",
+        },
+        { text: "" },
+        { text: "Advanced Features" },
+
+        {
+          text: " Build a Chain Abstracted App",
+          link: "/mee/tutorials/build-chainabstracted-app",
+        },
+
+        {
+          text: " Manage Multichain Smart Accounts",
+          link: "/mee/tutorials/manage-multichain-sca",
+        },
+        {
+          text: " Build and Execute Intents",
+          link: "/mee/tutorials/execute-intent",
+        },
+        {
+          text: " Cross-Chain Gas Abstraction",
+          link: "/mee/tutorials/pay-gas-across-chains",
+        },
+
+        {
+          text: " Execute a Cross-Chain Tx",
+          link: "/mee/tutorials/combine-intents-transactions",
+        },
+
+        { text: "" },
+        { text: "Smart EOA Stack" },
+        {
+          text: " Use EOAs Like Smart Accounts",
+          link: "/mee/fusion",
+        },
+        {
+          text: " Integrate EIP7702 (for Wallets)",
+          link: "/eip7702/wallet-guide",
+        },
+
+        { text: "" },
+        { text: "Account Modules" },
+        {
+          text: " Sign Transactions with Passkeys",
+          link: "/mee/tutorials/execute-intent",
+        },
+        {
+          text: " Set Account Sessions",
+          link: "/mee/tutorials/execute-intent",
+        },
+      ],
+    },
+    {
+      text: "Learn",
       items: [
         {
-          text: "Modular Smart Accounts",
+          text: " Modular Smart Accounts",
           link: "/explained/modular-sca",
         },
         {
-          text: "Modular Execution Environment",
+          text: " Modular Execution Environment",
           link: "/explained/mee",
         },
         {
-          text: "Bundlers and Paymasters",
+          text: " Bundlers and Paymasters",
           link: "/explained/bundlers-paymasters",
         },
-        { text: "EOA Support: Fusion and EIP7702", link: "/explained/eoa" },
+        { text: " EOA Support: Fusion and EIP7702", link: "/explained/eoa" },
       ],
     },
     {
@@ -64,38 +130,24 @@ export default defineConfig({
       collapsed: true,
       items: [
         { text: "Overview", link: "/mee/mee" },
-        { text: ""},
-        { text: "→ Quickstart: Chain Abstracted App",
-           link: "/mee/quickstart" },
+        { text: "" },
+
         {
-          text: "→ Execute a Simple Supertransaction",
-          link: "/mee/tutorials/execute-supertransaction",
+          text: "→ Use EOAs Like Smart Accounts",
+          link: "/fusion/fusion",
         },
         {
-          text: "→ Execute an Intent",
-          link: "/mee/tutorials/execute-intent",
-        },
-        
-        {
-          text: "→ Execute a Cross-Chain Sequence",
-          link: "/mee/tutorials/combine-intents-transactions",
+          text: "",
         },
         {
-          text: '→ Use EOAs Like Smart Accounts',
-          link: '/fusion/fusion'
-        },
-        {
-          text: ""
-        },
-        {
-          text: 'Concepts',
+          text: "Concepts",
           collapsed: true,
           items: [
-            { text: 'Multichain Smart Account' },
-            { text: 'Supertransaction' },
-            { text: 'MultichainContract' },
-            { text: 'BridgePlugin' },
-          ]
+            { text: "Multichain Smart Account" },
+            { text: "Supertransaction" },
+            { text: "MultichainContract" },
+            { text: "BridgePlugin" },
+          ],
         },
         {
           text: "SDK Reference",

@@ -1,22 +1,30 @@
-# EIP7702 Guide
+# EIP7702 Integration Guide for Wallets
 
-## Intro - Why EIP7702
-EIP7702 is an upcoming upgrade to EVM chains which will enable wallets to convert their user EOAs to Smart Accounts. By 
-upgrading the users to Smart Accounts, users will gain many meaningful UX upgrades:
+## Intro, Why EIP7702
+EIP7702 is an upcoming upgrade to Ethereum and EVM blockchains which enables
+wallets to convert the user EOA wallets into [Smart Accounts]()
 
-- Ability to sponsor user gas
-- Ability for users to pay for gas in ERC20 tokens
-- Ability to batch execute transactions
+Biconomy has built **the most comprehensive EIP7702 Solution** on the 
+market:
 
-### Biconomy Unique Advantages 
+#### ✅ Sponsor gas across all chains, with a single gas tank
+Deposit funds to a single chain and use that to sponsor transactions for
+users across 30+ chains and rollups.
 
-Biconomy has built a comprehensive suite for wallets to upgrade their users to Smart Accounts, built on top of our 
-Modular Execution Environment and Bundler/Paymaster infrastructure. Biconomy is unique among EIP7702 infrastructure 
-providers by offering:
+#### ✅ Enable users to share gas across all supported chains
+Your users can use their ETH, USDC, USDT (or any of the xy+ supported ERC20 tokens)
+to pay for gas on any chain. 
 
-- Ability to pay for gas across multiple chain (e.g. user has USDC on Optimism, uses that to pay for transaction execution on Base)
-- Ability to batch execute multiple transactions across multiple chains with a single user signature
-- Ability to use intent-based execution for extremely fast liquidity fronting
+:::info[🧠 Example]
+If a user has USDC on Base, they can instantly
+execute transactions on Polygon, Optimism, Arbitrum, ...
+:::
+
+#### ✅ Unify User Balances Across all Chains
+Treat user balances across all chains as if they're a single balance. Biconomy
+uses leading bridging and intent providers to make sure the funds are 
+transferred with the best execution prices and fastest execution speed.
+
 
 :::info
 If you're a wallet team looking for an EIP7702 strategy - [Contact Us](https://google.com)
