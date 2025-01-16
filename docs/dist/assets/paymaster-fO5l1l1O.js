@@ -1,0 +1,20 @@
+import{u as s,j as e}from"./index-ZQOw4TQ3.js";const i={sidebar_label:"Create a Paymaster",sidebar_position:2,title:"Create a Paymaster",description:"undefined"};function n(t){const a={a:"a",aside:"aside",code:"code",div:"div",h1:"h1",h2:"h2",header:"header",img:"img",p:"p",...s(),...t.components};return e.jsxs(e.Fragment,{children:[e.jsx(a.header,{children:e.jsxs(a.h1,{id:"create-a-paymaster",children:["Create a Paymaster",e.jsx(a.a,{"aria-hidden":"true",tabIndex:"-1",href:"#create-a-paymaster",children:e.jsx(a.div,{"data-autolink-icon":!0})})]})}),`
+`,e.jsxs(a.h2,{id:"add-paymaster",children:["Add Paymaster",e.jsx(a.a,{"aria-hidden":"true",tabIndex:"-1",href:"#add-paymaster",children:e.jsx(a.div,{"data-autolink-icon":!0})})]}),`
+`,e.jsx(a.p,{children:`Once you log in to our dashboard, you'll be directed to the paymaster page. To add a paymaster, simply click the "Add Paymaster" button.`}),`
+`,e.jsx(a.p,{children:e.jsx(a.img,{src:"/paymaster/add_paymaster.png",alt:"Add Paymaster"})}),`
+`,e.jsxs(a.h2,{id:"register-paymaster",children:["Register Paymaster",e.jsx(a.a,{"aria-hidden":"true",tabIndex:"-1",href:"#register-paymaster",children:e.jsx(a.div,{"data-autolink-icon":!0})})]}),`
+`,e.jsx(a.p,{children:'After clicking the "Add Paymaster" button, you can register the paymaster. Give it a name, choose a version (currently 1.0.0), and select your preferred chain.'}),`
+`,e.jsx(a.p,{children:e.jsx(a.img,{src:"/paymaster/register_paymaster.png",alt:"Register Paymaster"})}),`
+`,e.jsxs(a.h2,{id:"create-gas-tank",children:["Create Gas Tank",e.jsx(a.a,{"aria-hidden":"true",tabIndex:"-1",href:"#create-gas-tank",children:e.jsx(a.div,{"data-autolink-icon":!0})})]}),`
+`,e.jsx(a.p,{children:"If you want to sponsor users' transactions to make them gasless, you'll need to set up a gas tank."}),`
+`,e.jsx(a.p,{children:e.jsx(a.img,{src:"/paymaster/first_time_gastank.png",alt:"First time gas tank"})}),`
+`,e.jsx(a.p,{children:`On the Gas Tank page, which you'll see for the first time, note the wallet you use for the initial setup. This wallet is the only one authorized to withdraw funds from the gas tank. When you click "I understand and set up gas tank," your wallet will prompt you for a signature. This action incurs some gas costs. Congratulations!
+Your gas tank is now set up.`}),`
+`,e.jsxs(a.h2,{id:"deposit-funds",children:["Deposit Funds",e.jsx(a.a,{"aria-hidden":"true",tabIndex:"-1",href:"#deposit-funds",children:e.jsx(a.div,{"data-autolink-icon":!0})})]}),`
+`,e.jsx(a.p,{children:`Now that your gas tank is set up, you can deposit funds into it. Choose an amount and click "Deposit" to fill up your tank. Once the transaction is confirmed, you'll be able to see the available funds in your gas tank.`}),`
+`,e.jsxs(a.p,{children:["You can programmatically deposit funds using the paymasterContract ",e.jsx(a.code,{children:"depositFor"})," function by passing the ",e.jsx(a.code,{children:"amount"})," and ",e.jsx(a.code,{children:"paymasterId"})," which is the EOA address. For instance, you can invoke the following ",e.jsx(a.a,{href:"https://polygonscan.com/address/0x00000f79b7faf42eebadba19acc07cd08af44789#writeContract#F3",children:"function"})," on the Polygon chain."]}),`
+`,e.jsx(a.p,{children:e.jsx(a.img,{src:"/paymaster//deposit_funds.png",alt:"Deposit funds"})}),`
+`,e.jsxs(a.h2,{id:"withdraw-funds",children:["Withdraw funds",e.jsx(a.a,{"aria-hidden":"true",tabIndex:"-1",href:"#withdraw-funds",children:e.jsx(a.div,{"data-autolink-icon":!0})})]}),`
+`,e.jsx(a.p,{children:'If you need to withdraw funds from your gas tank at any time, go to the gas tank page. Enter the desired withdrawal amount and click the "Withdraw" button.'}),`
+`,e.jsx(a.p,{children:e.jsx(a.img,{src:"/paymaster/withdraw_funds.png",alt:"Withdraw Funds"})}),`
+`,e.jsx(a.aside,{"data-callout":"info",children:e.jsx(a.p,{children:"Reminder that only the wallet you initially set up the gas tank with can actually perform a withdrawal. Any wallet is allowed to deposit as needed."})})]})}function d(t={}){const{wrapper:a}={...s(),...t.components};return a?e.jsx(a,{...t,children:e.jsx(n,{...t})}):n(t)}export{d as default,i as frontmatter};

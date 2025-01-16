@@ -29,18 +29,18 @@ export default defineConfig({
       text: "Quickstart Guides",
       items: [
         { text: "Core Features" },
-        { text: " Quickstart Guide", link: "/legacy/quickstart" },
+        { text: " Quickstart Guide", link: "/quickstart" },
         {
           text: " Sponsor Gas With Paymasters",
-          link: "/legacy/tutorials/gasless",
+          link: "/tutorials/gasless",
         },
         {
           text: " Paying Gas with ERC20 Tokens",
-          link: "/legacy/tutorials/tokenPaymaster",
+          link: "/tutorials/tokenPaymaster",
         },
         {
           text: " Executing Batch Transactions",
-          link: "/legacy/tutorials/batch",
+          link: "/tutorials/batch",
         },
         { text: "" },
         { text: "Advanced Features" },
@@ -113,15 +113,15 @@ export default defineConfig({
       text: "Using Bundlers & Paymasters",
       collapsed: true,
       items: [
-        { text: "Quickstart Guide", link: "/legacy/quickstart" },
-        { text: "How to Sponsor Gas", link: "/legacy/tutorials/gasless" },
+        { text: "Quickstart Guide", link: "/quickstart" },
+        { text: "How to Sponsor Gas", link: "/tutorials/gasless" },
         {
           text: "Paying Gas in ERC20 Tokens",
-          link: "/legacy/tutorials/tokenPaymaster",
+          link: "/tutorials/tokenPaymaster",
         },
         {
           text: "Executing Batch Transactions",
-          link: "/legacy/tutorials/batch",
+          link: "/tutorials/batch",
         },
       ],
     },
@@ -184,8 +184,8 @@ export default defineConfig({
     {
       text: "Resources",
       items: [
-        { text: "Contracts & Audits", link: "/legacy/contractsAndAudits" },
-        { text: "Supported Networks", link: "/legacy/supportedNetworks" },
+        { text: "Contracts & Audits", link: "/contractsAndAudits" },
+        { text: "Supported Networks", link: "/supportedNetworks" },
       ],
     },
     {

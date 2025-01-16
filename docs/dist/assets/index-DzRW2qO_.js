@@ -1,0 +1,11 @@
+import{u as o,j as e}from"./index-ZQOw4TQ3.js";const c={title:"Smart Accounts",description:"undefined"};function a(t){const n={a:"a",code:"code",div:"div",h1:"h1",h2:"h2",header:"header",p:"p",...o(),...t.components};return e.jsxs(e.Fragment,{children:[e.jsx(n.header,{children:e.jsxs(n.h1,{id:"smart-accounts",children:["Smart Accounts",e.jsx(n.a,{"aria-hidden":"true",tabIndex:"-1",href:"#smart-accounts",children:e.jsx(n.div,{"data-autolink-icon":!0})})]})}),`
+`,e.jsxs(n.p,{children:["In the context of ERC 4337, a smart account is a smart contract account used to manage assets and create ",e.jsx(n.code,{children:"userOperations"})," or ",e.jsx(n.code,{children:"userOps"}),`.
+These are pseudo-transaction objects that eventually execute as a transaction on the EVM.
+They replace traditional Externally Owned Accounts (Wallets).`]}),`
+`,e.jsxs(n.h2,{id:"the-biconomy-smart-account",children:["The Biconomy Smart Account",e.jsx(n.a,{"aria-hidden":"true",tabIndex:"-1",href:"#the-biconomy-smart-account",children:e.jsx(n.div,{"data-autolink-icon":!0})})]}),`
+`,e.jsx(n.p,{children:"Biconomy Smart Accounts are an ERC 4337-compliant solution that works with any Paymaster and Bundler service."}),`
+`,e.jsxs(n.p,{children:[`These Smart Accounts are signer agnostic, which allows you to use any authorization package of your choice as long as you can pass a signer to our SDK upon the creation of a Smart Account.
+Check out the different ways you can create a Biconomy Smart Account `,e.jsx(n.a,{href:"/smartAccountsV2/account/signers",children:"here"}),"."]}),`
+`,e.jsxs(n.p,{children:["Smart Accounts are further enhanced by validation modules that allow you to execute arbitrary logic before validating a ",e.jsx(n.code,{children:"userOp"}),`.
+This allows you, as a developer, to build modules that allow for session keys, multi-chain validation modules, pass keys, and more. Learn more about Modules `,e.jsx(n.a,{href:"/smartAccountsV2/modules",children:"here"}),"."]}),`
+`,e.jsx(n.p,{children:"In the following sections, we provide a detailed overview of key concepts including"})]})}function r(t={}){const{wrapper:n}={...o(),...t.components};return n?e.jsx(n,{...t,children:e.jsx(a,{...t})}):a(t)}export{r as default,c as frontmatter};
