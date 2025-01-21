@@ -629,7 +629,7 @@ export default defineConfig({
       ],
     },
     {
-      text: 'Clients',
+      text: 'SDK Reference',
       items: [
         {
           text: "Nexus Client",
@@ -642,7 +642,6 @@ export default defineConfig({
             },
           ],
         },
-        { text: 'MEE Client', link: '/mee-client' }
       ]
     },
     {
