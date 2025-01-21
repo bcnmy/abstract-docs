@@ -15,7 +15,7 @@ For a quick start, Particle Network provides a guide, available [here](https://d
 ### Install the dependencies
 
 ```bash
-npm i @particle-network/auth @particle-network/provider @biconomy/sdk viem
+npm i @particle-network/auth @particle-network/provider @biconomy/abstractjs viem
 ```
 
 ### Create the `ParticleNetwork`
@@ -44,7 +44,7 @@ Next, use the Particle Network account to initialize the Biconomy Nexus Client:
 ```typescript
 import { ParticleNetwork } from "@particle-network/auth"
 import { ParticleProvider } from "@particle-network/provider"
-import { createNexusClient, NexusClient } from "@biconomy/sdk"; 
+import { createNexusClient, NexusClient } from "@biconomy/abstractjs"; 
 import { baseSepolia } from "viem/chains";
 import { http } from "viem";
 

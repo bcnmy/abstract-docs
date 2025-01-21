@@ -7,7 +7,7 @@ Dynamic.xyz is a web3 login solution for everyone, offering straightforward onbo
 ### Install the dependencies
 
 ```bash
-npm i @dynamic-labs/sdk-react-core @dynamic-labs/wagmi-connector @dynamic-labs/ethereum @biconomy/sdk viem wagmi
+npm i @dynamic-labs/sdk-react-core @dynamic-labs/wagmi-connector @dynamic-labs/ethereum @biconomy/abstractjs viem wagmi
 ```
 
 ### Create the Dynamic provider
@@ -44,7 +44,7 @@ Note: Inside any component which is wrapped by DynamicContextProvider, you can a
 ```ts
 import { createWalletClient, http } from "viem";
 import { baseSepolia } from "viem/chains";
-import { createNexusClient, NexusClient } from "@biconomy/sdk";
+import { createNexusClient, NexusClient } from "@biconomy/abstractjs";
 import { useUserWallets } from "@dynamic-labs/sdk-react-core";
 import { useWalletClient } from "wagmi";
 

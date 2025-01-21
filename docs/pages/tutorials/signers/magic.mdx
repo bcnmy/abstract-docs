@@ -10,7 +10,7 @@ By integrating Magic with the Biconomy SDK, you can pair Magic’s seamless soci
 ### Install the dependencies
 
 ```bash
-npm i @magic-ext/oauth magic-sdk @biconomy/sdk viem
+npm i @magic-ext/oauth magic-sdk @biconomy/abstractjs viem
 ```
 
 ### Create the `Magic object`
@@ -40,7 +40,7 @@ Next, use the Magic account to initialize the Biconomy Nexus Client:
 ```typescript
 import { OAuthExtension } from "@magic-ext/oauth"
 import { Magic as MagicBase } from "magic-sdk"
-import { createNexusClient, NexusClient } from "@biconomy/sdk"; 
+import { createNexusClient, NexusClient } from "@biconomy/abstractjs"; 
 import { baseSepolia } from "viem/chains";
 import { http } from "viem";
 

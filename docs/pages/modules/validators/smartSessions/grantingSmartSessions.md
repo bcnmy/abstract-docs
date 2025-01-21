@@ -15,7 +15,7 @@ Creates a new session with specified permissions and rules.
 
 ```typescript  [example.ts]
 import { usersNexusClient } from "./client"
-import { smartSessionCreateActions } from "@biconomy/sdk"
+import { smartSessionCreateActions } from "@biconomy/abstractjs"
 
 const response = await usersNexusClient.grantPermission({
   sessionRequestedInfo: [{
@@ -34,7 +34,7 @@ const response = await usersNexusClient.grantPermission({
 import { OneOf, Address, Hex, http } from "viem"
 import { ActionPolicyInfo, CreateSessionDataParams, toSmartSessionsValidator, smartSessionCreateActions } from "@biconomy/sdk-canary"
 import { privateKeyToAccount } from "viem/accounts";
-import { createNexusClient } from "@biconomy/sdk";
+import { createNexusClient } from "@biconomy/abstractjs";
 import { baseSepolia } from "viem/chains"; 
 
 const privateKey = "PRIVATE_KEY";
@@ -151,7 +151,7 @@ Adds trusted attesters for session validation.
 
 ```typescript  [example.ts]
 import { usersNexusClient } from "./client"
-import { smartSessionCreateActions } from "@biconomy/sdk"
+import { smartSessionCreateActions } from "@biconomy/abstractjs"
 import { MOCK_ATTESTER_ADDRESS, REGISTRY_ADDRESS } from "@rhinestone/module-sdk"
 
 const response = await usersNexusClient.trustAttesters({
@@ -164,7 +164,7 @@ const response = await usersNexusClient.trustAttesters({
 import { OneOf, Address, Hex, http } from "viem"
 import { ActionPolicyInfo, CreateSessionDataParams, toSmartSessionsValidator, smartSessionCreateActions } from "@biconomy/sdk-canary"
 import { privateKeyToAccount } from "viem/accounts";
-import { createNexusClient } from "@biconomy/sdk";
+import { createNexusClient } from "@biconomy/abstractjs";
 import { baseSepolia } from "viem/chains"; 
 
 const privateKey = "PRIVATE_KEY";

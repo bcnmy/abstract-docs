@@ -7,7 +7,7 @@
 ### Install the dependencies
 
 ```bash
-npm i @0xpass/passport @0xpass/webauthn-signer @0xpass/passport-viem @0xpass/key-signer @biconomy/sdk viem
+npm i @0xpass/passport @0xpass/webauthn-signer @0xpass/passport-viem @0xpass/key-signer @biconomy/abstractjs viem
 ```
 
 ### Create the Passport signer
@@ -113,7 +113,7 @@ import { KeySigner } from "@0xpass/key-signer";
 import { createPassportClient } from "@0xpass/passport-viem";
 import { http } from "viem";
 import { baseSepolia } from "viem/chains";
-import { createNexusClient, NexusClient } from "@biconomy/sdk";
+import { createNexusClient, NexusClient } from "@biconomy/abstractjs";
 
 const connect = async () => {
   try {

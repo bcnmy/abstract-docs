@@ -9,7 +9,7 @@ Read below to learn how to configure your app to create smart accounts for all y
 ### Install the dependencies
 
 ```bash
-npm i @usecapsule/web-sdk @usecapsule/viem-v2-integration @biconomy/sdk viem
+npm i @usecapsule/web-sdk @usecapsule/viem-v2-integration @biconomy/abstractjs viem
 ```
 
 ### Create the Capsule owner
@@ -21,7 +21,7 @@ import { http } from "viem";
 import { baseSepolia } from "viem/chains";
 import Capsule, { Environment } from "@usecapsule/web-sdk";
 import { createCapsuleViemClient } from "@usecapsule/viem-v2-integration";
-import { createNexusClient, NexusClient } from "@biconomy/sdk";
+import { createNexusClient, NexusClient } from "@biconomy/abstractjs";
 
 // Param options here will be specific to your project.  See the Capsule docs for more info.
 const capsule = new Capsule(Environment.BETA, "");
@@ -41,7 +41,7 @@ Create the smart account client using the Capsule signer client.
 import { http } from "viem";
 import { baseSepolia } from "viem/chains";
 import Capsule, { Environment } from "@usecapsule/web-sdk";
-import { createNexusClient, NexusClient } from "@biconomy/sdk";
+import { createNexusClient, NexusClient } from "@biconomy/abstractjs";
 import { createCapsuleViemClient } from "@usecapsule/viem-v2-integration"
 
 const capsule = new Capsule(Environment.BETA, "YOUR_API_KEY");

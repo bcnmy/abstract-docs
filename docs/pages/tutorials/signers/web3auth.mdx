@@ -9,19 +9,19 @@
 :::code-group
 
 ```bash [npm]
-npm install @web3auth/modal @web3auth/base @biconomy/sdk viem @web3auth/ethereum-provider
+npm install @web3auth/modal @web3auth/base @biconomy/abstractjs viem @web3auth/ethereum-provider
 ```
 
 ```bash [pnpm]
-pnpm add @web3auth/modal @web3auth/base @biconomy/sdk viem @web3auth/ethereum-provider
+pnpm add @web3auth/modal @web3auth/base @biconomy/abstractjs viem @web3auth/ethereum-provider
 ```
 
 ```bash [yarn]
-yarn add @web3auth/modal @web3auth/base @biconomy/sdk viem @web3auth/ethereum-provider
+yarn add @web3auth/modal @web3auth/base @biconomy/abstractjs viem @web3auth/ethereum-provider
 ```
 
 ```bash [bun]
-bun add @web3auth/modal @web3auth/base @biconomy/sdk viem @web3auth/ethereum-provider
+bun add @web3auth/modal @web3auth/base @biconomy/abstractjs viem @web3auth/ethereum-provider
 ```
 
 :::
@@ -35,7 +35,7 @@ import { CHAIN_NAMESPACES } from "@web3auth/base";
 import { createWalletClient, custom, http, type WalletClient } from "viem";
 import { baseSepolia } from "viem/chains";
 import { EthereumPrivateKeyProvider } from "@web3auth/ethereum-provider";
-import { createNexusClient, type EthereumProvider } from "@biconomy/sdk";
+import { createNexusClient, type EthereumProvider } from "@biconomy/abstractjs";
 
 // Chain configuration for Base Sepolia
 const chainConfig = {

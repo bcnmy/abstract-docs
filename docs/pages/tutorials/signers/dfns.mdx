@@ -11,7 +11,7 @@ The first thing we need to do is generate a DFNS wallet. Let's take a look at th
 ### Install the dependencies
 
 ```bash
-npm i @dfns/sdk @dfns/sdk-keysigner @dfns/lib-viem @biconomy/sdk viem
+npm i @dfns/sdk @dfns/sdk-keysigner @dfns/lib-viem @biconomy/abstractjs viem
 ```
 
 ### Setup DFNS
@@ -63,7 +63,7 @@ import { DfnsApiClient } from "@dfns/sdk"
 import { AsymmetricKeySigner } from "@dfns/sdk-keysigner"
 import { AccountSource, createWalletClient, http } from "viem"
 import { toAccount } from "viem/accounts"
-import { createNexusClient, NexusClient } from "@biconomy/sdk";
+import { createNexusClient, NexusClient } from "@biconomy/abstractjs";
 
 const bundlerUrl = `https://bundler.biconomy.io/api/v3/84532/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44`
 

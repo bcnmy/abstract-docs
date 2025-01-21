@@ -35,7 +35,7 @@ NEXT_PUBLIC_PAYMASTER_URL=your_paymaster_url
 #### Create Nexus Client
 
 ```typescript "
-import { createNexusClient, createBicoPaymasterClient } from "@biconomy/sdk";
+import { createNexusClient, createBicoPaymasterClient } from "@biconomy/abstractjs";
 import { baseSepolia } from "wagmi/chains";
 import { http, useAccount, useWalletClient } from "wagmi";
 
@@ -68,7 +68,7 @@ import {
   toPasskeyValidator,
   WebAuthnMode,
 } from "@biconomy/passkey";
-import { NexusClient } from "@biconomy/sdk";
+import { NexusClient } from "@biconomy/abstractjs";
 
 async function registerPasskey(nexusClient: NexusClient, passkeyName: string) {
   // Create WebAuthn key
@@ -100,7 +100,7 @@ async function registerPasskey(nexusClient: NexusClient, passkeyName: string) {
 #### Login with Existing Passkey
 
 ```typescript
-import { NexusClient } from "@biconomy/sdk";
+import { NexusClient } from "@biconomy/abstractjs";
 import {
   toWebAuthnKey,
   WebAuthnMode,
@@ -124,7 +124,7 @@ async function loginPasskey(nexusClient: NexusClient) {
 #### Install Passkey Validator Module
 
 ```typescript
-import type { NexusClient, Module } from "@biconomy/sdk";
+import type { NexusClient, Module } from "@biconomy/abstractjs";
 
 async function installPasskeyValidator(
   nexusClient: NexusClient,
@@ -153,7 +153,7 @@ import {
   type Module,
   type NexusClient,
   moduleActivator,
-} from "@biconomy/sdk";
+} from "@biconomy/abstractjs";
 import { baseSepolia } from "wagmi/chains";
 import { http, useAccount, useWalletClient } from "wagmi";
 import type { Address } from "viem";
@@ -192,7 +192,7 @@ import {
   type Module,
   createNexusClient,
   moduleActivator,
-} from "@biconomy/sdk";
+} from "@biconomy/abstractjs";
 
 async function uninstallPasskeyValidator(
   nexusClient: NexusClient,

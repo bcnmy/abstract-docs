@@ -12,7 +12,7 @@ Adds a new owner to the smart contract account.
 
 ```typescript
 import { nexusClient } from "./nexusClient"
-import { toOwnableValidator, ownableActions } from "@biconomy/sdk"
+import { toOwnableValidator, ownableActions } from "@biconomy/abstractjs"
 
 const ownableModule = toOwnableValidator({
   account: nexusClient.account,
@@ -130,7 +130,7 @@ Here's a complete example showing how to set up and use a multi-signature config
 
 ```typescript
 import { nexusClient } from "./nexusClient"
-import { toOwnableValidator, ownableActions } from "@biconomy/sdk"
+import { toOwnableValidator, ownableActions } from "@biconomy/abstractjs"
 
 // 1. Create and configure the ownable module
 const ownableModule = toOwnableValidator({

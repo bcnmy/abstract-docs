@@ -5,15 +5,15 @@
 :::code-group
  
 ```bash [npm]
-npm i @biconomy/sdk viem @rhinestone/module-sdk
+npm @biconomy/abstractjs viem @rhinestone/module-sdk
 ```
  
 ```bash [pnpm]
-pnpm i @biconomy/sdk viem @rhinestone/module-sdk
+pnpm @biconomy/abstractjs viem @rhinestone/module-sdk
 ```
  
 ```bash [bun]
-bun i @biconomy/sdk viem @rhinestone/module-sdk
+bun @biconomy/abstractjs viem @rhinestone/module-sdk
 ```
  
 :::
@@ -24,7 +24,7 @@ We have created quickstart templates for different environments that you can use
 - [Vite Quickstart](https://github.com/bcnmy/examples/tree/main/vite-quickstart) - A template using Vite + React
 - [Bun Quickstart](https://github.com/bcnmy/examples/tree/main/bun-quickstart) - A minimal template using Bun runtime
 
-Each template comes pre-configured with TypeScript, `viem`, and `@biconomy/sdk`.
+Each template comes pre-configured with TypeScript, `viem`, and `@biconomy/abstractjs`.
 
 ## Sending your first transaction with the SDK ⚡️
 
@@ -47,7 +47,7 @@ A `bundlerUrl` is required to submit User Operations to the Network, which will 
 
 ```typescript 
 import { privateKeyToAccount } from "viem/accounts";
-import { createNexusClient } from "@biconomy/sdk"; // [!code focus]
+import { createNexusClient } from "@biconomy/abstractjs"; // [!code focus]
 import { baseSepolia } from "viem/chains"; // [!code focus]
 import { http, parseEther } from "viem"; // [!code focus]
 
@@ -76,7 +76,7 @@ Ensure your smart account has sufficient funds to execute the transaction below.
 
 ```typescript 
 import { privateKeyToAccount } from "viem/accounts";
-import { createNexusClient } from "@biconomy/sdk";
+import { createNexusClient } from "@biconomy/abstractjs";
 import { baseSepolia } from "viem/chains"; 
 import { http, parseEther } from "viem"; 
 

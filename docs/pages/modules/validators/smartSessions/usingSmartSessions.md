@@ -14,7 +14,7 @@ Executes a transaction using the granted session permissions.
 
 ```typescript  [example.ts]
 import { nexusClient } from "./nexusClient"
-import { smartSessionUseActions } from "@biconomy/sdk"
+import { smartSessionUseActions } from "@biconomy/abstractjs"
 import { encodeFunctionData } from "viem"
 
 // Initialize the module for using permissions
@@ -46,7 +46,7 @@ const receipt = await sessionClient.waitForUserOperationReceipt({ hash: userOpHa
 
 ```typescript  [nexusClient.ts] filename="nexusClient.ts"
 import { privateKeyToAccount } from "viem/accounts";
-import { createNexusClient } from "@biconomy/sdk";
+import { createNexusClient } from "@biconomy/abstractjs";
 import { baseSepolia } from "viem/chains"; 
 import { http } from "viem"; 
 

@@ -23,7 +23,7 @@ const account = privateKeyToAccount(`${privateKey}`);
 Login to the [Dashboard](https://dashboard.biconomy.io/) and setup a v2 paymaster. Let's configure a client for the Smart Account with a `paymasterUrl` to enable gasless transactions. A `bundlerUrl` is required to submit transactions to the Network, which will initialize the Smart Account.
 
 ```typescript
-import { createNexusClient, createBicoPaymasterClient } from "@biconomy/sdk";
+import { createNexusClient, createBicoPaymasterClient } from "@biconomy/abstractjs";
 import { baseSepolia } from "viem/chains"; 
 import { http, parseEther } from "viem";
 import { privateKeyToAccount, generatePrivateKey } from "viem/accounts";
@@ -48,7 +48,7 @@ Next, define the transaction you want to send. Use the `sendTransaction` method 
 
 ```typescript
 
-import { createNexusClient, createBicoPaymasterClient } from "@biconomy/sdk";
+import { createNexusClient, createBicoPaymasterClient } from "@biconomy/abstractjs";
 import { baseSepolia } from "viem/chains"; 
 import { http, parseEther } from "viem";
 import { privateKeyToAccount, generatePrivateKey } from "viem/accounts";

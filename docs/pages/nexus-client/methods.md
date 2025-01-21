@@ -30,7 +30,7 @@ const hash = await nexusClient.sendTransaction({ // [!code focus:13]
 
 ```typescript  [nexusClient.ts] filename="nexusClient.ts"
 import { privateKeyToAccount } from "viem/accounts";
-import { createNexusClient } from "@biconomy/sdk";
+import { createNexusClient } from "@biconomy/abstractjs";
 import { baseSepolia } from "viem/chains"; 
 import { http } from "viem"; 
 
@@ -87,7 +87,7 @@ const receipt = await nexusClient.waitForUserOperationReceipt({  // [!code focus
 
 ```typescript  [nexusClient.ts] filename="nexusClient.ts"
 import { privateKeyToAccount } from "viem/accounts";
-import { createNexusClient } from "@biconomy/sdk";
+import { createNexusClient } from "@biconomy/abstractjs";
 import { baseSepolia } from "viem/chains"; 
 import { http } from "viem"; 
 
@@ -143,7 +143,7 @@ const gas = await nexusClient.estimateUserOperationGas({ // [!code focus:12]
 
 ```typescript  [nexusClient.ts] filename="nexusClient.ts"
 import { privateKeyToAccount } from "viem/accounts";
-import { createNexusClient } from "@biconomy/sdk";
+import { createNexusClient } from "@biconomy/abstractjs";
 import { baseSepolia } from "viem/chains"; 
 import { http } from "viem"; 
 
@@ -200,7 +200,7 @@ const receipt = await nexusClient.getUserOperation({ // [!code focus:3]
 
 ```typescript  [nexusClient.ts] filename="nexusClient.ts"
 import { privateKeyToAccount } from "viem/accounts";
-import { createNexusClient } from "@biconomy/sdk";
+import { createNexusClient } from "@biconomy/abstractjs";
 import { baseSepolia } from "viem/chains"; 
 import { http } from "viem"; 
 
@@ -259,7 +259,7 @@ const receipt = await nexusClient.getUserOperationReceipt({  // [!code focus:3]
 
 ```typescript  [nexusClient.ts] filename="nexusClient.ts"
 import { privateKeyToAccount } from "viem/accounts";
-import { createNexusClient } from "@biconomy/sdk";
+import { createNexusClient } from "@biconomy/abstractjs";
 import { baseSepolia } from "viem/chains"; 
 import { http } from "viem"; 
 
@@ -299,7 +299,7 @@ const entrypointAddresses = await nexusClient.getSupportedEntryPoints() // [!cod
 
 ```typescript  [nexusClient.ts] filename="nexusClient.ts"
 import { privateKeyToAccount } from "viem/accounts";
-import { createNexusClient } from "@biconomy/sdk";
+import { createNexusClient } from "@biconomy/abstractjs";
 import { baseSepolia } from "viem/chains"; 
 import { http } from "viem"; 
 
@@ -339,7 +339,7 @@ const chainId = await nexusClient.getChainId() // [!code focus:1]
 
 ```typescript  [nexusClient.ts] filename="nexusClient.ts"
 import { privateKeyToAccount } from "viem/accounts";
-import { createNexusClient } from "@biconomy/sdk";
+import { createNexusClient } from "@biconomy/abstractjs";
 import { baseSepolia } from "viem/chains"; 
 import { http } from "viem"; 
 

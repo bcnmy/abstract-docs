@@ -33,7 +33,7 @@ const createSessionsResponse = await usersNexusClient.grantPermission({
 import { OneOf, Address, Hex, http } from "viem"
 import { ActionPolicyInfo, CreateSessionDataParams, toSmartSessionsValidator, smartSessionCreateActions } from "@biconomy/sdk-canary"
 import { privateKeyToAccount } from "viem/accounts";
-import { createNexusClient } from "@biconomy/sdk";
+import { createNexusClient } from "@biconomy/abstractjs";
 import { baseSepolia } from "viem/chains"; 
 
 const privateKey = "PRIVATE_KEY";

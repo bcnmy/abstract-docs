@@ -55,7 +55,7 @@ const account = privateKeyToAccount(`0x${privateKey}`);
 A Smart Account needs access to the Network to query for information about its state (e.g., nonce, address, etc.). Let's configure a client for the Smart Account. A `bundlerUrl` is required to submit User Operations to the Network, which will initialize the Smart Account.
 
 ```typescript
-import { createNexusClient } from "@biconomy/sdk";
+import { createNexusClient } from "@biconomy/abstractjs";
 import { baseSepolia } from "viem/chains"; 
 import { http } from "viem"; 
 import { privateKeyToAccount } from "viem/accounts";
@@ -154,7 +154,7 @@ Most commonly, the data is stored either in the LocalStorage of the browser or t
 :::
 
 
-Use the `stringify()` (exported from `@biconomy/sdk`) function to prepare the session data for storage. It does the same as `JSON.stringify()` but it accommodates bigints.
+Use the `stringify()` (exported from `@biconomy/abstractjs`) function to prepare the session data for storage. It does the same as `JSON.stringify()` but it accommodates bigints.
 
 ::::
 
@@ -239,7 +239,7 @@ console.log(`Transaction hash: ${userOpHash}`);
 import {
     createNexusClient, toSmartSessionsValidator, smartSessionCreateActions,
     smartSessionUseActions, CreateSessionDataParams, SessionData,
-} from "@biconomy/sdk";
+} from "@biconomy/abstractjs";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { baseSepolia } from "viem/chains";
 import { Hex, encodeFunctionData, http } from "viem";

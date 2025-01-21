@@ -6,7 +6,7 @@ The Nexus Client is an interface for interacting with Nexus smart accounts. It a
 
 ```typescript 
 import { privateKeyToAccount } from "viem/accounts";
-import { createNexusClient } from "@biconomy/sdk";
+import { createNexusClient } from "@biconomy/abstractjs";
 import { baseSepolia } from "viem/chains"; 
 import { http } from "viem"; 
 
@@ -57,7 +57,7 @@ This parameter specifies the address of the smart account factory contract, whic
 import { baseSepolia } from "viem/chains"; 
 import { http } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { createNexusClient } from "@biconomy/sdk"; // [!code focus] 
+import { createNexusClient } from "@biconomy/abstractjs"; // [!code focus] 
 
 const privateKey = "PRIVATE_KEY";
 const account = privateKeyToAccount(`0x${privateKey}`);
@@ -90,7 +90,7 @@ The index of the smart account being created. By default, the first smart accoun
 import { baseSepolia } from "viem/chains"; 
 import { http } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { createNexusClient } from "@biconomy/sdk"; // [!code focus] 
+import { createNexusClient } from "@biconomy/abstractjs"; // [!code focus] 
 
 const privateKey = "PRIVATE_KEY";
 const account = privateKeyToAccount(`0x${privateKey}`);
@@ -118,7 +118,7 @@ The optional paymaster responsible for sponsoring transaction fees on behalf of 
 import { baseSepolia } from "viem/chains"; 
 import { http } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { createNexusClient, createBicoPaymasterClient } from "@biconomy/sdk"; // [!code focus] 
+import { createNexusClient, createBicoPaymasterClient } from "@biconomy/abstractjs"; // [!code focus] 
 
 const privateKey = "PRIVATE_KEY";
 const account = privateKeyToAccount(`0x${privateKey}`);
@@ -186,7 +186,7 @@ For example, to modify the maxFeePerGas and maxPriorityFeePerGas, you can obtain
 ```typescript  [example.ts]
 import { baseSepolia } from "viem/chains"; 
 import { http } from "viem";
-import { createNexusClient } from "@biconomy/sdk"; // [!code focus] 
+import { createNexusClient } from "@biconomy/abstractjs"; // [!code focus] 
 import { publicClient } from "./publicClient";
 import { safeMultiplier } from "./utils";
 

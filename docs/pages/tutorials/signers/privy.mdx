@@ -9,7 +9,7 @@ Read below to learn how to configure your app to create Nexus smart accounts for
 ### Install the dependencies
 
 ```bash
-npm i @privy-io/react-auth @biconomy/sdk viem @tanstack/react-query 
+npm i @privy-io/react-auth @biconomy/abstractjs viem @tanstack/react-query 
 ```
 
 ### Wrap your app with the PrivyProvider
@@ -53,7 +53,7 @@ export function App {
 ```ts
 import { http } from "viem";
 import { baseSepolia } from "viem/chains";
-import { createNexusClient, NexusClient } from "@biconomy/sdk";
+import { createNexusClient, NexusClient } from "@biconomy/abstractjs";
 import { useWallets, usePrivy } from '@privy-io/react-auth'; // [!code focus]  
 
 export default function Home() {
@@ -72,7 +72,7 @@ export default function Home() {
 ```ts
 import { http } from "viem";
 import { baseSepolia } from "viem/chains";
-import { createNexusClient, NexusClient } from "@biconomy/sdk";
+import { createNexusClient, NexusClient } from "@biconomy/abstractjs";
 import { useWallets, usePrivy } from '@privy-io/react-auth';
 
 export default function Home() {
@@ -112,7 +112,7 @@ export default function Home() {
 ```ts
 import { http } from "viem";
 import { baseSepolia } from "viem/chains";
-import { createNexusClient, NexusClient } from "@biconomy/sdk";
+import { createNexusClient, NexusClient } from "@biconomy/abstractjs";
 import { useWallets, usePrivy } from '@privy-io/react-auth';
 
 export default function Home() {
