@@ -583,14 +583,6 @@ export default defineConfig({
           ],
         },
         {
-          link: "/modules/validators/ownableValidator",
-          text: "Ownables (Multisig) Module",
-        },
-        {
-          link: "/modules/validators/passkeyValidator",
-          text: "Passkey Module",
-        },
-        {
           text: "Composability Module",
           collapsed: true,
           items: [
@@ -604,6 +596,15 @@ export default defineConfig({
             },
           ],
         },
+        {
+          link: "/modules/validators/passkeyValidator",
+          text: "Passkey Module",
+        },
+        {
+          link: "/modules/validators/ownableValidator",
+          text: "Ownables (Multisig) Module",
+        },
+        
       ],
     },
     // {
