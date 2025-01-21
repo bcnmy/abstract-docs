@@ -368,8 +368,8 @@ export default defineConfig({
     light: "https://i.imgur.com/WyX6ebY.png",
   },
   logoUrl: {
-    dark: "https://docs.biconomy.io/logo.svg",
-    light: "https://docs.biconomy.io/logo.svg",
+    dark: "https://i.imgur.com/Mt2TmLl.png",
+    light: "https://i.imgur.com/Mt2TmLl.png",
   },
   theme: {
     accentColor: "#ec5d31",
