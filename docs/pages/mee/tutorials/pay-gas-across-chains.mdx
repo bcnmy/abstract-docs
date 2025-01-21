@@ -1,3 +1,10 @@
+:::warning[In Active Development]
+Biconomy Modular Exection Environment is in active development and is planned for production launch at the 
+end of Q1/2025! Developers can start integrating the MEE Features while the contracts and modules are being 
+audited.
+:::
+
+
 # Paying for Gas Across Chains
 
 `AbstractJS` enables developers to use native and ERC20 tokens on any supported chain to pay for gas on
@@ -23,9 +30,9 @@ npm install @biconomy/abstractjs viem
 
 #### Initialize the infrastructure
 In order to use cross-chain gas features, users need to intialize the [`MultichainSmartAccount`]()
-and connect to the Biconomy [MEE Node]().
+and connect to the Biconomy [MEE Node](/explained/mee).
 
-To learn more about the setup, read our [Building a Chain Abstracted App]() guide.
+To learn more about the setup, read our [Building a Chain Abstracted App](/mee/tutorials/build-chainabstracted-app) guide.
 
 ```ts [Connect the infrastructure]
 // Initialize the MultichainSmartAccount
@@ -77,7 +84,7 @@ const crossChainGasSupertx: Supertransaction = {
 
 #### Get the Execution Quote
 
-Send the Supertransaction to the [MEE Node]() to get the 
+Send the Supertransaction to the [MEE Node](/explained/mee) to get the 
 quote for the execution of your cross-chain gas Supertransaction.
 
 The quote contains the price for which the MEE Node will

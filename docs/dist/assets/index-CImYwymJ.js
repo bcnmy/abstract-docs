@@ -1,9 +1,0 @@
-import{u as s,j as e}from"./index-ZQOw4TQ3.js";const a={title:"TroubleShooting",description:"undefined"};function r(n){const t={a:"a",div:"div",h1:"h1",header:"header",li:"li",p:"p",ul:"ul",...s(),...n.components};return e.jsxs(e.Fragment,{children:[e.jsx(t.header,{children:e.jsxs(t.h1,{id:"troubleshooting",children:["TroubleShooting",e.jsx(t.a,{"aria-hidden":"true",tabIndex:"-1",href:"#troubleshooting",children:e.jsx(t.div,{"data-autolink-icon":!0})})]})}),`
-`,e.jsx(t.p,{children:"If you’re having trouble executing transactions, try the following troubleshooting steps:"}),`
-`,e.jsxs(t.ul,{children:[`
-`,e.jsx(t.li,{children:"Verify that you are using the correct Bundler URL, Paymaster ID, and Chain ID."}),`
-`,e.jsxs(t.li,{children:["Ensure that you are passing the paid rpc url in the ",e.jsx(t.a,{href:"/smartAccountsV2/account/methods#createsmartaccountclient",children:"createSmartAccountClient"})," method."]}),`
-`,e.jsxs(t.li,{children:["For gasless transactions, confirm that there are sufficient funds in the Paymaster. Additionally, make sure the SPONSORED flag is set in the ",e.jsx(t.a,{href:"/smartAccountsV2/tutorials/sendGasless#step-3-send-the-transaction-and-wait-for-the-transaction-hash",children:"sendTransaction"})," function."]}),`
-`,e.jsxs(t.li,{children:["If you are transferring tokens from a smart account, ensure that the tokens are held within the smart account, not the EOA. For more examples, visit the ",e.jsx(t.a,{href:"https://github.com/bcnmy/sdk-examples",children:"SDK-examples"})," repository."]}),`
-`]}),`
-`,e.jsxs(t.p,{children:["If you encounter specific errors, check the ",e.jsx(t.a,{href:"/smartAccountsV2/troubleshooting/commonerrors",children:"common errors"})," and ",e.jsx(t.a,{href:"/smartAccountsV2/FAQ",children:"FAQs"})," for further guidance."]})]})}function i(n={}){const{wrapper:t}={...s(),...n.components};return t?e.jsx(t,{...n,children:e.jsx(r,{...n})}):r(n)}export{i as default,a as frontmatter};

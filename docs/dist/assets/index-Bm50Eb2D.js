@@ -1,1 +1,0 @@
-import{u as r,j as n}from"./index-ZQOw4TQ3.js";const i={sidebar_position:1,title:"Sign with EOA"};function o(t){return n.jsx(n.Fragment,{})}function a(t={}){const{wrapper:e}={...r(),...t.components};return e?n.jsx(e,{...t,children:n.jsx(o,{...t})}):o()}export{a as default,i as frontmatter};

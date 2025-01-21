@@ -148,7 +148,7 @@ contract and the EVM transaction is executed normally.
 This first operation in a Fusion transaction is usually a simple `transfer` function which transfers the necessary
 amount of an `ERC20` token to the Companion Account. When the user signs this transaction they are also signing the
 hash which was appended after the regular `callData`. AbstractJS then sends all of the 
-instructions which need to be executed on the Companion account to the The Biconomy [MEE Node](). 
+instructions which need to be executed on the Companion account to the The Biconomy [MEE Node](/explained/mee). 
 
 After the `ERC20` token arrives to the Companion account, Tthe MEE Node then calls the `execute` function
 on the Companion smart account to execute additional instructions. The Companion account will not allow any 
