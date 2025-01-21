@@ -10,7 +10,7 @@ protocol upgrades and without moving users to Smart Accounts. Instant onboarding
 If you want to know how the Fusion Module works under the hood, [read the technical explanation](#advanced-how-does-the-fusion-module-work)
 
 :::tip[Read about our Research]
-If you want to learn how Fusion Transactions work under the hood, read the [explanation](advanced-how-does-the-fusion-module-work)
+If you want to learn how the Fusion Module works under the hood, read the [explanation](advanced-how-does-the-fusion-module-work)
 
 ---
 
@@ -19,8 +19,8 @@ To get an in-depth overview of the Fusion architecture, read our post on [Ethere
 :::
 
 :::info[Fusion and EIP7702]
-Fusion Transactions are **100%** compatible with EIP7702 accounts. In fact, we recommend using Fusion Transactions
-as the ideal solutions for apps interacting with both regular and EIP7702 enabled EOAs!
+Fusion Module is **100%** compatible with EIP7702 accounts. In fact, we recommend using the Fusion Module
+as the ideal solution for apps interacting with both regular and EIP7702 enabled EOAs!
 
 ---
 
@@ -29,7 +29,7 @@ features provided by the wallets. These will primarily include gasless execution
 apps will have a blend of users with and without EIP7702 enabled wallets. 
 
 The `executeFusionTransaction` function in the `AbstractJS` SDK will be able to intelligently switch between using
-EIP7702 exection and regular EOA execution. This means that apps using Fusion transactions will get:
+EIP7702 exection and regular EOA execution. This means that apps using the Fusion module will get:
 
 - Same codebase for both EIP7702 enabled and regular EOA users!
 - Additional features offered by Smart Accounts (cross-chain gas sharing, smart sessions, resource locks, ...)
@@ -81,25 +81,47 @@ const supply = mcAaveV3Pool.on(optimism.id).supply({
 })
 ```
 
-#### Encode a Fusion Transaction
-Now, we will use the `AbstractJS` - `encodeFusionTransacton` function call combine the approve + 
-execute into a single transaction. This function will call the `signer` from the `mcNexus` account,
-use it to sign the [Fusion Transaction]() and commit the transaction onchain. 
+### Encode a Trigger Transaction
+The trigger transaction is a transaciton which will be posted onchain and
+which will trigger the full execution of the Fusion transaction. In most
+cases, including this tutorial, this will be a transfer of ERC20 tokens 
+to a Smart Contract Account address:
 
-It will also pass the additional instructions to the [Biconomy Superbundler]() which will then 
-execute the transaction.
+```ts [Trigger Transaction]
+const triggerTransaction = {
+  chain: optimism,
+  call: {
+    to: mcUSDC.addressOn(optimism.id),
+    data: encodeFunctionData({
+      abi: erc20Abi,
+      functionName: 'transfer',
+      args: [
+        mcNexus.deploymentOn(optimism.id)!.address,
+        supplyAmount
+      ]
+    })
+  }
+}
+```
+
+#### Encode a Fusion Transaction
+Now, we will use the `AbstractJS` utilities to encode a Fusion Transaction
 
 ```ts
-const { hash } = 
-  await executeFusionTransaction(meeClient, {
-    chain: optimism, // Chain where the transaction is executed
-    account: mcNexus, // Companion Smart Account
-    token: mcUSDC, // token used by the Fusion Transaction
-    amountUsed: amountToSupply, // Amount of `token` used by the Fusion Transaction
-    instructions: [ 
-      approve, supply // Instructions for the Fusion Transaction
-    ]
+const { hash } = await meeClient.executeSignedFusionQuote({
+  signedFusionQuote: await meeClient.signFusionQuote({
+    trigger: triggerTransaction,
+    quote: await meeClient.getQuote({
+      instructions: [
+        approve, supply
+      ],
+      feeToken: toFeeToken({
+        chainId: optimism.id,
+        token: mcUSDC
+      })
+    })
   })
+})
 ```
 
 #### Track the Transaction!
@@ -108,7 +130,7 @@ That's it - your single signature, multi-step transaction has been executed! Wit
 to move users to Smart Accounts.
 
 You can track the execution of the trigger transaction by tracking the `hash` on an EVM explorer.
-To track the execution of the additional instructions - you can use the [Biconomy MEE Explorer]()
+To track the execution of the additional instructions - you can use the [Biconomy MEE Explorer](https://meescan.biconomy.io)
 
 ::::
 
@@ -116,7 +138,7 @@ To track the execution of the additional instructions - you can use the [Biconom
 
 ![Fusion Flow](https://i.imgur.com/dVUmznn.png)
 Fusion transactions work by employing a [Companion Smart Account](). This account is invisible to the user
-and is used by the Biconomy [Superbundler]() to execute an arbitrary number of transactions, intents and
+and is used by the Biconomy [MEE Node]() to execute an arbitrary number of transactions, intents and
 cross-chain operations. 
 
 It achieves this by employing the _Fusion Packing Scheme_ which puts the hash of additional instructions 
@@ -126,12 +148,12 @@ contract and the EVM transaction is executed normally.
 This first operation in a Fusion transaction is usually a simple `transfer` function which transfers the necessary
 amount of an `ERC20` token to the Companion Account. When the user signs this transaction they are also signing the
 hash which was appended after the regular `callData`. AbstractJS then sends all of the 
-instructions which need to be executed on the Companion account to the The Biconomy [Superbundler](). 
+instructions which need to be executed on the Companion account to the The Biconomy [MEE Node](). 
 
-After the `ERC20` token arrives to the Companion account, Tthe Superbundler then calls the `execute` function
+After the `ERC20` token arrives to the Companion account, Tthe MEE Node then calls the `execute` function
 on the Companion smart account to execute additional instructions. The Companion account will not allow any 
 transactions to be executed which were not _explicity_ contained in the hash which was appended after the `callData`
 
-In order to be able to execute those transactions, the `Superbundler` provides the full signed transaction 
+In order to be able to execute those transactions, the `MEE Node` provides the full signed transaction 
 (called the trigger transaction) as the signature to the Companion smart account.
 

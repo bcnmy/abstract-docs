@@ -70,7 +70,7 @@ npm install @biconomy/abstractjs viem
 
 #### Initialize the infrastructure
 In execute intents, users need to intialize the [`MultichainSmartAccount`](/mee/tutorials/manage-multichain-sca)
-and connect to the Biconomy [Superbundler](). Connecting to the [Superbundler]() is done by creating an 
+and connect to the Biconomy [MEE Node](). Connecting to the [MEE Node]() is done by creating an 
 [`meeClient`](). To learn more about the setup, read our [Building a Chain Abstracted App]() guide.
 
 ```ts [Connect the infrastructure]
@@ -80,7 +80,7 @@ const mcNexus = await toMultichainNexusAccount({
   signer: eoaAccount
 })
 
-// Connect to the Superbundler
+// Connect to the MEE Node
 const meeClient = createMeeClient({
   account: mcNexus
 })

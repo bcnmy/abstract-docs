@@ -14,14 +14,13 @@ User sees a unified balance across all chains
 User can deposit to _any_ AAVE market in a single signature. Intents are used to move the liquidity
 around
 
-#### Rebalance, Bridge/Intent and Execute - In a Single Signature
-If a user has an already open position on AAVE, they can "rebalance" their position to another chain with a single
-signature.
-
 #### Pay for Gas With ERC20 Tokens on Any Chain
 The user will be able to pay for the execution of all transactions on all chains with on any 
 chain where they have either native or ERC20 tokens 
 
+#### Withdraw from Multiple AAVE Positions with a Single Signature
+The user can withdraw all of their AAVE positions across all chains with a single 
+signature. 
 ::::
 
 The entire interface should be extremely straightforward for the user, with no chain switching, bridging or managing gas.
@@ -31,9 +30,9 @@ The entire interface should be extremely straightforward for the user, with no c
 The app which we build in this guide will leverage all the latest features available in `AbstractJS` SDK and 
 the Biconomy stack! Some highlights:
 
-- Using a [Unified Multichain Balance]()
-- Triggering [Intents]() and Transactions in as single operation
-- Executing [multiple transactions on multiple chains]() with a single signature
+- Using a Unified Multichain Balance
+- Triggering [Intents](/mee/tutorials/execute-intent) and Transactions in as single operation
+- Executing multiple transactions on multiple chains with a single signature
 - Using automatic orchestration provided by the Biconomy MEE Node
 
 
@@ -104,7 +103,7 @@ executes the desired transaction together.
 
 #### Initialize the `meeClient`
 
-In order to execute transactions through the Biconomy [Superbundler](), we need to establish a connection 
+In order to execute transactions through the Biconomy [MEE Node](), we need to establish a connection 
 to it. `AbstractJS` makes this easy with a helper function:
 
 ```ts [Connect to MEE Node]
@@ -170,13 +169,14 @@ addresses of the AAVE Pool on different chains:
 ```ts [Multichain Contract]
 const mcAaveV3Pool = getMultichainContract({
   abi: parseAbi([
-      "function supply(address asset, uint256 amount, address onBehalfOf, uint16 referralCode)",
+    "function supply(address asset, uint256 amount, address onBehalfOf, uint16 referralCode)",
+    "function withdraw(address asset, uint256 amount, address to)"
   ]),
   deployments: [
-      ["0x794a61358D6845594F94dc1DB02A252b5b4814aD", optimism.id],
-      ["0xA238Dd80C259a72e81d7e4664a9801593F98d1c5", base.id],
-      ["0x794a61358D6845594F94dc1DB02A252b5b4814aD", polygon.id],
-      ["0x794a61358D6845594F94dc1DB02A252b5b4814aD", arbitrum.id]
+    ["0x794a61358D6845594F94dc1DB02A252b5b4814aD", optimism.id],
+    ["0xA238Dd80C259a72e81d7e4664a9801593F98d1c5", base.id],
+    ["0x794a61358D6845594F94dc1DB02A252b5b4814aD", polygon.id],
+    ["0x794a61358D6845594F94dc1DB02A252b5b4814aD", arbitrum.id]
   ],
 });
 ```
@@ -196,5 +196,277 @@ console.log(address)
 
 #### Get the Unified Multichain Balance
 
+Use the built-in `getUnifiedERC20Balance` function to fetch the 
+unified ERC20 Balance.
 
+```ts
+const unifiedBalance = await getUnifiedERC20Balance({
+  account: mcNexus,
+  mcToken: mcUSD0
+})
+```
+::::
+
+## Execute a Cross-Chain Supply With Intents
+::::steps
+#### Encode an Intent for Moving Funds to the Target Chain
+
+We'll use a built-in `AbstractJS` function for encoding intents. This function
+will make sure that the tokens are transferred from whichever chain they're on
+to the target chain. 
+
+:::tip[Intent Solvers and Fillers]
+Currently, Biconomy is using Across to provide liquidity to intents. Adding 
+additional providers is scheduled to be added to the SDK.
+:::
+
+```ts
+const supplyAmount = parseUnits('100', 6 ) // 100 USDC
+
+if(unifiedBalance.balance < supplyAmount) {
+  console.log("Not enough funds")
+}
+
+const intent = await mcNexus.build({
+  type: 'intent',
+  data: {
+    mcToken: mcUSDC,
+    amount: supplyAmount,
+    chain: optimism
+  }
+})
+```
+
+#### Select Chain for Paying Gas
+Working on MEE stack gives developers automatic access to cross-chain 
+gas abstraction - meaning you can pay for gas on any chain, while executing
+on any other.
+
+In practice - this means that no matter how much transactions we encode across
+chains - we'll pay the transaction fee only once and only on one chain.
+
+Here, we will choose the chain with the biggest balance. 
+
+:::tip[Paying in Assets Being Used]
+Make sure that you have enough tokens on your account for both the transaction
+and the gas.
+
+If you're using USDC as input into a function and also paying for gas 
+with USDC - the gas payment transaction is always executed first. So if you're
+using the entire balance to pay for gas, the subsequent transactions will fail.
+:::
+
+```ts [Selecting Biggest Balance for Gas]
+const payingGasOnChain = unifiedBalance.breakdown.reduce((max, current) => {
+  return current.balance > max.balance ? current : max;
+}).chainId;
+```
+
+#### Make Sure to Account for Slippage
+When using intents and bridges, the amount you receive on the destination 
+will be less than the amount provided. This is due to the fact that Solvers
+take fees for executing these cross-chain transfers. 
+
+:::tip[Proper Solution - Composability Stack]
+We are developing the Composability Stack - which is a module developers
+can install on accounts to dynamically inject the _exact_ acmount of funds
+which were received from bridging and/or swapping.
+
+The Composability stack will be in production together with the production 
+release of the Biconomy MEE stack.
+
+[Learn about the Composability Stack](/composability/using-fallback-handlers)
+:::
+
+For now, this tutorial will use a fixed
+slippage buffer - a hacky solution - until we add the composability stack
+documentation.
+
+```ts
+const slippageBuffer = parseUnits('0.5', 6)
+```
+
+#### Encode Approve + Execute
+
+Now we will encode two transactions.
+
+1. Approve AAVE to Spend USDC on Optimism
+2. Execute Supply
+
+```ts 
+const approveSupply: Instruction[] = [
+  // Approve tx
+  mcUSDC.on(optimism.id).approve({
+    args: [
+      mcAaveV3Pool.addressOn(optimism.id),
+      supplyAmount
+    ],
+    gasLimit: 100_000n
+  }),
+  // Supply tx
+  mcAaveV3Pool.on(optimism.id).supply({
+    args: [
+      mcUSDC.addressOn(optimism.id), // asset to supply
+      supplyAmount - slippageBuffer, // how much to supply
+      zeroAddress, // on behalf of - zeroaddress if supplying for oneself
+      0 // refferal code
+    ],
+    gasLimit: 100_000n
+  })
+]
+```
+
+#### Execute Supertransaction
+Now let's execute the Supertransaction which supplies to AAVE across chains:
+
+:::tip[Quote + Execute]
+The execution process for MEE works by utilizing a Quote + Execute process.
+
+1. The node gives a Quote for the execution price
+2. The developer/user checks the price
+3. If not-OK, they reject the tx
+4. If OK, they accept the tx
+
+We will be using the `execute` method which does the Quote + Execute 
+automatically and accepts the best available quote. If you wish to 
+have control over the execution price, use different methods. 
+
+[Learn more](/mee/tutorials/execute-simple-supertx)
+:::
+
+```ts
+const { hash } = await meeClient.execute({
+  instructions: [
+    ...intent,
+    ...approveSupply
+  ],
+  feeToken: toFeeToken({
+    chainId: payingGasOnChain,
+    token: mcUSDC
+  })
+})
+```
+
+#### Track the Execution of Your Supertransaction
+
+Use the built-in function to get the link to `MEEScan`
+
+```ts
+console.log(
+  getMeeScanLink(hash)
+)
+```
+
+#### Wait for the Supertransaction to Execute
+
+```ts
+const reciept = await meeClient.waitForSupertransactionReceipt({
+  hash
+})
+```
+::::
+
+## Unwind AAVE Positions on Multiple Chains With a Single Signature
+::::steps
+#### Fetch AAVE Positions Across Chains
+
+We'll use the `getUnifiedERC20Balance` utility to fetch all aUSDC positions across chains.
+
+```ts [Fetch aUSDC Balances]
+const mcAUSDC = getMultichainContract({
+  abi: parseAbi([
+    "function balanceOf(address owner) view returns (uint256)"
+  ]),
+  deployments: [
+    ["0x625E7708f30cA75bfd92586e17077590C60eb4cD", optimism.id],
+    ["0x forced to be brief here - add real address", base.id],
+    ["0x625E7708f30cA75bfd92586e17077590C60eb4cD", polygon.id],
+    ["0x625E7708f30cA75bfd92586e17077590C60eb4cD", arbitrum.id]
+  ],
+});
+
+const aUSDCPositions = await getUnifiedERC20Balance({
+  account: mcNexus,
+  mcToken: mcAUSDC
+})
+
+const activePositions = aUSDCPositions.breakdown.filter(p => p.balance > 0n)
+```
+
+#### Encode Withdrawal Instructions
+
+For each chain where we have a position, we need to encode two transactions:
+1. Approve AAVE Pool to burn our aUSDC
+2. Execute the withdrawal
+
+```ts [Encode Withdrawals]
+const withdrawalInstructions = activePositions.flatMap(position => ([
+  // Approve tx
+  mcAUSDC.on(position.chainId).approve({
+    args: [
+      mcAaveV3Pool.addressOn(position.chainId),
+      position.balance
+    ],
+    gasLimit: 100_000n
+  }),
+  // Withdraw tx
+  mcAaveV3Pool.on(position.chainId).withdraw({
+    args: [
+      mcUSDC.addressOn(position.chainId),
+      position.balance,
+      mcNexus.deploymentOn(position.chainId).address
+    ],
+    gasLimit: 200_000n
+  })
+]))
+```
+
+#### Select Chain for Paying Gas
+
+Let's check USDC balances across chains to choose where to pay gas from.
+
+```ts [Get Unified Balance]
+const unifiedBalance = await getUnifiedERC20Balance({
+  account: mcNexus,
+  mcToken: mcUSDC
+})
+
+const payingGasOnChain = unifiedBalance.breakdown.reduce((max, current) => {
+  return current.balance > max.balance ? current : max;
+}).chainId;
+```
+
+#### Execute the Multichain Withdrawal
+
+Now we can execute all of our withdrawal transactions with a single signature:
+
+```ts [Execute Withdrawals]
+const { hash } = await meeClient.execute({
+  instructions: withdrawalInstructions,
+  feeToken: toFeeToken({
+    chainId: payingGasOnChain,
+    token: mcUSDC
+  })
+})
+```
+
+#### Track the Execution Progress
+
+Just like with supplying, we can track our transaction on MEEScan:
+
+```ts [Get MEEScan Link]
+console.log(
+  getMeeScanLink(hash)
+)
+
+const receipt = await meeClient.waitForSupertransactionReceipt({
+  hash
+})
+```
+
+:::tip[Parallel Execution]
+The MEE node will automatically orchestrate the execution of transactions
+across different chains in parallel when possible. This means that your
+withdrawals will execute as quickly as possible!
+:::
 ::::

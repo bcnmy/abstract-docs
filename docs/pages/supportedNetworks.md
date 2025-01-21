@@ -1,4 +1,4 @@
-# Supported Networks
+# Supported Chains
 
 | Network                      | Bundler | Sponsorship Paymaster | Token Paymaster | MEE Node
 |-----------------------------|---------|----------------------|-----------------|---|

@@ -2,24 +2,62 @@
 
 ## Intro, Why EIP7702
 EIP7702 is an upcoming upgrade to Ethereum and EVM blockchains which enables
-wallets to convert the user EOA wallets into [Smart Accounts]()
+wallets to convert the user EOA wallets into Smart Accounts
 
 With EIP7702, wallets can drastically improve the UX for their users by offering smart
 account features, such as:
 
-- The ability to pay for gas with ERC20 tokens
-- The ability to batch execute transactions with a single signature
-- The ability to recover user accounts, either through social recovery or timelocked
-recovery solutions
+---
+
+**Gas Abstraction** <br/>
+The ability to pay for gas with ERC20 tokens
+
+---
+
+**Gas Sponsorship** <br/>
+Wallets can sponsor user gas onchain and offer their users a different way of paying for their
+transactions (e.g. prepaid, postpaid, ...)
+
+---
+
+**Batch Execution** <br/>
+The ability to batch execute transactions with a single signature
+
+---
+
+**Enable Automation** <br/>
+Wallets can install (or enable apps to install) Session Keys on accounts, which provide a
+safe way to automate wallet actions. Session keys provide guardrails, meaning that the Session Key
+signer can only execute the exact transactions approved by the wallet/user. This can include enabling
+dollar cost averaging, TWAP selling, yield rebalancing, ...
+
+
+## The Most Comprehensive EIP7702 Solutions Suite
 
 At Biconomy, we have built the most comprehensive EIP7702 solution on the market, enabling
 wallets to add all of the above mentioned features, as well as many advanced - Biconomy 
 stack specific features:
 
-- The ability to unify user balances across chains
-- The ability to pay for gas across chains (e.g. pay for tx on Optimism with USDC on Arbitrum)
-- The ability to nativelly schedule transactions (e.g. execute five minutes from now)
-- The ability to nativelly set repeating tranasactions (e.g. execute every 10 minutes)
+**Unified User Balances** <br/>
+Wallets can present apps with a _Unified Multichain Balance_. The app can then "pull" the 
+funds they need to the chain of their choosing. Wallets can work with solvers and bridges
+to provide this liquidity.
+
+--- 
+
+**Cross-Chain Gas Abstraction** <br/>
+Wallets can enable users to pay for gas with native or ERC20 tokens across chains. E.g. a
+user can pay for a transaction on Base with USDC or ETH on Arbitrum.
+
+--- 
+
+**Native Scheduling and Automation** <br/>
+The Biconomy MEE Nodes can commit to execute a transaction at some point in the future or to
+execute a series of transactions in some time period. For Biconomy integrators, this is available
+without 
+
+--- 
+
 
 :::info
 If you're a wallet team looking for an EIP7702 strategy - [Contact Us](https://google.com)
@@ -63,11 +101,13 @@ const authorization = await walletClient.signAuthorization({
 #### Choose your execution environment
 
 With `AbstractJS` and the Biconomy stack, developers can choose whether to 
-push transactions through our battle-tested [ERC4337 Bundler/Paymaster stack]() *or*
-through our innovative multi-chain [MEE Stack]()
+push transactions through our battle-tested [ERC4337 Bundler/Paymaster stack](/explained/bundlers-paymasters) *or*
+through our innovative multi-chain [MEE Stack](/mee/mee)
 ::::
 
-## Execute through the ERC4337 Bundler/Paymaster Stack
+{/* ## Execute through the ERC4337 Bundler/Paymaster Stack
+
+
 
 ## Execute through the MEE Stack
 
@@ -118,7 +158,7 @@ const hash = await executeQuote(meeSerivice, quote)
 
 ::::
 
-
+ */}
 
 
 

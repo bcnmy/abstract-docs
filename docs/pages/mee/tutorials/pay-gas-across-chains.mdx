@@ -23,7 +23,7 @@ npm install @biconomy/abstractjs viem
 
 #### Initialize the infrastructure
 In order to use cross-chain gas features, users need to intialize the [`MultichainSmartAccount`]()
-and connect to the Biconomy [Superbundler]().
+and connect to the Biconomy [MEE Node]().
 
 To learn more about the setup, read our [Building a Chain Abstracted App]() guide.
 
@@ -34,7 +34,7 @@ const mcNexus = await toMultichainNexusAccount({
   signer: eoaAccount
 })
 
-// Connect to the Superbundler
+// Connect to the MEE Node
 const meeClient = createMeeClient({
   account: mcNexus
 })
@@ -77,16 +77,16 @@ const crossChainGasSupertx: Supertransaction = {
 
 #### Get the Execution Quote
 
-Send the Supertransaction to the [Superbundler]() to get the 
+Send the Supertransaction to the [MEE Node]() to get the 
 quote for the execution of your cross-chain gas Supertransaction.
 
-The quote contains the price for which the Superbundler will
+The quote contains the price for which the MEE Node will
 execute the Supertransaction.
 
 :::tip[Maximum Price]
-This is the maximum possible price that the Superbundler will
+This is the maximum possible price that the MEE Node will
 take. If the onchain execution turns out to be cheaper, the 
-Superbundler will [refund]() the user.
+MEE Node will [refund]() the user.
 :::
 
 ```ts [Get Quote]

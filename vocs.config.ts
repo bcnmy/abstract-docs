@@ -386,7 +386,7 @@ export default defineConfig({
       link: "/about",
     },
     {
-      text: "Supported Networks",
+      text: "Supported Chains",
       link: "/supportedNetworks",
     },
     {
@@ -404,6 +404,9 @@ export default defineConfig({
             { text: "Passport", link: "/tutorials/signers/passport" },
             { text: "Turnkey", link: "/tutorials/signers/turnkey" },
             { text: "Dynamic", link: "/tutorials/signers/dynamic" },
+            { text: "Capsule", link: "/tutorials/signers/capsule" },
+            { text: "DFNS", link: "/tutorials/signers/dfns" },
+
           ],
         },
       ],
@@ -483,21 +486,7 @@ export default defineConfig({
       text: "Smart Accounts",
       items: [
         { text: "Overview", link: "/account-providers/overview" },
-        { text: "Nexus", link: "/overview", collapsed: true, items: [
-          {
-            text: "Nexus Client",
-            items: [
-              {
-                text: "Integration",
-                link: "/nexus-client",
-              },
-              {
-                text: "Methods",
-                link: "/nexus-client/methods",
-              },
-            ],
-          }
-        ] },
+        { text: "Nexus", link: "/overview", collapsed: true },
         { text: "Other Providers", link: "/account-providers/others" },
       ],
     },
@@ -531,7 +520,6 @@ export default defineConfig({
     },
     {
       text: "Account Modules",
-      collapsed: true,
       items: [
         {
           text: "Overview",
@@ -642,6 +630,23 @@ export default defineConfig({
       ],
     },
     {
+      text: 'Clients',
+      items: [
+        {
+          text: "Nexus Client",
+          collapsed: false,
+          link: '/nexus-client',
+          items: [
+            {
+              text: "Methods",
+              link: "/nexus-client/methods",
+            },
+          ],
+        },
+        { text: 'MEE Client', link: '/mee-client' }
+      ]
+    },
+    {
       text: "Resources",
       items: [
         { text: "Contracts & Audits", link: "/contractsAndAudits" },
@@ -649,9 +654,12 @@ export default defineConfig({
       ],
     },
     {
-      text: 'Legacy (v2) Account Docs',
+      text: 'Legacy Account Docs',
       collapsed: true,
-      items: smartAccountsV2Sidebar
+      items: [
+        { collapsed: true, text: 'V2 Docs & Infrastructure', items: smartAccountsV2Sidebar },
+        { text: 'V1 Docs', link: 'https://legacy-docs.biconomy.io/' }
+      ]
     },
     {
       text: "The Biconomy Network",
