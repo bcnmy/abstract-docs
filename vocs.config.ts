@@ -361,7 +361,6 @@ export const smartAccountsV2Sidebar = [
   { link: "/smartAccountsV2/supportedNetworks", text: "SupportedNetworks" },
 ];
 
-
 export default defineConfig({
   iconUrl: {
     dark: "https://i.imgur.com/WyX6ebY.png",
@@ -406,7 +405,6 @@ export default defineConfig({
             { text: "Dynamic", link: "/tutorials/signers/dynamic" },
             { text: "Capsule", link: "/tutorials/signers/capsule" },
             { text: "DFNS", link: "/tutorials/signers/dfns" },
-
           ],
         },
       ],
@@ -456,17 +454,6 @@ export default defineConfig({
         },
 
         { text: "" },
-
-        { text: "Smart EOA Stack" },
-        {
-          text: " Give EOAs Smart Account Features",
-          link: "/mee/fusion",
-        },
-        {
-          text: " Convert EOA to Smart Account",
-          link: "/eip7702/wallet-guide",
-        },
-        { text: "" },
         { text: "Account Modules" },
         {
           text: " Sign Transactions with Passkeys",
@@ -489,6 +476,7 @@ export default defineConfig({
         { text: "Nexus", link: "/overview", collapsed: true },
       ],
     },
+
     {
       text: "Execution Environments",
       items: [
@@ -514,6 +502,19 @@ export default defineConfig({
               ],
             },
           ],
+        },
+      ],
+    },
+    {
+      text: "Smart EOA Stack",
+      items: [
+        {
+          text: "Give EOAs Smart Account Features",
+          link: "/mee/fusion",
+        },
+        {
+          text: "EIP7702 Guide for Wallets",
+          link: "/eip7702/wallet-guide",
         },
       ],
     },
@@ -629,20 +630,70 @@ export default defineConfig({
       ],
     },
     {
-      text: 'SDK Reference',
+      text: "SDK Reference",
       items: [
         {
           text: "Nexus Client",
           collapsed: false,
-          link: '/nexus-client',
+          link: "/nexus-client",
           items: [
             {
               text: "Methods",
               link: "/nexus-client/methods",
+              items: [
+                {
+                  text: "sendUserOperation",
+                  link: "/nexus-client/methods/sendUserOperation",
+                },
+                {
+                  text: "waitForUserOperationReceipt",
+                  link: "/nexus-client/methods/waitForUserOperationReceipt",
+                },
+                {
+                  text: "debugUserOperation",
+                  link: "/nexus-client/methods/debugUserOperation",
+                },
+                {
+                  text: "prepareUserOperation",
+                  link: "/nexus-client/methods/prepareUserOperation",
+                },
+                {
+                  text: "prepareTokenPaymasterUserOp",
+                  link: "/nexus-client/methods/prepareTokenPaymasterUserOp",
+                },
+                {
+                  text: "sendTokenPaymasterUserOp",
+                  link: "/nexus-client/methods/sendTokenPaymasterUserOp",
+                },
+                {
+                  text: "sendTransaction",
+                  link: "/nexus-client/methods/sendTransaction",
+                },
+                {
+                  text: "estimateUserOperationGas",
+                  link: "/nexus-client/methods/estimateUserOperationGas",
+                },
+                {
+                  text: "getUserOperation",
+                  link: "/nexus-client/methods/getUserOperation",
+                },
+                {
+                  text: "getUserOperationReceipt",
+                  link: "/nexus-client/methods/getUserOperationReceipt",
+                },
+                {
+                  text: "getSupportedEntryPoints",
+                  link: "/nexus-client/methods/getSupportedEntryPoints",
+                },
+                {
+                  text: "getChainId",
+                  link: "/nexus-client/methods/getChainId",
+                },
+              ],
             },
           ],
         },
-      ]
+      ],
     },
     {
       text: "Resources",
@@ -652,12 +703,16 @@ export default defineConfig({
       ],
     },
     {
-      text: 'Legacy Account Docs',
+      text: "Legacy Account Docs",
       collapsed: true,
       items: [
-        { collapsed: true, text: 'V2 Docs & Infrastructure', items: smartAccountsV2Sidebar },
-        { text: 'V1 Docs', link: 'https://legacy-docs.biconomy.io/' }
-      ]
+        {
+          collapsed: true,
+          text: "V2 Docs & Infrastructure",
+          items: smartAccountsV2Sidebar,
+        },
+        { text: "V1 Docs", link: "https://legacy-docs.biconomy.io/" },
+      ],
     },
     {
       text: "The Biconomy Network",
@@ -665,4 +720,3 @@ export default defineConfig({
     },
   ],
 });
-

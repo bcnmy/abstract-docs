@@ -36,7 +36,6 @@ A bot signer is allowed to:
 
 In this tutorial we will be implementing a Smart Session which allows another signer to execute 
 only the `incrementCounter` function on a `Counter` contract. This is an example of an `actionPolicy`. 
-You can check the list of available policies [here]()
 
 ::::steps
 

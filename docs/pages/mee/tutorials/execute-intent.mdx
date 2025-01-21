@@ -12,7 +12,7 @@ audited.
 abstracted experiences to their users by leveraging industry-leading
 intent solvers.
 
-By encoding an intent into a [Supertransaction](), developers can 
+By encoding an intent into a Supertransaction, developers can 
 move funds from one chain to another in record times (even under
 a second), without the user ever needing to see the "bridging"
 operation. `AbstractJS` is able to execute multiple intents, moving
@@ -22,7 +22,7 @@ funds from multiple chains, in a single operation.
 
 :::tip
 ### No vendor lock-in
-Biconomy [Modular Execution Environment]()
+Biconomy [odular Execution Environment
 leverages a vendor-neutral intent model, meaning that developers can 
 choose which provider they're working with. `AbstractJS` comes built-in
 with plugins for triggering the biggest intent providers, giving 
@@ -39,9 +39,9 @@ providers to get the best execution price.
 
 For example,
 an optimal route to get 1000 USDC on Optimsim might include 
-moving 600 USDC from Base using [Across]() and moving 400 USDC
-from Polygon using [deBrige](). AbstractJS can encode both of those providers into a single 
-[Supertransaction]() and trigger both of them within a single
+moving 600 USDC from Base using Across and moving 400 USDC
+from Polygon using deBrige. AbstractJS can encode both of those providers into a single 
+Supertransaction and trigger both of them within a single
 user action.
 :::
 
@@ -77,7 +77,7 @@ npm install @biconomy/abstractjs viem
 #### Initialize the infrastructure
 In execute intents, users need to intialize the [`MultichainSmartAccount`](/mee/tutorials/manage-multichain-sca)
 and connect to the Biconomy [MEE Node](/explained/mee). Connecting to the [MEE Node](/explained/mee) is done by creating an 
-[`meeClient`](). To learn more about the setup, read our [Building a Chain Abstracted App](/mee/tutorials/build-chainabstracted-app) guide.
+`meeClient`. To learn more about the setup, read our [Building a Chain Abstracted App](/mee/tutorials/build-chainabstracted-app) guide.
 
 ```ts [Connect the infrastructure]
 // Initialize the MultichainSmartAccount
@@ -124,7 +124,7 @@ execute additional actions. For this example, we'll use supplying to
 AAVE as an example.
 
 First, instantiate the AAVE contract. This can be done by using the `AbstractJS`
-utility type `MultichainContract` - click [here]() to learn how
+utility type `MultichainContract` - click here to learn how
 `AbstractJS` multichain utilities simplify the moden onchain DevEx 
 
 ```ts

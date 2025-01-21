@@ -29,7 +29,7 @@ npm install @biconomy/abstractjs viem
 ```
 
 #### Initialize the infrastructure
-In order to use cross-chain gas features, users need to intialize the [`MultichainSmartAccount`]()
+In order to use cross-chain gas features, users need to intialize the `MultichainSmartAccount`
 and connect to the Biconomy [MEE Node](/explained/mee).
 
 To learn more about the setup, read our [Building a Chain Abstracted App](/mee/tutorials/build-chainabstracted-app) guide.
@@ -49,7 +49,7 @@ const meeClient = createMeeClient({
 
 #### Encode a Supertransaction
 Cross-chain gas functionalities in `AbstractJS` are achieved by encoding and executing 
-[Supertransactions](). 
+Supertransactions 
 
 :::tip[Exported Common Tokens]
 Finding token addresses accross many chains can be a pain. This is why `AbstractJS` 
@@ -93,7 +93,7 @@ execute the Supertransaction.
 :::tip[Maximum Price]
 This is the maximum possible price that the MEE Node will
 take. If the onchain execution turns out to be cheaper, the 
-MEE Node will [refund]() the user.
+MEE Node will refund the user.
 :::
 
 ```ts [Get Quote]
