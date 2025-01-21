@@ -487,7 +487,6 @@ export default defineConfig({
       items: [
         { text: "Overview", link: "/account-providers/overview" },
         { text: "Nexus", link: "/overview", collapsed: true },
-        { text: "Other Providers", link: "/account-providers/others" },
       ],
     },
     {
