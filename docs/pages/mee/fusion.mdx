@@ -29,7 +29,7 @@ features provided by the wallets. These will primarily include gasless execution
 apps will have a blend of users with and without EIP7702 enabled wallets. 
 
 The `executeFusionTransaction` function in the `AbstractJS` SDK will be able to intelligently switch between using
-EIP7702 exection and regular EOA execution. This means that apps using the Fusion module will get:
+EIP7702 execution and regular EOA execution. This means that apps using the Fusion module will get:
 
 - Same codebase for both EIP7702 enabled and regular EOA users!
 - Additional features offered by Smart Accounts (cross-chain gas sharing, smart sessions, resource locks, ...)
@@ -150,7 +150,7 @@ amount of an `ERC20` token to the Companion Account. When the user signs this tr
 hash which was appended after the regular `callData`. AbstractJS then sends all of the 
 instructions which need to be executed on the Companion account to the The Biconomy [MEE Node](/explained/mee). 
 
-After the `ERC20` token arrives to the Companion account, Tthe MEE Node then calls the `execute` function
+After the `ERC20` token arrives to the Companion account, The MEE Node then calls the `execute` function
 on the Companion smart account to execute additional instructions. The Companion account will not allow any 
 transactions to be executed which were not _explicity_ contained in the hash which was appended after the `callData`
 
