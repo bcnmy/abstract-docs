@@ -1,238 +1,94 @@
-:::tip[In Development]
-The Biconomy MEE stack is still undergoing audits and will be in production at the end of Q1/25.
+# Understanding Modular Execution Environments
+
+Let's dive into how Modular Execution Environments (MEE) transform complex cross-chain transactions into seamless 
+operations. At its heart, MEEs solve a crucial problem in blockchain development: 
+orchestrating multiple transactions and intent executions across different chains while maintaining security and user intent.
+
+## The Power of MEE Nodes
+
+Think of MEE Nodes as highly intelligent transaction conductors. Unlike traditional bundlers that simply batch and execute transactions, MEE Nodes understand the intricate dance of cross-chain operations. When your user initiates a complex sequence - say, bridging tokens from Optimism to Base and then using them in a DeFi protocol - the MEE Node choreographs the entire sequence.
+
+:::info[Key Capability]
+MEE Nodes can pause execution at critical points, waiting for confirmations and watching for successful bridge operations before proceeding with subsequent steps. This ensures your transactions execute in perfect sequence, regardless of which chains they span.
 :::
 
-# Modular Execution Environment (MEE)
-
-## Intro
-
-Modular Execution Environments (MEEs) are an evolution of the Bundler/Paymaster
-infrastructure introduced with the [ERC4337]() standard. With MEEs and Smart
-Accounts, users can leverage all functionalities offered by Bundlers and Paymasters
-such as:
-
-- [Sponsor transactions for users](/tutorials/gasless).
-- [Pay for gas with ERC20 tokens](/tutorials/tokenPaymaster).
-- [Batch execute contract calls]() with a single signature.
-
-But beyond offering just the functionality provided by the Bundlers and
-Paymasters, MEEs offer a plethora of new features, with users being able to:
-
-- [Share gas across chains]().
-- [Execute Intents]().
-- Execute [multiple transactions on multiple chains]() with a signle signature.
-- Orhcestrate [complex transaction sequences]() which span multiple blockchains.
-- [Batch execute with EOAs]().
-- [Compose contract calls]() across chains.
-- [Dynamically inject outputs of bridges and solvers]() into function calls.
-
-## Modular Execution Environment
-
-Our Modular Execution Environment, powered by the permisionless [Biconomy Network](https://asd.com), enables developers
-to build fully chain-abstracted user experiences and to effortlessly build apps which access users, funds and liquidity
-across multiple blockchains.
-
-### Supertransaction
-
-The base of MEE is the Supertransaction data model. Supertransactions enable developers to encode multiple transactions and
-intents into a single data model. This entire complex series of instructions is represented by a single `hash`. 
-
-By signing the Supertransaction hash - the user permits all of those 
-instructions to be executed by MEE Nodes.
-
-```ts
-// Encode a Supertransaction
-const supertx: SuperTransaction = {
-  instructions: [
-    // Send USDC on Optimsim
-    mcUSDC.on(optimism.id).transfer({
-      args: [recipient, sendAmount],
-      gasLimit: 100_000n
-    }),
-    // Send USDT on Base
-    mcUSDT.on(base.id).transfer({
-      args: [recipient, sendAmount],
-      gasLimit: 100_000n
-    })
-  ],
-  // Pay for gas with USDC on Polygon
-  feeToken: toFeeToken({ token: mcUSDC, chain: polygon })
-}
-
-// Execute everything with a single signature
-await executeQuote(meeClient, {
-  quote: await getQuote(meeClient, stx)
-})
-```
-![Supertx](https://d3e0luujhwn38u.cloudfront.net/resized/1gCQ1yzpbiG5ncnAOaw-lAm8ZuFQN1jwvSWfn5lka1Q/s:3200/plain/s3://typefully-user-uploads/img/original/186833/ab861f2c-6080-4fca-862c-26d256b75099.png)
-
-### Advanced Gas Abstraction
-
-Users can pay for execution on one chain with native or ERC20 tokens on another
-chain.
-
-:::tip[Example]
-A user is executing a `swap` transaction on `Optimism` and pays for execution
-with `USDC` on `Base`
-:::
-
-```ts
-const supertx: Supertransaction = {
-  instructions: [
-    // Send USDC on Optimism
-    mcUSDC.on(optimism).transfer({
-      args: [...]
-      //... 
-    })
-  ],
-  // Pay for gas with USDT on Base
-  feeToken: toFeeToken({
-    token: mcUSDT,
-    chain: base
-  })
-}
-```
-
-### Execute Intents
-
-Intent based execution has enabled instant cross-chain liqudity fronting. If a user has funds on Optimsim and Base, but needs
-to call a contract on Polygon - they can use intent networks and solvers to quickly move the funds to the target chain.
-
-MEEs enable users to combine intents (for quickly getting funds on the target chains) with transactions (for precisely
-defining which contacts to call on the target chain).
-
-[Learn How to Execute Intents](/mee/tutorials/execute-intent)
-
-```ts
-// Move 100 USDC to Optimsim
-const intent = await prepareIntent({
-  account: mcNexus,
-  amount: parseUnits('100', 6),
-  toChain: optimism,
-  token: mcUSDC
-})
-
-// Execute intent
-await executeQuote(meeClient, {
-  quote: await getQuote(meeClient, {
-    instructions: [intent],
-    feeToken: toFeeToken({token: mcUSDC, chain: base})
-  })
-})
-```
-
-### Batch Execute Large Transaction Bundles
-
-Since MEE Nodes can execute an arbitrary number of transactions with a 
-single gas payment and a single signature - they're not limited by the 
-`blockGasLimit` so can be used for bulk executing very large bundles of 
-transactions.
-
-Here is an example of sending 100 USDC a thousand times. 
-
-```ts
-const thousandRecipients: Address[] = Array(1000).fill(zeroAddress)
-
-const supertx: SuperTransaction = {
-  instructions: [
-    // Execute `transfer` a 1000 times
-    ...thousandRecipients.map(recipient =>
-      mcUSDC.on(optimism.id).transfer({
-        args: [recipient, parseUnits('100', 6)],
-        gasLimit: 100000n
-      })
-    )
-  ],
-  // Pay for gas once with USDC on Optimism
-  feeToken: toFeeToken({
-    chain: optimism,
-    token: mcUSDC
-  })
-}
-```
-
-### Multichain Orchestration
-
-MEE enables the execution of multiple transactions on multiple chains - with a single user signature. The developer simply
-needs to encode a series of transactions which need to be executed - e.g. Swap USDT to USDC on Polygon, bridge USDC to Base
-and, once it arrives, use the exact amount which arrived to supply to a Morpho Lending Pool. The entire transaction is
-automatically orchestrated by the MEE network.
-
-## Compatibility
-
+What makes this truly powerful is the Node's ability to automatically determine the optimal ordering of transactions, both within a single chain and across multiple chains. It's like having a smart assistant that knows exactly when each piece of your transaction puzzle needs to fall into place.
 :::info
-**Note**
-
-If you're already building with ERC4337 - transitioning to
-MEE is effotless and requries no code changes on your side. You can simply add MEE execution where it fits, while keeping
-the ERC4337 code base in the same project. You can add MEE to projects powered by both Biconomy or alternative ERC4337 infra
-providers.
+The orchestration capabilities of the MEE Node will be greatly improved with the production release of the 
+[Composability Stack](/composability)
 :::
 
-## Code Highlight - Orchestrating A Multichain Transaction with Cross-Chain Gas Abstraction
+![MEE Node Power](https://i.imgur.com/CdLkOZw.png)
 
-This is an example of a Supertransaction enabled by the Modular Execution Environment. This operation will:
+## Supertransactions: The Innovation Under the Hood
 
-1. Pull funds from multiple chains to a single target chain
-2. Wait for all the funds to arrive on the target chain
-3. Automatically orchestrate a batch execution of `approve` + `supply`
+At the technical core of MEE lies the concept of Supertransactions. This isn't just another transaction format - it's a fundamental reimagining of how we can bundle and secure complex cross-chain operations.
 
-This entire Supertransaction is permitted by a single signature from the user and is automtatically
-orchestrated and executed by our MEE infrastructure.
+Here's how it works:
 
-MEE will make sure that all the conditions are met on the destination chain before proceeding to execute the
-approve and supply transactions, there is no manual management of transaction dependencies by the developer
+1. Each individual operation (like a token approval or a swap) becomes a child transaction, encoded as a UserOp
+2. These UserOps are organized into a Merkle Tree structure
+3. The root of this tree becomes the Supertransaction hash - a single piece of data that cryptographically represents the entire execution sequence
 
-:::info
-This is not a full code example. To start implementing plase refer to [MEE Quickstart](/mee/mee) or
-[AA Quickstart](/quickstart). Not sure where to start? Read our [Choosing Infrastructure Guice](/mee/mee)
+:::tip[Developer Impact]
+Instead of managing multiple signatures and complex transaction ordering logic, you can have your users sign a single hash that validates the entire operation sequence.
 :::
 
-```typescript
-// Move user funds from multiple chains to a single
-// destination chain and execute a supply to AAVE on that
-// chain. All executed with a single signature.
-const sTx = supertransaction({
-  account: mcNexus, // Multichain Smart Account
-  feeToken: mcUSDC.on(base), // Pay gas with USDC on Base
-  instructions: [
-    // Encode liquidity fronting from multiple chains
-    await requireERC20Balance({
-      token: mcUSDC,
-      chain: optimism,
-      providedAmount: supplyAmount,
-    }),
-    // Approve USDC to AAVE
-    mcUSDC.write({
-      chain: optimism,
-      functionName: "approve",
-      args: [
-        mcAAVE.deploymentOn(optimism),
-        inTimeBalanceOf(mcUSDC), // Adjust for slippage with bridging
-      ],
-    }),
-    // Supply to AAVE
-    mcAAVE.write({
-      chain: optimism,
-      functionName: "supply",
-      args: [
-        mcUSDC.addressOn(optimism),
-        inTimeBalanceOf(mcUSDC),
-        zeroAddress,
-        0,
-      ],
-    }),
-  ],
-});
+The security of this system is anchored in ERC7579 smart contract accounts. Each account has a validator that verifies the execution, ensuring the MEE Node can only execute transactions that were explicitly approved in the signed Supertransaction.
 
-// Execute with a single user signature
-const result = await meeService.execute(
-  await signMeeQuote({
-    executionMode: "direct-to-mee",
-    quote,
-    signer,
-  })
-);
+![Supertransaction](https://i.imgur.com/ulvvS0h.png)
 
-console.log("Supertransaction hash:", result.hash);
-```
+## The Future: Biconomy Network
+
+The current MEE architecture is just the beginning. We're building toward Biconomy Network, a system where MEE Nodes can collaborate trustlessly to execute Supertransactions across an even broader range of chains.
+
+Imagine this scenario:
+- You have a Supertransaction that needs to execute across Optimism, Arbitrum, and Berachain
+- MEE Node A supports Optimism and Arbitrum
+- MEE Node B specializes in Berachain operations
+
+In the Biconomy Network, these nodes can seamlessly collaborate to execute your transaction, with each handling the chains they specialize in.
+
+![Collaborative Execution](https://i.imgur.com/eSJusML.png)
+
+### Making Trustless Collaboration Possible
+
+The key to enabling this collaboration is an elegant stake/slash mechanism:
+
+![Security Graph](https://i.imgur.com/R2TCego.png)
+
+When a node commits to executing part of a Supertransaction:
+1. It posts a stake for the transactions it plans to execute
+2. Signs the root hash, cryptographically committing to the execution
+3. Must execute successfully or lose its stake
+
+:::info[Economic Security]
+This economic model means nodes can collaborate without trusting each other - the stake ensures they'll execute their committed transactions or face financial consequences.
+:::
+
+## Technical Benefits for Developers
+
+This architecture provides several key advantages:
+
+::::steps
+#### **Simplified Complex Operations**
+   - Handle multi-chain sequences with single-signature UX
+   - Automatic transaction ordering and dependency management
+
+#### **Enhanced Security**
+   - Cryptographic verification of transaction sequences
+   - Economic security through stake/slash mechanism
+   - Smart contract validation of execution paths
+
+#### **Future Scalability**
+   - Access to growing network of specialized nodes
+   - Broader chain coverage through node collaboration
+   - Maintained simplicity despite increasing complexity
+::::
+## Implementation Considerations
+
+:::warning[Important Note]
+While MEE Nodes handle much of the complexity, understanding the underlying execution flow helps in designing more efficient cross-chain applications.
+:::
+
+By leveraging MEE, you're not just building another blockchain application - you're creating solutions that can seamlessly operate across the entire blockchain ecosystem, while maintaining the simplicity your users expect.

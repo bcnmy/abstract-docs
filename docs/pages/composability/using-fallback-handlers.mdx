@@ -1,0 +1,169 @@
+# Fallback Handlers: The Engine of Composability
+
+## Calling `executeComposable`
+The composability stack works by executing an `executeComposable` function on top of a Smart Account implementation. When 
+calling `executeComposable` the developer can encode exactly which parameters they'd like to define ahead of time and which
+parameters they'd like to dynamically inject through the Composability stack.
+
+:::tip[Abstracted]
+Encoding calls to the `executeComposable` will be done by `AbstractJS` through a developer-friendly
+set of utility functions. Writing composable function calls should be no harder then writing regular 
+function calls.
+:::
+
+```solidity
+/**
+  * @notice Executes a composable transaction with dynamic parameter composition and return value handling
+  * @param to The target address for the transaction
+  * @param value The amount of native tokens to send
+  * @param functionSig The 4-byte function signature
+  * @param params Array of Parameter structs defining how to compose the calldata
+  * @param returnConfig Configuration for handling the return value
+  */
+function executeComposable(
+    address to,
+    uint256 value,
+    bytes4 functionSig,
+    Parameter[] calldata params,
+    ReturnValueConfig calldata returnConfig
+) external
+```
+
+## Understanding Fallback Handlers
+
+Traditionally, smart accounts (like Biconomy Nexus) use fallback handlers as a way to handle transactions that don't match any standard function signatures. When a smart account receives a transaction it doesn't recognize, instead of failing, it passes the transaction to its fallback handler to deal with.
+
+## Making the Fallback Handler do More
+
+What makes Biconomy's approach special is how it leverages this fallback mechanism. Instead of just handling unknown transactions, the fallback handler becomes an active participant in transaction composition. It acts as a middleware layer that can intercept, modify, and enhance transactions before they're executed.
+
+
+## Why Fallback Handlers Are Perfect for Composability
+
+The beauty of using fallback handlers for composability lies in their position in the transaction flow. When a transaction goes through a smart account, the fallback handler gets to see it before it reaches its final destination. This means it can:
+
+::::steps
+#### Read the original transaction
+Since the developer encoded a call to `executeComposable` this will forward the 
+transaction to the fallback handler. The handler will deduce which parameters the
+developer encoded ahead of time and which they want to be dynamically injected during execution
+
+#### Access current blockchain state
+The fallback handler will then, if encoded as such - read the state of certain onchain variables or
+storage slots. 
+
+#### Modify the transaction parameters
+The fallback handler will inject the results of those reads into the required parameters in the 
+function call
+
+#### Handle the execution results
+The fallback handler will call the required target function
+::::
+
+This positioning makes fallback handlers the perfect place to inject dynamic values and handle transaction composition.
+
+![ComposerFallbackHandler](https://i.imgur.com/zESn9BO.png)
+
+
+## Intercept, Inject, Execute
+
+The fallback handler's ability to intercept and modify transactions in flight is what enables dynamic composition. Because it sits between the transaction initiation and execution, it can modify the transaction parameters in real-time, injecting current values exactly when they're needed.
+
+## Unlocking Transaction Composability with Frontend Code
+
+Previously, if you wanted to use the result of one transaction in another, you'd need to:
+1. Write a custom smart contract
+2. Build complex storage mechanisms
+3. Handle all the cross-transaction state management
+
+With the fallback handler approach, all of this complexity is handled by pre-deployed infrastructure. The fallback handler can capture transaction outputs, store them in namespaced slots, and inject them into subsequent transactions - all without requiring custom smart contract development.
+
+Pseudocode example of a composable call to `supply` function on a smart contract:
+
+```
+composableSupply = {
+  token: '0xUSDC_ADDRESS',
+  amount: injectParameter(storage_slot_xyz)
+}
+```
+
+## Composability Stack Supports Cross-Chain Composability
+
+The fallback handler's power extends even further when working across chains. Because it can intercept and modify transactions, it can:
+1. Capture values on the source chain
+2. Trigger cross-chain messages
+3. Have another fallback handler receive and store these values on the destination chain
+4. Inject these values into new transactions
+
+![Cross-chain](https://i.imgur.com/XbGIeDn.png)
+
+## Go to Market Quicker
+
+What makes this truly revolutionary is that all of this power is accessible through frontend code. Developers don't need to understand the intricacies of fallback handlers or write smart contracts - they just need to use the SDK to compose their transactions. The fallback handlers handle all the complexity of:
+- Parameter injection
+- State management
+- Cross-chain messaging
+- Value storage and retrieval
+
+This creates a powerful abstraction layer that makes complex blockchain interactions accessible to frontend developers while maintaining the security and reliability of smart contract infrastructure.
+
+Here is a pseudocode example which will be very similar to the end composability features in the 
+`AbstractJS` SDK:
+
+:::danger[Not implemented]
+The Composability stack is still in active development. This document is meant as an overview of the 
+architecture and a preview of the future implementation of the Composability stack
+:::
+
+### Single-chain
+```ts
+const supertx: Supertransaction = {
+  instructions: [
+    uniswapContract.on(optimism).swap({
+      args: [
+        usdc.addressOn(optimism), //swap from USDC
+        usdt.addressOn(optimism) // Swap to USDT
+      ]
+    }),
+    aaveContract.on(optimism).supply({
+      args: [
+        usdt.addressOn(optimism), // Supply USDT
+
+        // Dyanmically inject the exact amount of USDT
+        // available at the time the of the execution of 
+        // the supply function
+        inTimeBalanceOf(usdt.addressOn(optimsim)) 
+      ]
+    })
+  ]
+}
+```
+
+### Cross-chain
+```ts
+const amountToBridge = parseUnits('100', 6) // 100 USDC
+const supertx: Supertransaction = {
+  instructions: [
+    acrossPool.on(optimism).bridge({
+      args: [
+        usdc.addressOn(optimism), // Bridge USDC from OP
+        usdc.addressOn(arbitrum), // to USDC on Arbitrum
+        optimism.id,// Bridge from Optimism
+        arbitrum.id, // Bridge to Arbitrum
+        amountToBridge
+      ]
+    }),
+    uniswap.on(arbitrum).swap({
+      args: [
+        usdc.addressOn(arbitrum), // Swap USDC on Arbitrum,
+        usdt.addressOn(arbitrum), // to USDT on Arbitrum 
+
+        // Dynamically inject the amount of USDC
+        // which arrived from Optimsim, compensating
+        // for any slippage a bridge might have had
+        inTimeBalanceOf(usdc.addressOn(arbitrum))
+      ]
+    })
+  ]
+}
+```

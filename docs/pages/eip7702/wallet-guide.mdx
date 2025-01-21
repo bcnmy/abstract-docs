@@ -4,27 +4,22 @@
 EIP7702 is an upcoming upgrade to Ethereum and EVM blockchains which enables
 wallets to convert the user EOA wallets into [Smart Accounts]()
 
-Biconomy has built **the most comprehensive EIP7702 Solution** on the 
-market:
+With EIP7702, wallets can drastically improve the UX for their users by offering smart
+account features, such as:
 
-#### ✅ Sponsor gas across all chains, with a single gas tank
-Deposit funds to a single chain and use that to sponsor transactions for
-users across 30+ chains and rollups.
+- The ability to pay for gas with ERC20 tokens
+- The ability to batch execute transactions with a single signature
+- The ability to recover user accounts, either through social recovery or timelocked
+recovery solutions
 
-#### ✅ Enable users to share gas across all supported chains
-Your users can use their ETH, USDC, USDT (or any of the xy+ supported ERC20 tokens)
-to pay for gas on any chain. 
+At Biconomy, we have built the most comprehensive EIP7702 solution on the market, enabling
+wallets to add all of the above mentioned features, as well as many advanced - Biconomy 
+stack specific features:
 
-:::info[🧠 Example]
-If a user has USDC on Base, they can instantly
-execute transactions on Polygon, Optimism, Arbitrum, ...
-:::
-
-#### ✅ Unify User Balances Across all Chains
-Treat user balances across all chains as if they're a single balance. Biconomy
-uses leading bridging and intent providers to make sure the funds are 
-transferred with the best execution prices and fastest execution speed.
-
+- The ability to unify user balances across chains
+- The ability to pay for gas across chains (e.g. pay for tx on Optimism with USDC on Arbitrum)
+- The ability to nativelly schedule transactions (e.g. execute five minutes from now)
+- The ability to nativelly set repeating tranasactions (e.g. execute every 10 minutes)
 
 :::info
 If you're a wallet team looking for an EIP7702 strategy - [Contact Us](https://google.com)
@@ -34,7 +29,7 @@ If you're a wallet team looking for an EIP7702 strategy - [Contact Us](https://g
 
 ::::steps
 #### Install Packages
-Install AbstractJS TypeScript SDK and viem 
+Install `AbstractJS` TypeScript SDK and viem 
 
 ```bash
 npm install @biconomy/abstractjs viem
@@ -65,6 +60,23 @@ const authorization = await walletClient.signAuthorization({
 })
 ```
 
+#### Choose your execution environment
+
+With `AbstractJS` and the Biconomy stack, developers can choose whether to 
+push transactions through our battle-tested [ERC4337 Bundler/Paymaster stack]() *or*
+through our innovative multi-chain [MEE Stack]()
+::::
+
+## Execute through the ERC4337 Bundler/Paymaster Stack
+
+## Execute through the MEE Stack
+
+::::steps
+#### Follow tutorial
+
+Follow all the instructions for authorizing Nexus as your Smart Account at
+the beginning of this tutorial.
+
 #### Initialize the Modular Execution Environment
 
 ```ts
@@ -82,7 +94,7 @@ const account = await toMultichainNexusAccount({
   chains: [odysseyTestnet],
   signer: eoa,
   // Override the address of the account to the EOA address
-  address: eoa.address
+  accountAddress: eoa.address
 })
 ```
 

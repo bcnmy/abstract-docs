@@ -1,36 +1,82 @@
-## Bundlers and Paymasters
+# Understanding Bundlers and Paymasters
 
-Our battle-tested legacy infrastructure eliminates core friction points in blockchain interaction. Through batch
-execution, users can conveniently perform multiple operations in a single transaction - whether that's approving
-and swapping tokens or executing a complex DeFi strategy, all with just one signature. 
+## What are UserOperations?
 
-By enabling gas sponsorships,
-companies can now fully cover their users' transaction costs, creating truly frictionless Web3 experiences.
-Users also gain the flexibility to pay gas fees in any ERC20 token they already hold, removing the traditional
-requirement to maintain native token balances across chains. The stack seamlessly integrates with all major
-smart account providers, letting developers enhance their existing infrastructure while delivering these
-powerful benefits to their users without disruptive changes to their codebase.
+UserOperations (UserOps) are the foundation of ERC4337, replacing standard Ethereum transactions for smart accounts. A UserOperation describes everything needed to execute actions from a smart account: the intended operation, validation rules, gas limits, and payment details.
 
+Key aspects of UserOperations:
+- They represent one or more actions a smart account wants to take
+- They include validation data for signature verification
+- They specify how gas will be paid (either by the account or a paymaster)
+- They can trigger account deployment if needed
+- They enable atomic execution of multiple actions
 
-## Code highlight - Executing a Sponsored Transaction
+![UserOp](https://i.imgur.com/sCzKkPc.png)
 
-```ts
-const bundlerUrl = "https://bundler.biconomy.io/api/v3/84532/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44";
-const paymasterUrl = "https://paymaster.biconomy.io/api/v2/84532/F7wyL1clz.75a64804-3e97-41fa-ba1e-33e98c2cc703";
+## Why Use Bundlers?
 
-const nexusClient = await createNexusClient({
-    signer: account,
-    chain: baseSepolia,
-    transport: http(),
-    bundlerTransport: http(bundlerUrl),
-    paymaster: createBicoPaymasterClient({paymasterUrl})
-}); // [!code focus:7]
+Bundlers are specialized network participants that handle UserOperations. They serve as the bridge between your application's smart account operations and the blockchain.
 
-// Execute a gas sponsored transaction
-const hash = await nexusClient.sendTransaction({ calls:  
-    [{to : '0xf5715961C550FC497832063a98eA34673ad7C816', value: parseEther('0')}] },
-); 
-console.log("Transaction hash: ", hash) 
-const receipt = await nexusClient.waitForTransactionReceipt({ hash });
+#### Core bundler functions:
+1. Receiving and validating UserOperations
+2. Maintaining a separate mempool for UserOperations
+3. Simulating operations before execution
+4. Combining multiple operations into efficient bundles
+5. Submitting the final bundles to the blockchain
 
-```
+A bundler ensures your UserOperations are valid, properly formatted, and will execute successfully on-chain. They handle all the complexity of ERC4337 validation rules and provide an efficient way to submit smart account transactions.
+
+## Why Use Paymasters?
+
+Paymasters are smart contracts that enable flexible gas payment options. They remove the requirement for users to hold native tokens (like ETH) for gas fees.
+
+#### Paymaster capabilities:
+1. Sponsoring transactions (making them gasless for users)
+2. Accepting ERC20 tokens as gas payment
+3. Implementing subscription models
+4. Adding custom rules for transaction sponsorship
+
+:::info[Use Cases]
+Common paymaster applications:
+- Free transactions for new users
+- Subscription-based dapps
+- Enterprise applications paying for user transactions
+- Token-based gas fee payments
+:::
+
+## How They Work Together
+
+The bundler-paymaster flow follows these steps:
+
+1. Your application creates a UserOperation
+2. If using a paymaster, it verifies and approves the operation
+3. The bundler receives the operation and validates it
+4. The bundler simulates the full execution including paymaster interactions
+5. When ready, the bundler includes your operation in a bundle
+6. The bundle is submitted to the blockchain
+7. The paymaster handles gas payment during execution
+
+## Benefits for Your Application
+
+Implementing bundlers and paymasters enables:
+
+1. Better User Experience
+   - No need for users to hold native tokens
+   - Simplified transaction flow
+   - Predictable gas costs
+
+2. Enhanced Functionality
+   - Batch multiple operations
+   - Implement complex transaction logic
+   - Flexible gas payment options
+
+3. Risk Management
+   - Pre-execution validation
+   - Simulation before submission
+   - Gas cost estimation
+
+## Getting Started
+
+Read our [Quickstart Guide](/tutorials/gasless) to account abstraction.
+
+Bundlers and paymasters are the key infrastructure components that make smart accounts practical and user-friendly. Understanding how they work helps you build better web3 applications with superior user experience.

@@ -1,0 +1,32 @@
+# Smart Account Execution Environments
+
+When interacting onchain with Smart Accounts, the users don't post the transactions themselves on the blockchain. Instead, 
+they use more advanced transaction data models - in the case of Biconomy infra - `UserOps` and `Supertransactions`!
+
+These data models contain extra information which a normal onchain transaction doesn't have. This can include anything
+from gas sponosorship information and batch execution instructions in UserOps, to multi-chain execution sequences and
+cross-chain composability instructions in Supertransactions.
+
+In order to convert these complex data objects into transactions and post them onchain, Smart Account users use
+**Execution Environments**. 
+
+![Execution Environments](https://i.imgur.com/RzOBVwn.png)
+
+## Types of Execution Environments
+
+### Bundlers and Paymasters
+The most common type of a Smart Account execution environment is the [ERC4337](https://erc4337.com) Bundler & Paymaster 
+stack. In this execution environment the Bundler parses the UserOp data model and posts the function calls contained 
+within it onchain. If the developer decides to sponsor the user transactions or enable users to pay for gas with ERC20
+tokens - they can enable a Paymaster, which takes care of that functionality.
+
+[Learn more about Bundlers and Paymasters](/explained/bundlers-paymasters.mdx)
+
+### Modular Execution Environment
+The Modular Execution Environment, or MEE - is an innovative execution environment standard - developed by Biconomy. 
+MEEs enable much more complex transaction sequences to be executed than just Bundlers and Paymasters. Beyond supporting just
+transactions, Modular Execution Environments support both the execution of intents and transactions. Additionally, MEEs were
+build with the future in mind - with an elegant mechanism which can provide execution across 1000+ blockchains, rollups
+and appchains.
+
+[Learn more about MEEs](/explained/mee.mdx)

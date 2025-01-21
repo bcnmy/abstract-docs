@@ -2,6 +2,30 @@
 
 For this tutorial, we will be building a chain abstracted app, powered by the Biconomy Modular Execution Environment!
 
+## Goals
+
+We want to build an app with the following features:
+
+::::steps
+#### Unified Balance
+User sees a unified balance across all chains
+
+#### Cross-Chain Transactions with Intents
+User can deposit to _any_ AAVE market in a single signature. Intents are used to move the liquidity
+around
+
+#### Rebalance, Bridge/Intent and Execute - In a Single Signature
+If a user has an already open position on AAVE, they can "rebalance" their position to another chain with a single
+signature.
+
+#### Pay for Gas With ERC20 Tokens on Any Chain
+The user will be able to pay for the execution of all transactions on all chains with on any 
+chain where they have either native or ERC20 tokens 
+
+::::
+
+The entire interface should be extremely straightforward for the user, with no chain switching, bridging or managing gas.
+
 ## Core concepts
 
 The app which we build in this guide will leverage all the latest features available in `AbstractJS` SDK and 
@@ -12,17 +36,12 @@ the Biconomy stack! Some highlights:
 - Executing [multiple transactions on multiple chains]() with a single signature
 - Using automatic orchestration provided by the Biconomy MEE Node
 
-## Goals
 
-We want to build an app with the following features:
-
-- User sees a unified balance across all chains
-- User can deposit to _any_ AAVE market in a single signature
-- If a user has an already open position on AAVE, they can "rebalance" their position to another chain with a single
-signature.
-
-The entire interface should be extremely straightforward for the user, with no chain switching, bridging or managing gas.
-
+## Step-by-Step Tutorial
+:::tip
+This tutorial will use the most verbose coding style, in order to explain all of the concepts. `AbstractJS` comes with 
+many utilities which would enable this app to be written in less lines of code.
+:::
 ## Building the app
 
 ::::steps

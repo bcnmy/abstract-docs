@@ -112,40 +112,6 @@ To track the execution of the additional instructions - you can use the [Biconom
 
 ::::
 
-
-## Single Signature Multi-Chain Sequence with Intents
-
-This is achieved with the innovative [Biconomy Fusion Module](). We'll be using [AbstractJS]() to 
-encode a multi-chain Fusion transaction which will execute with a single user signature.
-
-### Transaction steps:
-::::steps
-#### Executes an Intent
-The first step is executing an intent which will move USDC from Optimism to Base. For this step,
-Biconomy uses industry-leading providers, such as [Across]() or [LiFi]()
-
-#### Approves
-::::
-
-```ts [Fusion Transaction]
-const tx = 
-  await executeFusionTransaction(meeClient, {
-    token: mcUSDC,
-    chain: optimism,
-    account: mcNexus,
-    amountUsed: parseUnits('100', 6),
-    instructions: [
-      await prepareIntent({
-        account: mcNexus,
-        amount: parseUnits('100', 6),
-        toChain: base,
-        token: mcUSDC,
-      }),
-      mc
-    ]
-  })
-```
-
 ## Advanced: How Does the Fusion Module Work?
 
 ![Fusion Flow](https://i.imgur.com/dVUmznn.png)

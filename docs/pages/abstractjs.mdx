@@ -1,285 +1,138 @@
-# `AbstractJS` SDK
-
-`AbstractJS` is the ultimate SDK for building solutions on top of smart accounts, enabling developers to effortlessly build
-user friendly apps which leverage the latest innovations in blockchain execution, including [chain abstraction](),
-[gas sponsorships](), [managing smart account modules]() and much more...
-
-Modern onchain app teams work in a multi-chain environment, where they have to interact with multiple chains, bridges and
-intent solvers. `AbstractJS` makes navigating this complex multi-chain hybrid execution environment a breeze, with a rich
-library of **multichain utilities**. These include functions like:
-- [Getting a unified multichain balance](), 
-- [Handling smart account deployments across multiple chains](), 
-- [Executing intents](), 
-- [Effortessly building complex multi-chain sequences](), 
-- [Handling token deployements across multiple chains]()
-
-Built on top of the industry-standard `viem` SDK, AbstractJS enables developes to seamlessly interact with:
-
-- Biconomy [Superbundler](/mee/mee) and the [Modular Execution Environment (MEE)]()
-- ERC4337 [Bundler & Paymaster infrastructure](/overview)
-
-
-:::tip[Open-Source and Vendor Neutral]
-`AbstractJS` is infrastrucure and account neutral. You can use it with [Biconomy Nexus]() account or with alernative
-smart account providers (Safe, Kernel, ...) as well as with a multitude of infrastructure environments such as
-Biconomy MEE or ERC4337 Bundlers & Paymasters (Biconomy, Pimlico, ...)
-:::
-
-:::info
-AbstractJS is open-source and distributed under an MIT licence, with all source files being available on [GitHub](https://google.com)
-:::
-
-# `AbstractJS` Highlight Features
+# AbstractJS SDK
 
 ```bash [Install AbstractJS]
-npm install @biconomy/abstractjs viem 
+npm install @biconomy/abstractjs viem
 ```
 
-This is a high level overview of the features of `AbstractJS`. To dive straight into coding with the SDK, check our 
-quickstart guides:
+### Single and Multichain Capabilities
+AbstractJS is a comprehensive smart account SDK that goes beyond standard account management capabilities. While it 
+provides all the features you'd expect from a smart account SDK - executing UserOps, gas management, signature handling, installing account modules - it's
+been supercharged with powerful utilities for multi-chain development.
 
-- [Building a Chain Abstracted Application](/mee/tutorials/build-chainabstracted-app)
-- [Executing Intents](/mee/tutorials/execute-intent)
-- [Sponsoring a Transaction with Paymasters](/tutorials/gasless)
-- [Cross-Chain Gas Abstraction](/mee/tutorials/pay-gas-across-chains)
-- [Working With Account Modules](/modules/validators)
+### Support for both EOAs and Smart Accounts
+Additionally, what sets AbstractJS apart is its support for both smart accounts and EOAs. Through [Fusion transactions](), 
+EOA users can batch execute operations across multiple chains with a single signature. 
 
-## Manage Smart Accounts
-AbstractJS enables developers to deploy and manage Modular Smart Accounts. The SDK is vendor neutral and supports 
-both [Biconomy Nexus]() account as well as other smart account implementations. [Click here]() for a list of supported
-providers.
+For wallet developers, AbstractJS enables EIP7702, enabling seamless migration of users from EOAs to smart contract accounts while maintaining support for both our innovative Modular Execution Environment (MEE) and traditional Bundler/Paymaster execution paths.
 
-### Multichain Smart Account Management
+![AbstractJS](https://i.imgur.com/hJbBCCy.png)
 
-Deploying and managing smart account deployments across multiple chains can be a pain.
-AbstractJS comes with buil-in utilities to [handle smart account deployment on multiple chains]()
 
-:::info
-This is not a full code example. To start implementing plase refer to [MEE Quickstart](./mee/mee) or 
-[AA Quickstart](./quickstart). Not sure where to start? Read our [Choosing Infrastructure Guide](./mee/mee)
+## Work with Chains, Intents and Bridges
+Working with multiple chains, bridges, and intents has traditionally required complex infrastructure and significant development effort. AbstractJS eliminates this complexity by providing advanced tools that make multi-chain operations as simple as single-chain ones. Through our innovative MEE infrastructure, developers can orchestrate complex cross-chain transactions and intents with unprecedented ease. 
+
+Check out a quick guide on [building a chain abstracted app](/mee/tutorials/build-chainabstracted-app).
+
+## Open-Source, Built on `viem`
+AbstractJS is vendor-neutral, open source and built on the industry-leading `viem` SDK 
+
+:::info[Key Benefits]
+- Multi-chain environment support out of the box
+- Infrastructure and account neutral design
+- Open-source (MIT licensed)
+- Built on industry-standard viem SDK
 :::
-```ts
-// Wraps a Nexus Smart Account deployment on Polygon, Optimism and Base
+
+:::tip[Vendor Neutral Design]
+AbstractJS works with any ERC4337-compliant smart account including:
+- Biconomy Nexus
+- Safe
+- Kernel
+- Other compliant implementations
+:::
+
+## Execution Environment Support
+AbstractJS supports two distinct execution environments. [Learn more about execution environments](/explained/exec-environments)
+
+::::steps
+#### **Modular Execution Environment (MEE)**
+A novel execution environment, serving as an evolution to Bundlers and Paymasters, enabling 
+execution of transactions and intents and the orchestration of complex multi-chain sequences.
+
+[Learn more about MEEs](/explained/mee)
+   
+#### **ERC4337 Bundler & Paymaster Execution Environment**
+Industry standard and battle tested execution stack. Enables developers to sponsor transactions for users,
+users to pay for transactions with ERC20 tokens and batch executions. 
+
+[Learn more about Bundlers & Paymasters](/explained/bundlers-paymasters)
+
+::::
+
+## Advanced Smart Account & Module Support
+AbstractJS enables developers to create smart accounts, connect them to execution environments, install account
+modules (like Passkeys, Session Keys, MultiSigs, Account Recover and more...), encode and execute UserOps and 
+Supertransactions through Smart Accounts and use Smart Accounts with EOA users.
+
+[Learn more](/modules)
+
+## Multi-Chain Smart Account Management
+AbstractJS streamlines the complexity of working with smart accounts across multiple chains. You can deploy and manage accounts across networks like Polygon, Optimism, and Base with unified interfaces and consistent APIs.
+
+```ts [Code Example: Using a Biconomy Nexus Account on Multiple Chains]
 const mcNexus = await toMultichainNexusAccount({
-  chains: [polygon, optimism, base],
-  signer: signer,
-});
+  signer: eoa,
+  chains: [optimism, base, polygon, arbitrum]
+})
 ```
 
-## Use Modular Execution Environments and Bundlers/Paymasters
+[Learn More](/mee/tutorials/manage-multichain-sca)
 
-AbstractJS supports transaction execution through Biconomy Modular Execution Environment or
-through ERC4337 Bundlers and Paymasters.
+## EOA Multi-Chain Batch Execution (Fusion)
+The Fusion feature provides advanced capabilities for EOA accounts:
+- Execute multiple transactions across chains with one signature
+- Pay gas fees on a single chain
+- Automated cross-chain execution sequencing
 
-### Modular Execution Environment (MEE)
+[Learn More](/mee/fusion)
 
-Biconomy [Modular Execution Environment]() (MEE) enables developers to execute complex transaction and intent sequences across 
-multiple blockchains with a single user signature.
 
-:::info
-This is not a full code example. To start implementing plase refer to [MEE Quickstart](./mee/mee) or 
-[AA Quickstart](./quickstart). Not sure where to start? Read our [Choosing Infrastructure Guice](./mee/mee)
+## Multi-Chain Utilities
+
+AbstractJS provides essential tools for multi-chain development:
+
+::::steps
+#### **Contract Management Across Chains**
+Map multiple contract instances across multiple chains into a single object. Use it to
+effortlessly encode UserOps across on all chains.
+
+#### **Unified Multichain Balance**
+All utility functions within AbstractJS can work with a Unified Multichain Balance
+object - which treats all balances across all chains - as if it was a single one.
+
+#### **Bridge & Intent Integration**
+Find optimal bridging routes and combine multiple intent providers in just a few lines of code. Modern
+onchain environments require a lot of moving funds across chains - AbstractJS makes this effortless for 
+the developer and invisible for the user.
+
+::::
+
+## Transaction Orchestration
+AbstractJS enables complex transaction sequences across multiple chains. You can build operations that:
+- Move tokens between chains
+- Interact with DeFi protocols
+- Manage approvals and permissions
+- Execute multi-step operations atomically
+
+
+:::info[Quick Start]
+Install AbstractJS:
+```bash
+npm install @biconomy/abstractjs viem
+```
 :::
-```ts
 
-// Modular Execution Environment Client
-const meeClient = createMeeClient({
-  account: mcNexus // Multichain Nexus account wrapper
-})
+## Development Resources
 
-// Get quote for execution
-const quote = await getQuote(meeClient, {
-  instructions: [
-    {
-      calls: [ to: zeroAddress, gasLimit: 100_000n, value: 0n ],
-      chainId: optimism.id // Transaction on Optimism
-    },
-    {
-      calls: [ to: zeroAddress, gasLimit: 100_000n, value: 0n ],
-      chainId: base.id // Transaction on Base
-    },
-  ],
-  feeToken: {
-    address: mcUSDC.deploymentOn(base.id).address, // USDC address on Base
-    chainId: base.id // Pay for gas on Base
-  }
-})
+For detailed implementation guidance:
+- [Chain Abstracted Applications Guide](/mee/tutorials/build-chainabstracted-app)
+- [Intent Execution Documentation](/mee/tutorials/execute-intent)
+- [Gas Sponsorship Implementation](/tutorials/gasless)
+- [Cross-Chain Gas Guide](/mee/tutorials/pay-gas-across-chains)
+- [Account Module Management](/modules/validators)
 
-// Execute entire sequence of actions across multiple 
-// blockchains with a single user signature.
-const receipt = await executeQuote(meeClient, { quote })
-```
+Source code is available on our [GitHub Repository](https://google.com).
 
-### ERC4337 Bundlers and Paymasters
-
-Bundlers and Paymasters enable [gas sponsorship](), [paying for gas with ERC20 tokens]()
-and [single-chain batch execution]()
-
-:::info
-This is not a full code example. To start implementing plase refer to [MEE Quickstart](./mee/mee) or 
-[AA Quickstart](./quickstart). Not sure where to start? Read our [Choosing Infrastructure Guice](./mee/mee)
+:::tip
+This documentation highlights key features but isn't exhaustive. Explore the API reference and tutorials for complete coverage.
 :::
-```ts
-const nexusClient = await createSmartAccountClient({
-  signer: account,
-  chain: baseSepolia,
-  transport: http(),
-  bundlerTransport: http(bundlerUrl),
-  paymaster: createBicoPaymasterClient({ paymasterUrl }),
-});
-
-const hash = await nexusClient.sendTransaction({
-  calls: [
-    {
-      to: "0xf5715961C550FC497832063a98eA34673ad7C816",
-      value: parseEther("0"),
-    },
-  ],
-});
-const receipt = await nexusClient.waitForTransactionReceipt({ hash });
-```
-
-## Multichain Utilities
-AbstractJS comes built-in with utility types and functions, making it easy for developers to work in a multichain
-environment.
-
-### Multichain Contract Mapping
-AbstractJS exposes functions for wrapping smart contract deployments across multiple chains in a single object, enabling
-developers to quickly encode actions on any chain.
-
-```ts
-const mcAAVE = getMultichainContract({
-  abi: parseAbi([
-    "function supply(address asset, uint256 amount, address onBehalfOf, uint16 referralCode)",
-  ]),
-  deployments: [
-    ["0x794a61358D6845594F94dc1DB02A252b5b4814aD", optimism.id],
-    ["0xA238Dd80C259a72e81d7e4664a9801593F98d1c5", base.id],
-  ],
-});
-```
-
-### Fetching Unified ERC20 Balance
-A single function call to fetch a unified balance across all supported chains
-
-```ts
-const unifiedBalance = await getUnifiedERC20Balance({
-    multichainERC20: mcUSDC,  // Your multichain token contract
-    multichainAccount: mcNexus // Your multichain account
-});
-```
-
-### Bridging Plugins
-AbstractJS exposes pre-built plugins for interacting with bridges such as Across or LiFi. Utility functions
-can encode multiple bridging transactions at the same time - when users need to fetch funds from multiple chains.
-
-#### Triggering an Across intent with a built-in plugin
-
-```ts
-import { AcrossPlugin } from "./plugins";
-
-AcrossPlugin.encodeBridgeUserOp({
-  bridgingAmount: parseUnits('10', 6),
-  fromChain: optimism,
-  toChain: base,
-  multichainAccount: mcNexus,
-  multichainToken: mcUSDC
-})
-```
-
-#### Calculating optimal bridging / intent routes
-
-AbstractJS has utilities to help you calculate optimal routes for moving
-funds from one chain to another.
-
-```ts
-buildMultichainBridgingInstructions({
-  amount: parseUnits('10',6),
-  bridgingPlugins: [AcrossPlugin],
-  multichainAccount: mcNexus,
-  toChain: optimism,
-  unifiedBalance: await getUnifiedERC20Balance({
-    multichainAccount: mcNexus,
-    multichainERC20: mcUSDC
-  }),
-  isTxFeePaidWithTokenBeingBridged: false
-})
-```
-
-## Effortless Single-chain and Multi-chain Orchestration
-
-What used to take thousands of lines of code, can be achieved in a dozen lines of code with AbstractJS. Let's
-check an example of a transaction which:
-
-1. Pays for gas with USDC on Base
-2. Moves USDC from multiple chains to Optimsim
-3. Approves AAVE to use USDC on Optimism
-4. Supplies to AAVE on Optimsim
-
-
-```ts
-const sTx = supertransaction({
-  account: mcNexus,
-  feeToken: mcUSDC.on(base),
-  instructions: [
-    await requireERC20Balance({
-      token: mcUSDC,
-      chain: optimism,
-      providedAmount: supplyAmount,
-    }),
-    mcUSDC.write({
-      chain: optimism,
-      functionName: "approve",
-      args: [mcAAVE.deploymentOn(optimism), inTimeBalanceOf(mcUSDC)],
-    }),
-    mcAAVE.write({
-      chain: optimism,
-      functionName: "supply",
-      args: [
-        mcUSDC.addressOn(optimism),
-        inTimeBalanceOf(mcUSDC),
-        zeroAddress,
-        0,
-      ],
-    }),
-  ],
-});
-```
-
-## Multichain Batch Execution for EOAs
-
-AbstractJS comes with built-in support for the [Biconomy Fusion]() module - enabling developers to execute
-batch transactions across multiple chains from user EOA accounts - with a single signature.
-
-The Fusion Module gives regular EOAs the ability to batch execute transactions
-across one or multiple chains, while paying for gas on only one chain!
-
-#### Before Fusion
-❌ Three user signatures <br/>
-❌ User needs to have gas on two chains<br/>
-❌ User needs to wait for the bridge to finish before signing the second tx
-
-#### After Fusion
-✅ One user signature<br/>
-✅ Needs gas on only one chain<br/>
-✅ Set and forget: User signs and all transactions are executed fully
-
-```ts
-const signedFusionQuote = await signFusionQuote(meeClient, {
-  // Transfer required funds from EOA to Companion SCA
-  trigger: mcUSDC.on(optimism.id).transfer([
-    mcNexus.deploymentOn(optimism.id).address, // smart account instance on Base
-    transactionUsedAmount, // amount used by the batch execute
-  ]),
-  // After receiving funds, execute batch transactions
-  // across one or more chains
-  quote: await getQuote(meeClient, {
-    instructions: instructions, // e.g. bridge from Optimism to Base, then supply to Morpho pool
-    feeToken: {
-      // Pay for extra execution in any token
-      address: paymentToken,
-      chainId: paymentChain.id,
-    },
-  }),
-});
-```

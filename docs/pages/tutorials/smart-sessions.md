@@ -1,10 +1,42 @@
 # Sending Transactions with Smart sessions ⚡️
-
-The Smart Sessions Module enables developers to create session keys with specific permissions and access rights on a user's account. This allows users to control what actions an app can perform on their behalf, enforcing these permissions directly on-chain. 
-
 This document provides a step-by-step guide on how to set up and use the Smart Sessions Module with the Nexus client. Below is a breakdown of how to create, install, and use the module's functionality.
 
-## Create the Smart Session
+Smart sessions enable powerful UX improvements for web3 applications by allowing users to delegate specific permissions to session keys. This creates a more seamless user experience while maintaining security through granular controls.
+
+![Smart Session](https://i.imgur.com/gN0Xhm6.png)
+
+
+## Smart Sessions Explained
+
+You can think of smart sessions as giving some signers/keys special granular access to your smart account. They can 
+execute transactions on that account, but they can't execute *any* transaction - only the transactions they were 
+explicitly approved to execute.
+
+These fall into a few broad categories:
+
+| Restriction Type | Description |
+|-----------------|-------------|
+| **How much they can execute** | Set the maximum amount of transactions a key can execute. |
+| **When they can execute** | Set time restrictions which prevent the signers from executing in any times beyond the ones approved by you. |
+| **How much funds they can use** | Set restrictions on how much tokens the signer can use in total or in a single call. |
+| **Which contracts they can call** | Set restrictions saying which *exact* contracts the signer is allowed to call. |
+
+All of these permissions can be combined with eachother to create powerful guardrails for signers - primarily bots or 
+AI agents.
+
+:::tip[Example of a complex session]
+A bot signer is allowed to:
+- Execute 20 transactions
+- Execute between 8AM - 8PM on Weekdays
+- Call only Uniswap and AAVE Contracts
+- Can spend maximum of 5000 USDC
+:::
+
+## Implementing Smart Sessions
+
+In this tutorial we will be implementing a Smart Session which allows another signer to execute 
+only the `incrementCounter` function on a `Counter` contract. This is an example of an `actionPolicy`. 
+You can check the list of available policies [here]()
 
 ::::steps
 
@@ -110,9 +142,17 @@ const sessionData: SessionData = {
 
 const compressedSessionData = stringify(sessionData);
 ```
-It’s crucial to save the compressedSessionData after the user grants permission. This data can include user-specific preferences, or any other session-related information. There are two main options to store this data:
-- Local Storage: Save SessionData as a string on the client side. (Local storage requires data to be stored as a string.)
-- Database Storage: Alternatively, you can save this data in your dapp’s database.
+
+:::tip[Save the Session Data]
+It’s crucial to save the compressedSessionData after the user grants permission.
+
+Most commonly, the data is stored either in the LocalStorage of the browser or to a Database.
+
+- **Local Storage**: Save SessionData as a string on the client side. If the user changes browsers or deletes history you won't be able to retrieve this session data. Preferably use this for shorter-lasting sessions.
+
+- **Database Storage**: Alternatively, you can save this data in your dapp’s database. Use this for longer lasting sessions where you might need to retrieve session data after the user has deleted history or switched browsers/devices.
+:::
+
 
 Use the `stringify()` (exported from `@biconomy/sdk`) function to prepare the session data for storage. It does the same as `JSON.stringify()` but it accommodates bigints.
 
