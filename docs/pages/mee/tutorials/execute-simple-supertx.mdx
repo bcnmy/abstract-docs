@@ -94,8 +94,8 @@ const supertransaction: Supertransaction = {
 #### Executing the Supertransaction 
 The way Supertransaction execution goes is as follows:
 
-1. The user send the Supertransaction to the MEE Node
-2. The MEE nodes gives back a quote - saying for how much it's willing to execute the Supertransaction
+1. The user sends the Supertransaction to the MEE Node
+2. The MEE node gives back a quote - saying for how much it's willing to execute the Supertransaction
 3. The user either confirms or declines the quote
 
 #### Getting a Quote from the MEE Node
@@ -143,7 +143,7 @@ console.log("Link: ", getMeeScanLink(hash))
 ```ts
 // Wait for the MEE Node to commit the transactions
 // within the Supertransaction onchain
-const reciept = await meeClient.waitForSupertransactionReceipt({
+const receipt = await meeClient.waitForSupertransactionReceipt({
   hash
 })
 ```
@@ -177,7 +177,7 @@ const { hash } = await meeClient.executeQuote({
   })
 })
 
-const reciept = await meeClient.waitForSupertransactionReceipt({
+const receipt = await meeClient.waitForSupertransactionReceipt({
   hash
 })
 ```

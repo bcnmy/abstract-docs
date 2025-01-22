@@ -276,7 +276,7 @@ take fees for executing these cross-chain transfers.
 
 :::tip[Proper Solution - Composability Stack]
 We are developing the Composability Stack - which is a module developers
-can install on accounts to dynamically inject the _exact_ acmount of funds
+can install on accounts to dynamically inject the _exact_ amount of funds
 which were received from bridging and/or swapping.
 
 The Composability stack will be in production together with the production 
@@ -316,7 +316,7 @@ const approveSupply: Instruction[] = [
       mcUSDC.addressOn(optimism.id), // asset to supply
       supplyAmount - slippageBuffer, // how much to supply
       zeroAddress, // on behalf of - zeroaddress if supplying for oneself
-      0 // refferal code
+      0 // referral code
     ],
     gasLimit: 100_000n
   })
@@ -367,7 +367,7 @@ console.log(
 #### Wait for the Supertransaction to Execute
 
 ```ts
-const reciept = await meeClient.waitForSupertransactionReceipt({
+const receipt = await meeClient.waitForSupertransactionReceipt({
   hash
 })
 ```

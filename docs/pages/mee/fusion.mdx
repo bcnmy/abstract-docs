@@ -74,15 +74,15 @@ const supply = mcAaveV3Pool.on(optimism.id).supply({
   args: [
     mcUSDC.addressOn(optimism.id), // asset to supply
     amountToSupply, // amount being supplied,
-    mcNexus.signer.address, // benficiary - our EOA address
-    0 // refferal code
+    mcNexus.signer.address, // beneficiary - our EOA address
+    0 // referral code
   ],
   gasLimit: 150_000n
 })
 ```
 
 ### Encode a Trigger Transaction
-The trigger transaction is a transaciton which will be posted onchain and
+The trigger transaction is a transaction which will be posted onchain and
 which will trigger the full execution of the Fusion transaction. In most
 cases, including this tutorial, this will be a transfer of ERC20 tokens 
 to a Smart Contract Account address:
@@ -152,7 +152,7 @@ instructions which need to be executed on the Companion account to the The Bicon
 
 After the `ERC20` token arrives to the Companion account, The MEE Node then calls the `execute` function
 on the Companion smart account to execute additional instructions. The Companion account will not allow any 
-transactions to be executed which were not _explicity_ contained in the hash which was appended after the `callData`
+transactions to be executed which were not _explicitly_ contained in the hash which was appended after the `callData`
 
 In order to be able to execute those transactions, the `MEE Node` provides the full signed transaction 
 (called the trigger transaction) as the signature to the Companion smart account.

@@ -19,7 +19,7 @@ A user has USDC on Optimism and uses that to pay for the execution of a transact
 
 ## Guide
 
-This guide will demonstrate how to use USDC on Optimsim to pay for transaction execution on Arbitrum
+This guide will demonstrate how to use USDC on Optimism to pay for transaction execution on Arbitrum
 
 ::::steps
 #### Install AbstractJS and viem
@@ -29,7 +29,7 @@ npm install @biconomy/abstractjs viem @rhinestone/module-sdk
 ```
 
 #### Initialize the infrastructure
-In order to use cross-chain gas features, users need to intialize the `MultichainSmartAccount`
+In order to use cross-chain gas features, users need to initialize the `MultichainSmartAccount`
 and connect to the Biconomy [MEE Node](/explained/mee).
 
 To learn more about the setup, read our [Building a Chain Abstracted App](/mee/tutorials/build-chainabstracted-app) guide.
@@ -52,7 +52,7 @@ Cross-chain gas functionalities in `AbstractJS` are achieved by encoding and exe
 Supertransactions 
 
 :::tip[Exported Common Tokens]
-Finding token addresses accross many chains can be a pain. This is why `AbstractJS` 
+Finding token addresses across many chains can be a pain. This is why `AbstractJS` 
 ships with a library of 100+ common ERC20 token contract constants. Import them 
 and use in your app:
 
@@ -74,7 +74,7 @@ const crossChainGasSupertx: Supertransaction = {
     // Transaction on Arbitrum
     { calls: [emptyCall], chainId: arbitrum.id }
   ],
-  // Pay for gas with USDC on Optimsim
+  // Pay for gas with USDC on Optimism
   feeToken: toFeeToken({
     chainId: optimism.id,
     token: mcUSDC
@@ -116,7 +116,7 @@ const { hash } = await executeQuote(meeClient, { quote })
 
 #### Wait for the Execution to Complete
 
-Track the execution status of the Supertranaction
+Track the execution status of the Supertransaction
 
 ```ts [Wait for Receipt]
 const receipt = 

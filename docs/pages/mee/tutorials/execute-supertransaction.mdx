@@ -90,7 +90,7 @@ const meeClient = createMeeClient({
 ```ts
 const simpleSupertx: SuperTransaction = {
   instructions: [
-    // Send 0 USDC on Optimsim
+    // Send 0 USDC on Optimism
     mcUSDC.on(optimism.id).transfer({
       args: [zeroAddress, 0n],
       gasLimit: 100_000n,
@@ -101,7 +101,7 @@ const simpleSupertx: SuperTransaction = {
       gasLimit: 100_000n,
     }),
   ],
-  // Pay for gas with USDC on Optimsim
+  // Pay for gas with USDC on Optimism
   feeToken: toFeeTokenInfo({
     token: mcUSDC,
     chainId: optimism.id,
@@ -156,7 +156,7 @@ const { hash } = await executeSignedQuote(meeClient, {
 });
 ```
 
-#### Wait for the Execution Reciept
+#### Wait for the Execution receipt
 
 You can track the Supertransaction execution in the MEE Explorer:
 
@@ -170,7 +170,7 @@ console.log(
 To wait for the Supertransaction to complete:
 
 ```ts
-const reciept = await waitForSupertransactionReceipt(meeClient, {
+const receipt = await waitForSupertransactionReceipt(meeClient, {
   hash: hash,
 });
 ```

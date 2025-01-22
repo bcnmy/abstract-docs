@@ -129,10 +129,10 @@ const supertx: Supertransaction = {
       args: [
         usdt.addressOn(optimism), // Supply USDT
 
-        // Dyanmically inject the exact amount of USDT
+        // Dynamically inject the exact amount of USDT
         // available at the time the of the execution of 
         // the supply function
-        inTimeBalanceOf(usdt.addressOn(optimsim)) 
+        inTimeBalanceOf(usdt.addressOn(Optimism)) 
       ]
     })
   ]
@@ -159,7 +159,7 @@ const supertx: Supertransaction = {
         usdt.addressOn(arbitrum), // to USDT on Arbitrum 
 
         // Dynamically inject the amount of USDC
-        // which arrived from Optimsim, compensating
+        // which arrived from Optimism, compensating
         // for any slippage a bridge might have had
         inTimeBalanceOf(usdc.addressOn(arbitrum))
       ]
