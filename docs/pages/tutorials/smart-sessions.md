@@ -20,6 +20,7 @@ These fall into a few broad categories:
 | **When they can execute** | Set time restrictions which prevent the signers from executing in any times beyond the ones approved by you. |
 | **How much funds they can use** | Set restrictions on how much tokens the signer can use in total or in a single call. |
 | **Which contracts they can call** | Set restrictions saying which *exact* contracts the signer is allowed to call. |
+| **What functions they can call** | Set a restriction on which *exact* functions on the contract the signer is allowed to call |
 
 All of these permissions can be combined with eachother to create powerful guardrails for signers - primarily bots or 
 AI agents.
@@ -28,7 +29,8 @@ AI agents.
 A bot signer is allowed to:
 - Execute 20 transactions
 - Execute between 8AM - 8PM on Weekdays
-- Call only Uniswap and AAVE Contracts
+- Call only AAVE Contracts
+- Call only `supply` and `withdraw` functions on the AAVE Contracts
 - Can spend maximum of 5000 USDC
 :::
 

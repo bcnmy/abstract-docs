@@ -389,6 +389,10 @@ export default defineConfig({
       link: "/supportedNetworks",
     },
     {
+      text: "Pricing",
+      link: "https://biconomy.notion.site/Biconomy-Product-Pricing-6f4537a645af4b8985f4d43f2b045865"
+    },
+    {
       text: "AbstractJS SDK",
       items: [
         { text: "Overview", link: "/abstractjs" },
