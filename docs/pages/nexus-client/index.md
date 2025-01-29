@@ -6,7 +6,7 @@ The Nexus Client is an interface for interacting with Nexus smart accounts. It a
 
 ```typescript 
 import { privateKeyToAccount } from "viem/accounts";
-import { createNexusClient } from "@biconomy/abstractjs";
+import { createSmartAccountClient } from "@biconomy/abstractjs";
 import { baseSepolia } from "viem/chains"; 
 import { http } from "viem"; 
 
@@ -14,7 +14,7 @@ const privateKey = "PRIVATE_KEY";
 const account = privateKeyToAccount(`0x${privateKey}`)
 const bundlerUrl = "https://bundler.biconomy.io/api/v3/84532/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44"; 
 
-const nexusClient = await createNexusClient({
+const nexusClient = await createSmartAccountClient({
   signer: account, 
   chain: baseSepolia,
   transport: http(), 
@@ -57,13 +57,13 @@ This parameter specifies the address of the smart account factory contract, whic
 import { baseSepolia } from "viem/chains"; 
 import { http } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { createNexusClient } from "@biconomy/abstractjs"; // [!code focus] 
+import { createSmartAccountClient } from "@biconomy/abstractjs"; // [!code focus] 
 
 const privateKey = "PRIVATE_KEY";
 const account = privateKeyToAccount(`0x${privateKey}`);
 const bundlerUrl = "https://bundler.biconomy.io/api/v3/84532/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44";
 
-const nexusClient = await createNexusClient({
+const nexusClient = await createSmartAccountClient({
     signer: account,
     chain: baseSepolia,
     transport: http(),
@@ -90,13 +90,13 @@ The index of the smart account being created. By default, the first smart accoun
 import { baseSepolia } from "viem/chains"; 
 import { http } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { createNexusClient } from "@biconomy/abstractjs"; // [!code focus] 
+import { createSmartAccountClient } from "@biconomy/abstractjs"; // [!code focus] 
 
 const privateKey = "PRIVATE_KEY";
 const account = privateKeyToAccount(`0x${privateKey}`);
 const bundlerUrl = "https://bundler.biconomy.io/api/v3/84532/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44";
 
-const nexusClient = await createNexusClient({
+const nexusClient = await createSmartAccountClient({
     signer: account,
     chain: baseSepolia,
     transport: http(),
@@ -118,14 +118,14 @@ The optional paymaster responsible for sponsoring transaction fees on behalf of 
 import { baseSepolia } from "viem/chains"; 
 import { http } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { createNexusClient, createBicoPaymasterClient } from "@biconomy/abstractjs"; // [!code focus] 
+import { createSmartAccountClient, createBicoPaymasterClient } from "@biconomy/abstractjs"; // [!code focus] 
 
 const privateKey = "PRIVATE_KEY";
 const account = privateKeyToAccount(`0x${privateKey}`);
 const bundlerUrl = "https://bundler.biconomy.io/api/v3/84532/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44";
 
 const paymasterUrl = "";  // [!code focus] 
-const nexusClient = await createNexusClient({
+const nexusClient = await createSmartAccountClient({
     signer: account,
     chain: baseSepolia,
     transport: http(),
@@ -186,7 +186,7 @@ For example, to modify the maxFeePerGas and maxPriorityFeePerGas, you can obtain
 ```typescript  [example.ts]
 import { baseSepolia } from "viem/chains"; 
 import { http } from "viem";
-import { createNexusClient } from "@biconomy/abstractjs"; // [!code focus] 
+import { createSmartAccountClient } from "@biconomy/abstractjs"; // [!code focus] 
 import { publicClient } from "./publicClient";
 import { safeMultiplier } from "./utils";
 
@@ -194,7 +194,7 @@ const privateKey = "PRIVATE_KEY";
 const account = privateKeyToAccount(`0x${privateKey}`);
 const bundlerUrl = "https://bundler.biconomy.io/api/v3/84532/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44";
 
-const nexusClient = await createNexusClient({
+const nexusClient = await createSmartAccountClient({
     signer: account,
     chain: baseSepolia,
     transport: http(),

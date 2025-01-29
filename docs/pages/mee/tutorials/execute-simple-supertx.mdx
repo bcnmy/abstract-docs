@@ -86,7 +86,7 @@ const supertransaction: Supertransaction = {
   ],
   feeToken: toFeeToken({
     chainId: optimism.id,
-    token: mcUSDC
+    mcToken: mcUSDC
   })
 }
 ```
@@ -172,7 +172,7 @@ const { hash } = await meeClient.executeQuote({
     ],
     feeToken: toFeeToken({
       chainId: optimism.id,
-      token: mcUSDC
+      mcToken: mcUSDC
     })
   })
 })

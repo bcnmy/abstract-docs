@@ -128,7 +128,7 @@ const steps = await requireErc20Balance({
   account: mcNexus,
   amount: uniBalance,
   chain: optimism,
-  token: mcUSDC
+  mcToken: mcUSDC
 })
 ```
 
@@ -167,7 +167,7 @@ const superTx: SuperTransaction = {
   ],
   feeToken: toFeeToken({
     chainId: optimism.id,
-    token: mcUSDC
+    mcToken: mcUSDC
   })
 }
 ```

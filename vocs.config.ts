@@ -638,13 +638,67 @@ export default defineConfig({
       text: "SDK Reference",
       items: [
         {
-          text: "Nexus Client",
+          text: "Mee Client",
+          link: "/mee-client",
           collapsed: false,
+          items: [
+            {
+              text: "Multichain Account",
+              link: "/mee-client/account",
+              collapsed: false,
+              items: [
+                {
+                  text: "build",
+                  link: "/mee-client/account/methods/build",
+                },
+                {
+                  text: "deploymentOn",
+                  link: "/mee-client/account/methods/deploymentOn",
+                },
+                {
+                  text: "addressOn",
+                  link: "/mee-client/account/methods/addressOn",
+                },
+              ],
+            },
+            {
+              text: "Methods",
+              link: "/mee-client/methods",
+              collapsed: false,
+              items: [
+                {
+                  text: "getQuote",
+                  link: "/mee-client/methods/getQuote",
+                },
+                {
+                  text: "executeQuote",
+                  link: "/mee-client/methods/executeQuote",
+                },
+                {
+                  text: "waitForSuperTransactionReceipt",
+                  link: "/mee-client/methods/waitForSuperTransactionReceipt",
+                },
+                {
+                  text: "signFusionQuote",
+                  link: "/mee-client/methods/signFusionQuote",
+                },
+                {
+                  text: "executeSignedFusionQuote",
+                  link: "/mee-client/methods/executeSignedFusionQuote",
+                },
+              ],
+            },
+          ],
+        },
+        {
+          text: "Nexus Client",
+          collapsed: true,
           link: "/nexus-client",
           items: [
             {
               text: "Methods",
               link: "/nexus-client/methods",
+              collapsed: false,
               items: [
                 {
                   text: "sendUserOperation",

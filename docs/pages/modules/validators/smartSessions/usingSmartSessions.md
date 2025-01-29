@@ -46,7 +46,7 @@ const receipt = await sessionClient.waitForUserOperationReceipt({ hash: userOpHa
 
 ```typescript  [nexusClient.ts] filename="nexusClient.ts"
 import { privateKeyToAccount } from "viem/accounts";
-import { createNexusClient } from "@biconomy/abstractjs";
+import { createSmartAccountClient } from "@biconomy/abstractjs";
 import { baseSepolia } from "viem/chains"; 
 import { http } from "viem"; 
 
@@ -54,7 +54,7 @@ const privateKey = "PRIVATE_KEY";
 const account = privateKeyToAccount(`0x${privateKey}`)
 const bundlerUrl = "https://bundler.biconomy.io/api/v3/84532/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44"; 
 
-export const nexusClient = await createNexusClient({ 
+export const nexusClient = await createSmartAccountClient({ 
     signer: account, 
     chain: baseSepolia,
     transport: http(), 
