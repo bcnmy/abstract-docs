@@ -114,7 +114,7 @@ In order to execute transactions through the Biconomy [MEE Node](/explained/mee)
 to it. `AbstractJS` makes this easy with a helper function:
 
 ```ts [Connect to MEE Node]
-const meeClient = createMeeClient({
+const meeClient = await createMeeClient({
   account: mcNexus
 })
 ```

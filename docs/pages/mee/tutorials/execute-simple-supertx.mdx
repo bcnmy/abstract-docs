@@ -44,7 +44,7 @@ const mcNexus = await toMultichainNexusAccount({
 })
 
 // Create the connection to the MEE
-const meeClient = createMeeClient({
+const meeClient = await createMeeClient({
   account: mcNexus
 })
 ```
@@ -154,7 +154,7 @@ will show the concise implementation of this exact same
 execution.
 
 ```ts [Concise Implementation]
-const meeClient = createMeeClient({
+const meeClient = await createMeeClient({
   account: await toMultichainNexusAccount({
     chains: [optimism, base, polygon, arbitrum],
     signer: eoaSigner

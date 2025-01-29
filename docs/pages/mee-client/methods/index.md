@@ -30,7 +30,7 @@ The base HTTP client is extended with the following MEE actions:
 ```typescript
 import { createMeeClient } from '@biconomy/abstract'
 
-const meeClient = createMeeClient({
+const meeClient = await createMeeClient({
   account: multiChainAccount,
   url: "https://custom-mee-node.example.com",
   pollingInterval: 2000

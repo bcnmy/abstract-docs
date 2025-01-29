@@ -18,7 +18,7 @@ const mcNexus = await toMultichainNexusAccount({
   signer: account
 });
 
-const meeClient = createMeeClient({ account: mcNexus });
+const meeClient = await createMeeClient({ account: mcNexus });
 ```
 
 ## Parameters

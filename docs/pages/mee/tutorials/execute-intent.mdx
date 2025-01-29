@@ -87,7 +87,7 @@ const mcNexus = await toMultichainNexusAccount({
 })
 
 // Connect to the MEE Node
-const meeClient = createMeeClient({
+const meeClient = await createMeeClient({
   account: mcNexus
 })
 ```
