@@ -46,10 +46,12 @@ Throws an error if the account is not deployed on any required chain.
 ```typescript
 type Instruction = {
   chainId: number
-  target: Address
-  value: bigint
-  data: Hex
-  gasLimit: bigint
+  calls: {
+    to: Address
+    value?: bigint
+    data?: Hex
+    gasLimit?: bigint // This is optional and defaults to 500_000n. Any overspending will be refunded.
+  }[]
 }
 
 type GetQuoteParams = {

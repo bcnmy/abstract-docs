@@ -60,8 +60,7 @@ const approve = mcUSDC.on(optimism.id).approve({
   args: [
     mcAaveV3Pool.addressOn(optimism.id), // approve to aave v3 pool contract
     amountToSupply // amount approved
-  ],
-  gasLimit: 150_000n
+  ]
 }),
 ```
 
@@ -76,8 +75,7 @@ const supply = mcAaveV3Pool.on(optimism.id).supply({
     amountToSupply, // amount being supplied,
     mcNexus.signer.address, // beneficiary - our EOA address
     0 // referral code
-  ],
-  gasLimit: 150_000n
+  ]
 })
 ```
 

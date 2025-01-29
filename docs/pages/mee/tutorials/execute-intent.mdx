@@ -148,8 +148,7 @@ const supplyToAaveOp: Instruction[] = [
     args: [
       mcUSDC.addressOn(optimism.id),
       parseUnits('99', 6)
-    ],
-    gasLimit: 100_000n
+    ]
   }),
   // Call `Supply` on AAVE
   mcAAVE.on(optimism.id).supply({
@@ -158,8 +157,7 @@ const supplyToAaveOp: Instruction[] = [
       parseUnits('99', 6),
       zeroAddress,
       0
-    ],
-    gasLimit: 100_000n
+    ]
   })
 ]
 ```

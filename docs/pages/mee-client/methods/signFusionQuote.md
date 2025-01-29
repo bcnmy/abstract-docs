@@ -35,7 +35,6 @@ const quote = await meeClient.getQuote({
   instructions: [{
     calls: [{ 
       to: "0x...", 
-      gasLimit: 50000n,
       value: 0n 
     }],
     chainId: targetChain.id

@@ -92,13 +92,11 @@ const simpleSupertx: SuperTransaction = {
   instructions: [
     // Send 0 USDC on Optimism
     mcUSDC.on(optimism.id).transfer({
-      args: [zeroAddress, 0n],
-      gasLimit: 100_000n,
+      args: [zeroAddress, 0n]
     }),
     // Send 0 USDC on Base
     mcUSDC.on(optimism.id).transfer({
       args: [zeroAddress, 0n],
-      gasLimit: 100_000n,
     }),
   ],
   // Pay for gas with USDC on Optimism
