@@ -114,7 +114,7 @@ In order to execute transactions through the Biconomy [MEE Node](/explained/mee)
 to it. `AbstractJS` makes this easy with a helper function:
 
 ```ts [Connect to MEE Node]
-const meeClient = createMeeClient({
+const meeClient = await createMeeClient({
   account: mcNexus
 })
 ```
@@ -307,8 +307,7 @@ const approveSupply: Instruction[] = [
     args: [
       mcAaveV3Pool.addressOn(optimism.id),
       supplyAmount
-    ],
-    gasLimit: 100_000n
+    ]
   }),
   // Supply tx
   mcAaveV3Pool.on(optimism.id).supply({
@@ -317,8 +316,7 @@ const approveSupply: Instruction[] = [
       supplyAmount - slippageBuffer, // how much to supply
       zeroAddress, // on behalf of - zeroaddress if supplying for oneself
       0 // referral code
-    ],
-    gasLimit: 100_000n
+    ]
   })
 ]
 ```
@@ -349,7 +347,7 @@ const { hash } = await meeClient.execute({
   ],
   feeToken: toFeeToken({
     chainId: payingGasOnChain,
-    token: mcUSDC
+    mcToken: mcUSDC
   })
 })
 ```
@@ -413,8 +411,7 @@ const withdrawalInstructions = activePositions.flatMap(position => ([
     args: [
       mcAaveV3Pool.addressOn(position.chainId),
       position.balance
-    ],
-    gasLimit: 100_000n
+    ]
   }),
   // Withdraw tx
   mcAaveV3Pool.on(position.chainId).withdraw({
@@ -422,8 +419,7 @@ const withdrawalInstructions = activePositions.flatMap(position => ([
       mcUSDC.addressOn(position.chainId),
       position.balance,
       mcNexus.deploymentOn(position.chainId).address
-    ],
-    gasLimit: 200_000n
+    ]
   })
 ]))
 ```
@@ -452,7 +448,7 @@ const { hash } = await meeClient.execute({
   instructions: withdrawalInstructions,
   feeToken: toFeeToken({
     chainId: payingGasOnChain,
-    token: mcUSDC
+    mcToken: mcUSDC
   })
 })
 ```

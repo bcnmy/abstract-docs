@@ -35,7 +35,7 @@ NEXT_PUBLIC_PAYMASTER_URL=your_paymaster_url
 #### Create Nexus Client
 
 ```typescript "
-import { createNexusClient, createBicoPaymasterClient } from "@biconomy/abstractjs";
+import { createSmartAccountClient, createBicoPaymasterClient } from "@biconomy/abstractjs";
 import { baseSepolia } from "wagmi/chains";
 import { http, useAccount, useWalletClient } from "wagmi";
 
@@ -44,7 +44,7 @@ const { data: walletClient } = useWalletClient({ account: account.address });
 
 async function initNexusClient() {
   if (walletClient) {
-    const nexusClient = await createNexusClient({
+    const nexusClient = await createSmartAccountClient({
       signer: walletClient,
       chain: baseSepolia, // or your preferred chain
       paymaster: createBicoPaymasterClient({
@@ -148,7 +148,7 @@ async function installPasskeyValidator(
 
 ```typescript
 import {
-  createNexusClient,
+  createSmartAccountClient,
   createBicoPaymasterClient,
   type Module,
   type NexusClient,
@@ -169,7 +169,7 @@ async function sendTransactionWithPasskey(
   // Extend NexusClient with passkey validator
   nexusClient.extend(moduleActivator(passkeyValidator));
   // Send transaction
-  const hash = await nexusClient.sendTransaction({
+  const hash = await nexusClient.sendUserOperation({
     calls: [
       {
         to: recipientAddress,
@@ -179,7 +179,7 @@ async function sendTransactionWithPasskey(
   });
 
   // Wait for confirmation
-  const receipt = await nexusClient.waitForTransactionReceipt({ hash });
+  const receipt = await nexusClient.waitForUserOperationReceipt({ hash });
   return receipt;
 }
 ```
@@ -190,7 +190,7 @@ async function sendTransactionWithPasskey(
 import {
   type NexusClient,
   type Module,
-  createNexusClient,
+  createSmartAccountClient,
   moduleActivator,
 } from "@biconomy/abstractjs";
 

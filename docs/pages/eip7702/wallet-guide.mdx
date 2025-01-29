@@ -120,7 +120,7 @@ the beginning of this tutorial.
 #### Initialize the Modular Execution Environment
 
 ```ts
-const meeClient = createMeeClient({
+const meeClient = await createMeeClient({
   nodeUrl: 'https://mee-node.biconomy.io'
 })
 ```
@@ -145,7 +145,7 @@ const quote = await getQuote(meeClient, {
   instructions: [
     {
       calls: [
-        { to: zeroAddress, gasLimit: 100_000n, value: 0n }
+        { to: zeroAddress, value: 0n }
       ],
       chainId: optimism.id
     }

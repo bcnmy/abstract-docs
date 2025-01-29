@@ -44,7 +44,7 @@ const mcNexus = await toMultichainNexusAccount({
 })
 
 // Create the connection to the MEE
-const meeClient = createMeeClient({
+const meeClient = await createMeeClient({
   account: mcNexus
 })
 ```
@@ -56,8 +56,7 @@ transaction which simply send 0ETH to `0x000000...`
 ```ts [Dummy Transaction]
 const emptyTx: AbstractCall = {
   to: zeroAddress,
-  value: 0n,
-  gasLimit: 50_000n
+  value: 0n
 }
 ```
 
@@ -86,7 +85,7 @@ const supertransaction: Supertransaction = {
   ],
   feeToken: toFeeToken({
     chainId: optimism.id,
-    token: mcUSDC
+    mcToken: mcUSDC
   })
 }
 ```
@@ -155,7 +154,7 @@ will show the concise implementation of this exact same
 execution.
 
 ```ts [Concise Implementation]
-const meeClient = createMeeClient({
+const meeClient = await createMeeClient({
   account: await toMultichainNexusAccount({
     chains: [optimism, base, polygon, arbitrum],
     signer: eoaSigner
@@ -167,12 +166,12 @@ const { hash } = await meeClient.executeQuote({
     instructions: [
       {
         chainId: optimism.id,
-        calls: [{ to: zeroAddress, value: 0n, gasLimit: 50_000n }]
+        calls: [{ to: zeroAddress, value: 0n }]
       }
     ],
     feeToken: toFeeToken({
       chainId: optimism.id,
-      token: mcUSDC
+      mcToken: mcUSDC
     })
   })
 })

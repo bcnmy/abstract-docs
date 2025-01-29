@@ -11,7 +11,7 @@ import { nexusClient } from "./nexusClient"
 import { contractABI } from "./abi"
 import { parseEther } from "viem"; 
 
-const hash = await nexusClient.sendTransaction({
+const hash = await nexusClient.sendUserOperation({
   calls: [ 
     { 
       to: '0xf5715961C550FC497832063a98eA34673ad7C816', 

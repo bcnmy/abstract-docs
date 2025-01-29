@@ -13,7 +13,7 @@ import { nexusClient } from "./nexusClient"
 import { contractABI } from "./abi"
 import { parseEther } from "viem"; 
 
-const hash = await nexusClient.sendTransaction({ // [!code focus:13]
+const hash = await nexusClient.sendUserOperation({ // [!code focus:13]
   calls: [ 
     { 
       to: '0xf5715961C550FC497832063a98eA34673ad7C816', 
@@ -30,7 +30,7 @@ const hash = await nexusClient.sendTransaction({ // [!code focus:13]
 
 ```typescript  [nexusClient.ts] filename="nexusClient.ts"
 import { privateKeyToAccount } from "viem/accounts";
-import { createNexusClient } from "@biconomy/abstractjs";
+import { createSmartAccountClient } from "@biconomy/abstractjs";
 import { baseSepolia } from "viem/chains"; 
 import { http } from "viem"; 
 
@@ -38,7 +38,7 @@ const privateKey = "PRIVATE_KEY";
 const account = privateKeyToAccount(`0x${privateKey}`)
 const bundlerUrl = "https://bundler.biconomy.io/api/v3/84532/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44"; 
 
-export const nexusClient = await createNexusClient({ 
+export const nexusClient = await createSmartAccountClient({ 
     signer: account, 
     chain: baseSepolia,
     transport: http(), 
@@ -87,7 +87,7 @@ const receipt = await nexusClient.waitForUserOperationReceipt({  // [!code focus
 
 ```typescript  [nexusClient.ts] filename="nexusClient.ts"
 import { privateKeyToAccount } from "viem/accounts";
-import { createNexusClient } from "@biconomy/abstractjs";
+import { createSmartAccountClient } from "@biconomy/abstractjs";
 import { baseSepolia } from "viem/chains"; 
 import { http } from "viem"; 
 
@@ -95,7 +95,7 @@ const privateKey = "PRIVATE_KEY";
 const account = privateKeyToAccount(`0x${privateKey}`)
 const bundlerUrl = "https://bundler.biconomy.io/api/v3/84532/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44"; 
 
-export const nexusClient = await createNexusClient({ 
+export const nexusClient = await createSmartAccountClient({ 
     signer: account, 
     chain: baseSepolia,
     transport: http(), 
@@ -143,7 +143,7 @@ const gas = await nexusClient.estimateUserOperationGas({ // [!code focus:12]
 
 ```typescript  [nexusClient.ts] filename="nexusClient.ts"
 import { privateKeyToAccount } from "viem/accounts";
-import { createNexusClient } from "@biconomy/abstractjs";
+import { createSmartAccountClient } from "@biconomy/abstractjs";
 import { baseSepolia } from "viem/chains"; 
 import { http } from "viem"; 
 
@@ -151,7 +151,7 @@ const privateKey = "PRIVATE_KEY";
 const account = privateKeyToAccount(`0x${privateKey}`)
 const bundlerUrl = "https://bundler.biconomy.io/api/v3/84532/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44"; 
 
-export const nexusClient = await createNexusClient({ 
+export const nexusClient = await createSmartAccountClient({ 
     signer: account, 
     chain: baseSepolia,
     transport: http(), 
@@ -200,7 +200,7 @@ const receipt = await nexusClient.getUserOperation({ // [!code focus:3]
 
 ```typescript  [nexusClient.ts] filename="nexusClient.ts"
 import { privateKeyToAccount } from "viem/accounts";
-import { createNexusClient } from "@biconomy/abstractjs";
+import { createSmartAccountClient } from "@biconomy/abstractjs";
 import { baseSepolia } from "viem/chains"; 
 import { http } from "viem"; 
 
@@ -208,7 +208,7 @@ const privateKey = "PRIVATE_KEY";
 const account = privateKeyToAccount(`0x${privateKey}`)
 const bundlerUrl = "https://bundler.biconomy.io/api/v3/84532/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44"; 
 
-export const nexusClient = await createNexusClient({ 
+export const nexusClient = await createSmartAccountClient({ 
     signer: account, 
     chain: baseSepolia,
     transport: http(), 
@@ -259,7 +259,7 @@ const receipt = await nexusClient.getUserOperationReceipt({  // [!code focus:3]
 
 ```typescript  [nexusClient.ts] filename="nexusClient.ts"
 import { privateKeyToAccount } from "viem/accounts";
-import { createNexusClient } from "@biconomy/abstractjs";
+import { createSmartAccountClient } from "@biconomy/abstractjs";
 import { baseSepolia } from "viem/chains"; 
 import { http } from "viem"; 
 
@@ -267,7 +267,7 @@ const privateKey = "PRIVATE_KEY";
 const account = privateKeyToAccount(`0x${privateKey}`)
 const bundlerUrl = "https://bundler.biconomy.io/api/v3/84532/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44"; 
 
-export const nexusClient = await createNexusClient({ 
+export const nexusClient = await createSmartAccountClient({ 
     signer: account, 
     chain: baseSepolia,
     transport: http(), 
@@ -299,7 +299,7 @@ const entrypointAddresses = await nexusClient.getSupportedEntryPoints() // [!cod
 
 ```typescript  [nexusClient.ts] filename="nexusClient.ts"
 import { privateKeyToAccount } from "viem/accounts";
-import { createNexusClient } from "@biconomy/abstractjs";
+import { createSmartAccountClient } from "@biconomy/abstractjs";
 import { baseSepolia } from "viem/chains"; 
 import { http } from "viem"; 
 
@@ -307,7 +307,7 @@ const privateKey = "PRIVATE_KEY";
 const account = privateKeyToAccount(`0x${privateKey}`)
 const bundlerUrl = "https://bundler.biconomy.io/api/v3/84532/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44"; 
 
-export const nexusClient = await createNexusClient({ 
+export const nexusClient = await createSmartAccountClient({ 
     signer: account, 
     chain: baseSepolia,
     transport: http(), 
@@ -339,7 +339,7 @@ const chainId = await nexusClient.getChainId() // [!code focus:1]
 
 ```typescript  [nexusClient.ts] filename="nexusClient.ts"
 import { privateKeyToAccount } from "viem/accounts";
-import { createNexusClient } from "@biconomy/abstractjs";
+import { createSmartAccountClient } from "@biconomy/abstractjs";
 import { baseSepolia } from "viem/chains"; 
 import { http } from "viem"; 
 
@@ -347,7 +347,7 @@ const privateKey = "PRIVATE_KEY";
 const account = privateKeyToAccount(`0x${privateKey}`)
 const bundlerUrl = "https://bundler.biconomy.io/api/v3/84532/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44"; 
 
-export const nexusClient = await createNexusClient({ 
+export const nexusClient = await createSmartAccountClient({ 
     signer: account, 
     chain: baseSepolia,
     transport: http(), 
