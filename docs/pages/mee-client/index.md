@@ -1,6 +1,6 @@
 # MEE Client
 
-The MEE (Multi-chain Execution Environment) Client is an interface for executing transactions across multiple chains. It enables seamless cross-chain operations by handling quote generation, signing, and execution of transactions across different blockchain networks.
+The MEE (Modular Execution Environment) Client is an interface for executing transactions across multiple chains. It enables seamless cross-chain operations by handling quote generation, signing, and execution of transactions across different blockchain networks.
 
 ## Usage
 

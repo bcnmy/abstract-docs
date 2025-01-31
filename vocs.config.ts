@@ -415,11 +415,10 @@ export default defineConfig({
 		},
 		{
 			text: "Quickstart Guides",
-			collapsed: true,
 			items: [
 				{
-					text: "Modular Execution Environment",
-					collapsed: false,
+					text: "Cross-Chain TXs & Intents",
+					collapsed: true,
 					items: [
 						{
 							text: "Execute a Simple Supertransaction",
@@ -440,7 +439,7 @@ export default defineConfig({
 					],
 				},
 				{
-					text: "Account Abstraction",
+					text: "Batch Execution & Gasless TXs",
 					collapsed: true,
 					items: [
 						{ text: "Execute a Simple UserOp", link: "/quickstart" },
@@ -459,7 +458,7 @@ export default defineConfig({
 					],
 				},
 				{
-					text: "Account Modules",
+					text: "Account Modules / Plugins",
 					collapsed: true,
 					items: [
 						{
