@@ -27,6 +27,7 @@ Click the table headers to view the real-time list of deployed contracts on [con
 | Sonic Testnet               | ⏳      | ⏳                   | ⏳              | ✅                   | ❌              | ✅              |
 | Blast Mainnet               | ⏳      | ⏳                   | ⏳              | ✅                   | ✅              | ✅              |
 | Blast Sepolia               | ⏳      | ⏳                   | ⏳              | ✅                   | ❌              | ✅              |
+| IOTA Mainnet                | ⏳      | ⏳                   | ⏳              | ✅                   | ✅              | ✅              |
 
 *PM = Paymaster
 
