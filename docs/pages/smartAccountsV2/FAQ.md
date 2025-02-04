@@ -76,7 +76,7 @@ Here is a tutorial on how to send parallel user ops with the Biconomy SDK: https
 
 **Is the bundler URL the same for all chains?**
     
-Yes, for testnets same [bundler URL](/dashboard#bundler-url) can be used, just change the chainId. For mainnet you can reach out to [us](https://t.me/rhicsanchez).
+Yes, for testnets same [bundler URL](/dashboard#bundler-url) can be used, just change the chainId. For mainnet you can reach out to [us](https://t.me/pitonivan).
     
 **How can I sign the userOp manually?**
     

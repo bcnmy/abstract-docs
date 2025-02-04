@@ -35,4 +35,4 @@ Follow the end to end integration guides for various use cases:
 - [Sponsored mode](/smartAccountsV2/tutorials/apiIntegration/paymasterSponsored)
 - [ERC20 mode](/smartAccountsV2/tutorials/apiIntegration/paymasterERC20)
 
-For additional support, reach out to us on [Telegram](https://t.me/himanshugarg06) or [discord](https://discord.com/invite/biconomy).
+For additional support, reach out to us on [Telegram](https://t.me/pitonivan) or [discord](https://discord.com/invite/biconomy).
