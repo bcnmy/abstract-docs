@@ -52,21 +52,21 @@ For instance, implementing Fusion features is as simple as creating an MEE clien
 ```typescript
 
 const { hash } = await meeClient.executeFusionQuote({
-  fusionQuote: {
+  fusionQuote: await meeClient.getFusionQuote({
     trigger: {
       chainId: optimism.id,
       tokenAddress: mcUSDC.addressOn(optimism.id),
       amount: amountToSupply
-      },
-      instructions: [
-        mcNexus.build({ ... }),
-        mcNexus.build({ ... }),
-      ],
+    },
+    instructions: [
+      mcNexus.build({ ... }),
+      mcNexus.build({ ... }),
+    ],
     feeToken: {
       address: mcUSDC.addressOn(optimism.id),
       chainId: optimism.id
     }
-  }
+  })
 });
 ```
 

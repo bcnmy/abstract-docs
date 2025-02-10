@@ -12,7 +12,7 @@ import { optimism, base } from "viem/chains";
 const meeClient = createMeeClient({ account: mcNexus });
 
 const { hash } = await meeClient.executeFusionQuote({
-  fusionQuote: {
+  fusionQuote: await meeClient.getFusionQuote({
     trigger: {
       chainId: optimism.id,
       tokenAddress: mcUSDC.addressOn(optimism.id),
@@ -33,7 +33,7 @@ const { hash } = await meeClient.executeFusionQuote({
       address: mcUSDC.addressOn(optimism.id),
       chainId: optimism.id
     }
-  }
+  })
 });
 
 // Wait for the transaction receipt
@@ -86,7 +86,7 @@ import { aave, mcUSDC } from "@biconomy/abstractjs";
 const amountToSupply = parseUnits("100", 6); // 100 USDC
 
 const { hash } = await meeClient.executeFusionQuote({
-  fusionQuote: {
+  fusionQuote: await meeClient.getFusionQuote({
     trigger: {
       chainId: optimism.id,
       tokenAddress: mcUSDC.addressOn(optimism.id),
@@ -126,7 +126,7 @@ const { hash } = await meeClient.executeFusionQuote({
       address: mcUSDC.addressOn(optimism.id),
       chainId: optimism.id
     }
-  }
+  })
 });
 
 // Wait for the transaction receipt
