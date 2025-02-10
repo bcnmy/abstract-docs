@@ -83,6 +83,7 @@ and connect to the Biconomy [MEE Node](/explained/mee). Connecting to the [MEE N
 // Initialize the MultichainSmartAccount
 const mcNexus = await toMultichainNexusAccount({
   chains: [optimism, base, polygon],
+  transports: [http(), http(), http()],
   signer: eoaAccount
 })
 
@@ -168,13 +169,13 @@ intent and the instructions for supplying to AAVE:
 ```ts
 const superTx: SuperTransaction = {
   instructions: [
-    intent,
+    mcNexus.build({ type: "intent", data: { amount: parseUnits('100', 6), mcToken: mcUSDC, toChain: optimism } }),
     ...supplyToAaveOp
   ],
-  feeToken: toFeeToken({
-    chain: optimism,
-    mcToken: mcUSDC
-  })
+  feeToken: {
+    chainId: optimism.id,
+    address: mcUSDC.addressOn(optimism.id)
+  }
 }
 ```
 

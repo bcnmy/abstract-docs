@@ -678,16 +678,16 @@ export default defineConfig({
 									link: "/mee-client/methods/executeQuote",
 								},
 								{
+									text: "getFusionQuote",
+									link: "/mee-client/methods/getFusionQuote",
+								},
+								{
+									text: "executeFusionQuote",
+									link: "/mee-client/methods/executeFusionQuote",
+								},
+								{
 									text: "waitForSuperTransactionReceipt",
 									link: "/mee-client/methods/waitForSuperTransactionReceipt",
-								},
-								{
-									text: "signFusionQuote",
-									link: "/mee-client/methods/signFusionQuote",
-								},
-								{
-									text: "executeSignedFusionQuote",
-									link: "/mee-client/methods/executeSignedFusionQuote",
 								},
 							],
 						},

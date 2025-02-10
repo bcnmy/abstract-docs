@@ -44,7 +44,7 @@ Note: Inside any component which is wrapped by DynamicContextProvider, you can a
 ```ts
 import { createWalletClient, http } from "viem";
 import { baseSepolia } from "viem/chains";
-import { createSmartAccountClient, NexusClient } from "@biconomy/abstractjs";
+import { createSmartAccountClient, NexusClient, toNexusAccount } from "@biconomy/abstractjs";
 import { useUserWallets } from "@dynamic-labs/sdk-react-core";
 import { useWalletClient } from "wagmi";
 
@@ -59,11 +59,14 @@ const smartAccountOwner = createWalletClient({
     transport: http("https://sepolia.base.org"),
 })
 
-const nexusClient: NexusClient = await createSmartAccountClient({
+const nexusClient: NexusClient = createSmartAccountClient({
     chain: baseSepolia,
-    signer: smartAccountOwner,
-    transport: http("https://sepolia.base.org"),
-    bundlerTransport: http(bundlerUrl),
+    account: await toNexusAccount({
+        signer: smartAccountOwner,
+        chain: baseSepolia,
+        transport: http("https://sepolia.base.org"),
+    }),
+    transport: http(bundlerUrl),
 })
 ```
 

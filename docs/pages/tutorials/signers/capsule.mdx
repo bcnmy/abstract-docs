@@ -41,7 +41,7 @@ Create the smart account client using the Capsule signer client.
 import { http } from "viem";
 import { baseSepolia } from "viem/chains";
 import Capsule, { Environment } from "@usecapsule/web-sdk";
-import { createSmartAccountClient, NexusClient } from "@biconomy/abstractjs";
+import { createSmartAccountClient, NexusClient, toNexusAccount } from "@biconomy/abstractjs";
 import { createCapsuleViemClient } from "@usecapsule/viem-v2-integration"
 
 const capsule = new Capsule(Environment.BETA, "YOUR_API_KEY");
@@ -53,11 +53,14 @@ const smartAccountOwner = createCapsuleViemClient(capsule, {
 })
 const bundlerUrl = `https://bundler.biconomy.io/api/v3/84532/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44`
 
-const nexusClient: NexusClient = await createSmartAccountClient({
+const nexusClient: NexusClient = createSmartAccountClient({
     chain: baseSepolia,
-    signer: smartAccountOwner,
-    transport: http("https://sepolia.base.org"),
-    bundlerTransport: http(bundlerUrl),
+    account: await toNexusAccount({
+        signer: smartAccountOwner,
+        chain: baseSepolia,
+        transport: http("https://sepolia.base.org"),
+    }),
+    transport: http(bundlerUrl),
 })
 
 ```

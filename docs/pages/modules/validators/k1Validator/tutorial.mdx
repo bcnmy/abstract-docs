@@ -21,7 +21,7 @@ const walletClient = createWalletClient({
 });
 
 // Create your smart account
-const smartAccount = await createSmartAccountClient({
+const smartAccount = createSmartAccountClient({
   signer: walletClient,
   bundlerUrl: "https://bundler.biconomy.io/api/v2/...", // Your bundler URL
 });

@@ -19,7 +19,7 @@ NEXT_PUBLIC_PAYMASTER_URL=your_paymaster_url
 ## Step 1: Create Nexus Client
 
 ```typescript "
-import { createSmartAccountClient, createBicoPaymasterClient } from '@biconomy/abstractjs'
+import { createSmartAccountClient, createBicoPaymasterClient, toNexusAccount } from '@biconomy/abstractjs'
 import { baseSepolia } from 'wagmi/chains'
 import { http, useAccount, useWalletClient } from 'wagmi'
 
@@ -28,16 +28,15 @@ const { data: walletClient } = useWalletClient({ account: account.address })
 
 async function initNexusClient() {
   if(walletClient) {
-    const nexusClient = await createSmartAccountClient({
-      signer: walletClient,
-      chain: baseSepolia,  // or your preferred chain
-      paymaster: createBicoPaymasterClient({
-        paymasterUrl: process.env.NEXT_PUBLIC_PAYMASTER_URL || "",
+    const nexusClient = createSmartAccountClient({ 
+      account: await toNexusAccount({ 
+        signer: account, 
+        chain: baseSepolia,
+        transport: http(),
       }),
-      transport: http(),
-      bundlerTransport: http(process.env.NEXT_PUBLIC_BUNDLER_URL),
+      transport: http(process.env.NEXT_PUBLIC_BUNDLER_URL),
+      paymaster: createBicoPaymasterClient({ paymasterUrl: process.env.NEXT_PUBLIC_PAYMASTER_URL || "" }),
     });
-    
     return nexusClient;
   }
   throw new Error('Wallet client not found')

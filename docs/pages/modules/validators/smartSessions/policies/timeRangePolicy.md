@@ -34,18 +34,20 @@ const createSessionsResponse = await usersNexusClient.grantPermission({
 import { Address, Hex, http } from "viem";
 import { ActionPolicyInfo, CreateSessionDataParams, toSmartSessionsValidator, smartSessionCreateActions } from "@biconomy/sdk-canary";
 import { privateKeyToAccount } from "viem/accounts";
-import { createSmartAccountClient } from "@biconomy/abstractjs";
+import { createSmartAccountClient, toNexusAccount } from "@biconomy/abstractjs";
 import { baseSepolia } from "viem/chains"; 
 
 const privateKey = "PRIVATE_KEY";
 const account = privateKeyToAccount(`0x${privateKey}`)
 const bundlerUrl = "https://bundler.biconomy.io/api/v3/84532/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44"; 
 
-const nexusClient = await createSmartAccountClient({
-  signer: account, 
-  chain: baseSepolia,
-  transport: http(), 
-  bundlerTransport: http(bundlerUrl), 
+export const nexusClient = createSmartAccountClient({
+  account: await toNexusAccount({ 
+    signer: account, 
+    chain: baseSepolia,
+    transport: http(),
+  }),
+  transport: http(bundlerUrl),
 })
 
 // ---cut---

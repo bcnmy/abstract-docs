@@ -8,13 +8,14 @@ The MEE (Modular Execution Environment) Client is an interface for executing tra
 import { privateKeyToAccount } from "viem/accounts";
 import { createMeeClient, toMultichainNexusAccount } from "@biconomy/abstractjs";
 import { baseSepolia, mainnet } from "viem/chains";
-
+import { http } from "viem";
 const privateKey = "PRIVATE_KEY";
 const account = privateKeyToAccount(`0x${privateKey}`);
 
 // Create multichain account
 const mcNexus = await toMultichainNexusAccount({
   chains: [baseSepolia, mainnet],
+  transports: [http(), http()],
   signer: account
 });
 

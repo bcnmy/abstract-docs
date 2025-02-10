@@ -85,39 +85,22 @@ which will trigger the full execution of the Fusion transaction. In most
 cases, including this tutorial, this will be a transfer of ERC20 tokens 
 to a Smart Contract Account address:
 
-```ts [Trigger Transaction]
-const triggerTransaction = {
-  chain: optimism,
-  call: {
-    to: mcUSDC.addressOn(optimism.id),
-    data: encodeFunctionData({
-      abi: erc20Abi,
-      functionName: 'transfer',
-      args: [
-        mcNexus.deploymentOn(optimism.id)!.address,
-        supplyAmount
-      ]
-    })
-  }
-}
-```
-
 #### Encode a Fusion Transaction
 Now, we will use the `AbstractJS` utilities to encode a Fusion Transaction
 
 ```ts
-const { hash } = await meeClient.executeSignedFusionQuote({
-  signedFusionQuote: await meeClient.signFusionQuote({
-    trigger: triggerTransaction,
-    quote: await meeClient.getQuote({
-      instructions: [
-        approve, supply
-      ],
-      feeToken: toFeeToken({
-        chainId: optimism.id,
-        mcToken: mcUSDC
-      })
-    })
+const { hash } = await meeClient.executeFusionQuote({
+  fusionQuote: await meeClient.getFusionQuote({
+    trigger: {
+      chainId: optimism.id,
+      tokenAddress: mcUSDC.addressOn(optimism.id),
+      amount: parseUnits("1", 6)
+    },
+    instructions: [approve, supply],
+    feeToken: {
+      address: mcUSDC.addressOn(optimism.id),
+      chainId: optimism.id
+    }
   })
 })
 ```

@@ -72,7 +72,8 @@ AbstractJS streamlines the complexity of working with smart accounts across mult
 ```ts [Code Example: Using a Biconomy Nexus Account on Multiple Chains]
 const mcNexus = await toMultichainNexusAccount({
   signer: eoa,
-  chains: [optimism, base, polygon, arbitrum]
+  chains: [optimism, base, polygon, arbitrum],
+  transports: [http(), http(), http(), http()]
 })
 ```
 

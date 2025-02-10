@@ -132,6 +132,7 @@ be using Biconomy Nexus.
 ```ts
 const account = await toMultichainNexusAccount({
   chains: [odysseyTestnet],
+  transports: [http()],
   signer: eoa,
   // Override the address of the account to the EOA address
   accountAddress: eoa.address
