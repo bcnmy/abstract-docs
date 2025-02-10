@@ -71,11 +71,14 @@ const main = async () => {
         signWith: signWith, 
     })
 
-    const nexusClient: NexusClient = await createSmartAccountClient({
+    const nexusClient: NexusClient = createSmartAccountClient({
         chain: baseSepolia,
-        signer: turnkeyAccount,
-        transport: http("https://sepolia.base.org"),
-        bundlerTransport: http(bundlerUrl),
+        account: await toNexusAccount({
+            signer: turnkeyAccount,
+            chain: baseSepolia,
+            transport: http("https://sepolia.base.org"),
+        }),
+        transport: http(bundlerUrl),
     })
 
 }

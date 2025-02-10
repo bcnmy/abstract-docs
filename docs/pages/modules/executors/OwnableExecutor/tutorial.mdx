@@ -22,11 +22,11 @@ const aliceWalletClient = createWalletClient({
   transport: http()
 });
 
-const bobSmartAccount = await createSmartAccountClient({
+const bobSmartAccount = createSmartAccountClient({
   signer: bobWalletClient,
   bundlerUrl: "https://bundler.biconomy.io/api/v2/...", // Your bundler URL
 });
-const aliceSmartAccount = await createSmartAccountClient({
+const aliceSmartAccount = createSmartAccountClient({
   signer: aliceWalletClient,
   bundlerUrl: "https://bundler.biconomy.io/api/v2/...", // Your bundler URL
 });

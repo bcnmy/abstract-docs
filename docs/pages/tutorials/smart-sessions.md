@@ -56,7 +56,7 @@ const account = privateKeyToAccount(`0x${privateKey}`);
 A Smart Account needs access to the Network to query for information about its state (e.g., nonce, address, etc.). Let's configure a client for the Smart Account. A `bundlerUrl` is required to submit User Operations to the Network, which will initialize the Smart Account.
 
 ```typescript
-import { createSmartAccountClient } from "@biconomy/abstractjs";
+import { createSmartAccountClient, toNexusAccount } from "@biconomy/abstractjs";
 import { baseSepolia } from "viem/chains"; 
 import { http } from "viem"; 
 import { privateKeyToAccount } from "viem/accounts";
@@ -66,11 +66,13 @@ const account = privateKeyToAccount(`0x${privateKey}`);
 
 const bundlerUrl = "https://bundler.biconomy.io/api/v3/84532/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44"; 
 
-const nexusClient = await createSmartAccountClient({ 
-    signer: account, 
-    chain: baseSepolia, 
-    transport: http(), 
-    bundlerTransport: http(bundlerUrl), 
+const nexusClient = createSmartAccountClient({ 
+    account: await toNexusAccount({
+        signer: account, 
+        chain: baseSepolia, 
+        transport: http(), 
+    }),
+    transport: http(bundlerUrl), 
 });
 ```
 
@@ -182,12 +184,14 @@ We need a new Nexus client that is associated with the session. This client will
 
 ```typescript
 
-const smartSessionNexusClient = await createSmartAccountClient({
+const smartSessionNexusClient = createSmartAccountClient({
     chain: baseSepolia,
-    accountAddress: sessionData.granter,
-    signer: sessionOwner,
-    transport: http(),
-    bundlerTransport: http(bundlerUrl)
+    account: await toNexusAccount({
+        signer: sessionOwner,
+        chain: baseSepolia,
+        transport: http(),
+    }),
+    transport: http(bundlerUrl)
 });
 ```
 
@@ -264,11 +268,13 @@ export const createAccountAndSendTransaction = async () => {
     const sessionPublicKey = sessionOwner.address;
 
     // 2. Set up Nexus client
-    const nexusClient = await createSmartAccountClient({
-        signer: userAccount,
-        chain: baseSepolia,
-        transport: http(),
-        bundlerTransport: http(bundlerUrl),
+    const nexusClient = createSmartAccountClient({
+        account: await toNexusAccount({
+            signer: userAccount,
+            chain: baseSepolia,
+            transport: http(),
+        }),
+        transport: http(bundlerUrl),
     });
 
     // 3. Create a smart sessions module for the user's account
@@ -325,12 +331,13 @@ export const createAccountAndSendTransaction = async () => {
     }
 
     // 2. Create a Nexus Client for Using the Session
-    const smartSessionNexusClient = await createSmartAccountClient({
-        chain: baseSepolia,
-        accountAddress: sessionData.granter,
-        signer: sessionOwner,
-        transport: http(),
-        bundlerTransport: http(bundlerUrl)
+    const smartSessionNexusClient = createSmartAccountClient({
+        account: await toNexusAccount({
+            signer: sessionOwner,
+            chain: baseSepolia,
+            transport: http(),
+        }),
+        transport: http(bundlerUrl)
     })
 
     // 3. Create a Smart Sessions Module for the Session Key

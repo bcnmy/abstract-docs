@@ -28,7 +28,9 @@ Promise resolving to a `GetQuotePayload` containing:
 
 ```typescript
 const quote = await meeClient.getQuote({
-  instructions: [...],
+  instructions: [
+    mcNexus.build({ ... }),
+  ],
   feeToken: { 
     address: '0x...', 
     chainId: 1 

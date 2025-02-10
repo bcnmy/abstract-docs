@@ -16,7 +16,7 @@ const entryPoints = await nexusClient.getSupportedEntryPoints()
 
 ```typescript [nexusClient.ts]
 import { privateKeyToAccount } from "viem/accounts";
-import { createSmartAccountClient } from "@biconomy/sdk";
+import { createSmartAccountClient, toNexusAccount } from "@biconomy/abstractjs";
 import { baseSepolia } from "viem/chains"; 
 import { http } from "viem"; 
 
@@ -24,11 +24,13 @@ const privateKey = "PRIVATE_KEY";
 const account = privateKeyToAccount(`0x${privateKey}`)
 const bundlerUrl = "https://bundler.biconomy.io/api/v3/84532/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44"; 
 
-const nexusClient = await createSmartAccountClient({
-  signer: account, 
-  chain: baseSepolia,
-  transport: http(), 
-  bundlerTransport: http(bundlerUrl), 
+const nexusClient = createSmartAccountClient({
+  account: await toNexusAccount({ 
+    signer: account, 
+    chain: baseSepolia,
+    transport: http(),
+  }),
+  transport: http(bundlerUrl),
 })
 ```
 

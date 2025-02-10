@@ -40,6 +40,7 @@ const eoaSigner = privateKeyToAccount("Your private key here")
 // with the multichain account utility function
 const mcNexus = await toMultichainNexusAccount({
   chains: [optimism, base, polygon, arbitrum],
+  transports: [http(), http(), http(), http()],
   signer: eoaSigner
 })
 
@@ -75,18 +76,13 @@ const supertransaction: Supertransaction = {
   // Transactions to be executed within a
   // Supertransaction
   instructions: [
-    {
-      // Function calls to execute within a transaction
-      calls: [emptyTx],
-
-      // Chain on which to execute the transaction
-      chainId: optimism.id
-    }
+    mcNexus.build({ type: "default", data: { chainId: optimism.id, calls: [emptyTx] } }),
   ],
-  feeToken: toFeeToken({
+  // Token to pay for the Supertransaction
+  feeToken: {
     chainId: optimism.id,
-    mcToken: mcUSDC
-  })
+    address: mcUSDC.addressOn(optimism.id)
+  }
 }
 ```
 
@@ -157,6 +153,7 @@ execution.
 const meeClient = await createMeeClient({
   account: await toMultichainNexusAccount({
     chains: [optimism, base, polygon, arbitrum],
+    transports: [http(), http(), http(), http()],
     signer: eoaSigner
   })
 })
@@ -164,15 +161,12 @@ const meeClient = await createMeeClient({
 const { hash } = await meeClient.executeQuote({
   quote: await meeClient.getQuote({
     instructions: [
-      {
-        chainId: optimism.id,
-        calls: [{ to: zeroAddress, value: 0n }]
-      }
+      mcNexus.build({ type: "default", data: { chainId: optimism.id, calls: [{ to: zeroAddress, value: 0n }] } }),
     ],
-    feeToken: toFeeToken({
+    feeToken: {
       chainId: optimism.id,
-      mcToken: mcUSDC
-    })
+      address: mcUSDC.addressOn(optimism.id)
+    }
   })
 })
 

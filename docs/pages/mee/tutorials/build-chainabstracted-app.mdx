@@ -97,6 +97,7 @@ Then, let's connect to our Smart Account with the utility function:
 ```ts [Initialize Multichain Smart Account]
 const mcNexus = await toMultichainNexusAccount({
   chains: [optimism, base, polygon, arbitrum],
+  transports: [http(), http(), http(), http()],
   signer: eoa
 })
 ```
@@ -345,10 +346,10 @@ const { hash } = await meeClient.execute({
     ...intent,
     ...approveSupply
   ],
-  feeToken: toFeeToken({
-    chainId: payingGasOnChain,
-    mcToken: mcUSDC
-  })
+  feeToken: {
+    chainId: payingGasOnChain.id,
+    address: mcUSDC.addressOn(payingGasOnChain.id)
+  }
 })
 ```
 
@@ -446,10 +447,10 @@ Now we can execute all of our withdrawal transactions with a single signature:
 ```ts [Execute Withdrawals]
 const { hash } = await meeClient.execute({
   instructions: withdrawalInstructions,
-  feeToken: toFeeToken({
-    chainId: payingGasOnChain,
-    mcToken: mcUSDC
-  })
+  feeToken: {
+    chainId: payingGasOnChain.id,
+    address: mcUSDC.addressOn(payingGasOnChain.id)
+  }
 })
 ```
 

@@ -35,7 +35,7 @@ NEXT_PUBLIC_PAYMASTER_URL=your_paymaster_url
 #### Create Nexus Client
 
 ```typescript "
-import { createSmartAccountClient, createBicoPaymasterClient } from "@biconomy/abstractjs";
+import { createSmartAccountClient, createBicoPaymasterClient, toNexusAccount } from "@biconomy/abstractjs";
 import { baseSepolia } from "wagmi/chains";
 import { http, useAccount, useWalletClient } from "wagmi";
 
@@ -44,14 +44,16 @@ const { data: walletClient } = useWalletClient({ account: account.address });
 
 async function initNexusClient() {
   if (walletClient) {
-    const nexusClient = await createSmartAccountClient({
-      signer: walletClient,
-      chain: baseSepolia, // or your preferred chain
+    const nexusClient = createSmartAccountClient({
+      account: await toNexusAccount({
+        signer: walletClient,
+        chain: baseSepolia, // or your preferred chain
+        transport: http(),
+      }),
       paymaster: createBicoPaymasterClient({
         paymasterUrl: process.env.NEXT_PUBLIC_PAYMASTER_URL || "",
       }),
-      transport: http(),
-      bundlerTransport: http(process.env.NEXT_PUBLIC_BUNDLER_URL),
+      transport: http(process.env.NEXT_PUBLIC_BUNDLER_URL),
     });
 
     return nexusClient;

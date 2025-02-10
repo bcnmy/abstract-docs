@@ -23,18 +23,12 @@ Promise resolving to an `ExecuteSignedQuotePayload` containing:
 ```typescript
 const quote = await meeClient.getQuote({
   instructions: [
-    {
-      calls: [{ 
-        to: "0x...", 
-        value: 0n 
-      }],
-      chainId: targetChain.id
-    }
+    mcNexus.build({ type: "default", data: { chainId: targetChain.id, calls: [{ to: "0x...", value: 0n }] } }),
   ],
-  feeToken: toFeeToken({
-    mcToken: mcUSDC,
-    chainId: 1
-  })
+  feeToken: {
+    address: mcUSDC.addressOn(optimism.id),
+    chainId: optimism.id
+  }
 });
 
 const { hash } = await meeClient.executeQuote({ quote });

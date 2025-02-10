@@ -26,7 +26,8 @@ The `MultichainNexusAccount` represents a smart account that can be deployed and
 ```typescript
 const account = await toMultichainNexusAccount({
   signer: mySigner,
-  chains: [optimism, base]
+  chains: [optimism, base],
+  transports: [http(), http()]
 });
 
 // Get deployment on specific chain

@@ -17,13 +17,10 @@ The base HTTP client is extended with the following MEE actions:
 | Method | Description |
 |--------|-------------|
 | `getQuote` | Get a quote for executing a set of instructions |
-| `signQuote` | Sign a quote for executing instructions |
-| `executeSignedQuote` | Execute a previously signed quote |
-| `execute` | Convenience method to get quote, sign, and execute in one call |
 | `executeQuote` | Alternative method to execute a quote directly |
+| `getFusionQuote` | Get a fusion quote with on-chain trigger |
+| `executeFusionQuote` | Execute a previously signed fusion quote |
 | `waitForSupertransactionReceipt` | Wait for a supertransaction receipt |
-| `signFusionQuote` | Sign a fusion quote with on-chain trigger |
-| `executeSignedFusionQuote` | Execute a previously signed fusion quote |
 
 ## Example
 
@@ -38,7 +35,9 @@ const meeClient = await createMeeClient({
 
 // Use any of the extended actions
 const quote = await meeClient.getQuote({
-  instructions: [...],
+  instructions: [
+    mcNexus.build({ ... }),
+  ],
   feeToken: {
     address: "0x...",
     chainId: 1
@@ -60,12 +59,9 @@ type BaseMeeClient = {
 ```typescript
 type MeeClient = BaseMeeClient & {
   getQuote: (params: GetQuoteParams) => Promise<GetQuotePayload>
-  signQuote: (params: SignQuoteParams) => Promise<SignQuotePayload>
-  executeSignedQuote: (params: ExecuteSignedQuoteParams) => Promise<ExecuteSignedQuotePayload>
-  execute: (params: GetQuoteParams) => Promise<ExecuteSignedQuotePayload>
   executeQuote: (params: SignQuoteParams) => Promise<ExecuteSignedQuotePayload>
+  getFusionQuote: (params: GetFusionQuoteParams) => Promise<GetFusionQuotePayload>
+  executeFusionQuote: (params: ExecuteFusionQuoteParams) => Promise<ExecuteFusionQuotePayload
   waitForSupertransactionReceipt: (params: WaitForSupertransactionReceiptParams) => Promise<WaitForSupertransactionReceiptPayload>
-  signFusionQuote: (params: SignFusionQuoteParams) => Promise<SignFusionQuotePayload>
-  executeSignedFusionQuote: (params: ExecuteSignedFusionQuoteParams) => Promise<ExecuteSignedFusionQuotePayload>
 }
 ```

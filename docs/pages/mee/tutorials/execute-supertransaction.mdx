@@ -68,6 +68,7 @@ const eoa = privateKeyToAccount(privateKey);
 const mcNexus = await toMultichainNexusAccount({
   // Initialize the Mutlichain Account on Optimism and Arbitrum
   chains: [optimism, arbitrum],
+  transports: [http(), http()],
   signer: eoa,
 });
 ```
@@ -100,10 +101,10 @@ const simpleSupertx: SuperTransaction = {
     }),
   ],
   // Pay for gas with USDC on Optimism
-  feeToken: toFeeTokenInfo({
-    mcToken: mcUSDC,
+  feeToken: {
+    address: mcUSDC.addressOn(optimism.id),
     chainId: optimism.id,
-  }),
+  },
 };
 ```
 

@@ -21,7 +21,7 @@ Initialize the bundler with updated configuration, to increase the timeout (mill
 ```jsx
 import { createSmartAccountClient, createBundler } from "@biconomy/account";
 
-const biconomySmartAccount = await createSmartAccountClient({
+const biconomySmartAccount = createSmartAccountClient({
     signer,
     bundler: await createBundler({
     bundlerUrl: "bundler url",

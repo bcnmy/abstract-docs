@@ -72,7 +72,7 @@ export default function Home() {
 ```ts
 import { http } from "viem";
 import { baseSepolia } from "viem/chains";
-import { createSmartAccountClient, NexusClient } from "@biconomy/abstractjs";
+import { createSmartAccountClient, NexusClient, toNexusAccount } from "@biconomy/abstractjs";
 import { useWallets, usePrivy } from '@privy-io/react-auth';
 
 export default function Home() {
@@ -86,11 +86,13 @@ export default function Home() {
             (async () => {
                 const provider = await embeddedWallet.getEthersProvider(); 
                 const signer = provider.getSigner();
-                const nexusClient = await createSmartAccountClient({ 
-                    signer, 
-                    chain: baseSepolia,
-                    transport: http(),
-                    bundlerTransport: http(BUNDLER_URL), // Get your BUNDLER_URL from the Biconomy Dashboard
+                const nexusClient = createSmartAccountClient({ 
+                    account: await toNexusAccount({
+                        signer, 
+                        chain: baseSepolia,
+                        transport: http(),
+                    }),
+                    transport: http(BUNDLER_URL), // Get your BUNDLER_URL from the Biconomy Dashboard
                 });
 
                 setNexusClient(nexusClient);
@@ -112,7 +114,7 @@ export default function Home() {
 ```ts
 import { http } from "viem";
 import { baseSepolia } from "viem/chains";
-import { createSmartAccountClient, NexusClient } from "@biconomy/abstractjs";
+import { createSmartAccountClient, NexusClient, toNexusAccount } from "@biconomy/abstractjs";
 import { useWallets, usePrivy } from '@privy-io/react-auth';
 
 export default function Home() {
@@ -126,11 +128,13 @@ export default function Home() {
             (async () => {
                 const provider = await embeddedWallet.getEthersProvider();
                 const signer = provider.getSigner();
-                const nexusClient = await createSmartAccountClient({
-                    signer,
-                    chain: baseSepolia,
-                    transport: http(),
-                    bundlerTransport: http(BUNDLER_URL),
+                const nexusClient = createSmartAccountClient({
+                    account: await toNexusAccount({
+                        signer,
+                        chain: baseSepolia,
+                        transport: http(),
+                    }),
+                    transport: http(BUNDLER_URL),
                 });
 
                 setNexusClient(nexusClient);

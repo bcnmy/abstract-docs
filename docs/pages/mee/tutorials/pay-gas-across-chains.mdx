@@ -38,6 +38,7 @@ To learn more about the setup, read our [Building a Chain Abstracted App](/mee/t
 // Initialize the MultichainSmartAccount
 const mcNexus = await toMultichainNexusAccount({
   chains: [optimism, base, polygon],
+  transports: [http(), http(), http()],
   signer: eoaAccount
 })
 
@@ -70,14 +71,13 @@ const emptyCall: AbstractCall = {
 
 const crossChainGasSupertx: Supertransaction = {
   instructions: [
-    // Transaction on Arbitrum
-    { calls: [emptyCall], chainId: arbitrum.id }
+    mcNexus.build({ type: "default", data: { chainId: arbitrum.id, calls: [emptyCall] } }),
   ],
   // Pay for gas with USDC on Optimism
-  feeToken: toFeeToken({
-    chainId: optimism.id,
-    mcToken: mcUSDC
-  })
+  feeToken: {
+    address: mcUSDC.addressOn(optimism.id),
+    chainId: optimism.id
+  }
 }
 ```
 

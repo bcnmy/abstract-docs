@@ -21,10 +21,7 @@ const walletClient = createWalletClient({
 });
 
 // Create your smart account
-const smartAccount = await createSmartAccountClient({
-  signer: walletClient,
-  bundlerUrl: "https://bundler.biconomy.io/api/v2/...", // Your bundler URL
-});
+const smartAccount = createSmartAccountClient({ ... });
 ```
 
 Now, let's install the K1Validator module:

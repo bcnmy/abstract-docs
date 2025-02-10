@@ -50,18 +50,24 @@ Biconomy has abstracted all this complexity into AbstractJS, making implementati
 For instance, implementing Fusion features is as simple as creating an MEE client and executing a quote:
 
 ```typescript
-const { hash } = await meeClient.executeSignedFusionQuote({
-  signedFusionQuote: await meeClient.signFusionQuote({
-    trigger: triggerTransaction,
-    quote: await meeClient.getQuote({
-      instructions: [/* your instructions */],
-      feeToken: toFeeToken({
-        chainId: chain.id,
-        token: token
-      })
-    })
+
+const { hash } = await meeClient.executeFusionQuote({
+  fusionQuote: await meeClient.getFusionQuote({
+    trigger: {
+      chainId: optimism.id,
+      tokenAddress: mcUSDC.addressOn(optimism.id),
+      amount: amountToSupply
+    },
+    instructions: [
+      mcNexus.build({ ... }),
+      mcNexus.build({ ... }),
+    ],
+    feeToken: {
+      address: mcUSDC.addressOn(optimism.id),
+      chainId: optimism.id
+    }
   })
-})
+});
 ```
 
 ## Looking Forward

@@ -136,6 +136,6 @@ const nexusClient = createSmartAccountClient({
 We use:
 ```typescript
 // ✅ Only the sessions module code is included
-const nexusClient = await createSmartAccountClient({ /* config */ });
+const nexusClient = createSmartAccountClient({ /* config */ });
 const sessionNexusClient = nexusClient.extend(smartSessionCreateActions(sessionsModule));
 ```
