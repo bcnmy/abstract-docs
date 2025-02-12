@@ -1,5 +1,15 @@
 # Supported Networks (Chains)
 
+The following is the list of networks supported by the Biconomy Stack. 
+Support for the network includes the deployment of Smart Account contracts
+and associated infrastructure (Bundlers / Paymasters or MEE Nodes)
+
+## Legacy SDKs Supported Chains
+
+##### [V1 Supported Chains](https://legacy-docs.biconomy.io/supportedNetworks)
+##### [V2 Supported Chains](/smartAccountsV2/supportedNetworks)
+
+## AbstractJS & Nexus Account Supported Chains
 :::info
 Click the table headers to view the real-time list of deployed contracts on [contractscan](https://contractscan.xyz/).
 :::
