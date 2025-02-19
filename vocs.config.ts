@@ -713,14 +713,6 @@ export default defineConfig({
 									link: "/mee-client/helpers/getMultichainContract",
 								},
 								{
-									text: "getExplorerTxLink",
-									link: "/mee-client/helpers/getExplorerTxLink",
-								},
-								{
-									text: "getMeeScanLink",
-									link: "/mee-client/helpers/getMeeScanLink",
-								},
-								{
 									text: "mcUniswapSwapRouter",
 									link: "/mee-client/helpers/mcUniswapSwapRouter",
 								},
@@ -733,8 +725,12 @@ export default defineConfig({
 									link: "/mee-client/helpers/mcUSDC",
 								},
 								{
-									text: "mcAaveV3Pool",
-									link: "/mee-client/helpers/mcAaveV3Pool",
+									text: "getExplorerTxLink",
+									link: "/mee-client/helpers/getExplorerTxLink",
+								},
+								{
+									text: "getMeeScanLink",
+									link: "/mee-client/helpers/getMeeScanLink",
 								},
 							],
 						},
