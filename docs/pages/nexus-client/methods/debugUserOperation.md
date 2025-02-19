@@ -95,9 +95,9 @@ TENDERLY_ACCOUNT_SLUG=your_account_slug
 TENDERLY_PROJECT_SLUG=your_project_slug
 ```
 
-When enabled, you'll get access to Tenderly's simulation interface:
+When enabled, you'll get access to Tenderly's simulation interface, which is particularly useful for debugging and testing aa23 errors.
 
-![Tenderly simulation interface showing transaction parameters and state overrides](/tenderly-simulation.png). This is particularly useful for debugging and testing aa23 errors. 
+![Tenderly simulation interface showing transaction parameters and state overrides](/tenderly-simulation.png)
 
 ## Related Methods
 
