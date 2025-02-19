@@ -2,14 +2,17 @@
 
 A pre-configured multichain contract instance for interacting with Aave V3 Pool contracts across different networks. This allows you to perform lending and borrowing operations across multiple chains using a unified interface.
 
-## Supported Networks
-
-The contract is deployed on:
-- Optimism: `0x794a61358D6845594F94dc1DB02A252b5b4814aD`
-- Base: `0xA238Dd80C259a72e81d7e4664a9801593F98d1c5`
-- Polygon: `0x794a61358D6845594F94dc1DB02A252b5b4814aD`
-- Arbitrum: `0x794a61358D6845594F94dc1DB02A252b5b4814aD`
-
+```typescript
+export const mcAaveV3Pool = getMultichainContract<typeof AavePoolAbi>({
+  abi: AavePoolAbi,
+  deployments: [
+    ["0x794a61358D6845594F94dc1DB02A252b5b4814aD", optimism.id],
+    ["0xA238Dd80C259a72e81d7e4664a9801593F98d1c5", base.id],
+    ["0x794a61358D6845594F94dc1DB02A252b5b4814aD", polygon.id],
+    ["0x794a61358D6845594F94dc1DB02A252b5b4814aD", arbitrum.id]
+  ]
+})
+```
 ## Usage
 
 ```typescript
@@ -28,13 +31,6 @@ const supplyInstruction = await mcAaveV3Pool.build({
       0               // referral code
     ]
   }
-})
-
-// Read user account data across chains
-const accountData = await mcAaveV3Pool.read({
-  onChains: [optimism, base],
-  functionName: "getUserAccountData",
-  args: [userAddress]
 })
 ```
 

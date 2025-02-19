@@ -107,13 +107,6 @@ const swap = mcUniswapSwapRouter.build({
   }
 })
 
-// Batch the approval and swap
-const batchOp = mcNexus.build({
-  type: "batch",
-  data: {
-    instructions: [approval, swap]
-  }
-})
 ```
 
 ## Error Handling

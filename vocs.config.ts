@@ -725,6 +725,10 @@ export default defineConfig({
 									link: "/mee-client/helpers/mcUniswapSwapRouter",
 								},
 								{
+									text: "mcAaveV3Pool",
+									link: "/mee-client/helpers/mcAaveV3Pool",
+								},
+								{
 									text: "mcUSDC",
 									link: "/mee-client/helpers/mcUSDC",
 								},

@@ -4,8 +4,7 @@ export default function Fusion() {
 		<div
 			style={{
 				position: "relative",
-				paddingBottom: "100%",
-				height: 0,
+				height: "800px",
 				marginBottom: "80px",
 			}}
 		>
@@ -18,7 +17,6 @@ export default function Fusion() {
 					left: 0,
 					width: "100%",
 					height: "100%",
-					minHeight: "500px",
 					border: "1px solid #eee",
 					borderRadius: "8px",
 				}}
