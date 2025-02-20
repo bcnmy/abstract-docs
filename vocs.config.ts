@@ -808,16 +808,16 @@ export default defineConfig({
 			],
 		},
 		{
-			text: "Experiments",
-			link: "/experiments",
+			text: "Demos",
+			link: "/demos",
 			items: [
 				{
 					text: "#001 SmartSessions",
-					link: "/experiments/smartSessions",
+					link: "/demos/smartSessions",
 				},
 				{
 					text: "#002 Fusion",
-					link: "/experiments/fusion",
+					link: "/demos/fusion",
 				},
 			],
 		},

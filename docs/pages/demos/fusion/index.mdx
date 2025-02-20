@@ -1,23 +1,23 @@
 import FusionDemo from "../../../src/components/Fusion";
 
-# EXP: Fusion
+# Fusion
 
-*What if your dapp could execute transactions on behalf of users, without requiring them to sign every time? Let's explore how MEE enables cross-chain composability while maintaining security and user sovereignty.*
+*Make your EOA work like a smart contract account - no upgrades or pre-signatures required. Approve & swap with one signature, compatible with any EOA, works today. *
 
 [GitHub](https://github.com/bcnmy/examples/tree/main/nextjs-demo-fusion) 
 
-:::warning[This experiment is slow because cross-chain intents are painfully slow on testnets. This would be much faster on mainnets and paid rpcs.]
+:::warning[This demo on testnets is slow because cross-chain intents have a lot of latency on testnets. Flick to mainnet mode to check out how zippy the meeNode is in production.]
 :::
 
 <FusionDemo/>
 
-# Building Cross-Chain Instructions with MEE: A Step-by-Step Guide
+# Building a single signature EOA cross-chain swap with MEE: A Step-by-Step Guide
 
 Building complex cross-chain transactions has never been easier. With Biconomy's Modular Execution Environment (MEE), you can create powerful multi-chain workflows in just a few steps. Let's walk through a real example that bridges USDC from Optimism to Base and swaps it for FUSION tokens via Uniswap - all with a single signature and simple code.
 
 ## The Power of Supertransactions
 
-Before we dive into the code, let me share what makes this experiment interesting. Imagine you want to:
+Before we dive into the code, let me share what makes this demo interesting. Imagine you want to:
 1. Move USDC from Optimism to Base
 2. Use that USDC to buy FUSION tokens on Base
 3. Have it all happen atomically with one signature
@@ -144,21 +144,23 @@ Finally, we bundle everything into a Fusion quote and execute it. Under the hood
 - Waiting for funds to arrive on Base
 - Executing the batched approval and swap
 
-## The Magic of Composability
+## Gasless by Default
 
-What makes this particularly powerful is how MEE handles the composability between instructions. The output of our bridge operation (the USDC arriving on Base) automatically becomes the input for our swap operation. No manual coordination or complex state management required.
+When using tokens that support ERC20Permit (like USDC in this demo), the entire flow becomes completely gasless! MEE automatically detects permit support and handles all the complexity:
+- No gas needed for approvals
+- No gas needed for token transfers
+- Just one signature for the entire cross-chain flow
+- Works automatically - no extra code needed
 
-This pattern can be extended to build even more complex cross-chain workflows, all while maintaining atomicity and requiring just a single signature from the user.
+## Seamless Cross-Chain Zaps
 
-## Try It Yourself
+Imagine letting your users deposit into your protocol using any token from any chain. No more forcing users to:
+- Bridge tokens themselves
+- Source specific tokens on specific chains
+- Execute multiple transactions
+- Pay for gas on multiple chains
 
-The complete example is available in our demo app. To get started with MEE in your own project:
-
-1. Install the SDK: `bun add @biconomy/abstractjs`
-2. Create a MEE client
-3. Start building cross-chain workflows!
-
-*Next up: We'll explore how to add conditional execution and more complex trigger conditions to your Supertransactions.*
+Instead, users can zap directly into your pool or vault using whatever assets they already have in their EOA. MEE handles all the complexity of bridging, swapping, and depositing - all with a single signature and no gas costs (when using permit-compatible tokens).
 
 ## The Challenge of Cross-Chain Composability
 
