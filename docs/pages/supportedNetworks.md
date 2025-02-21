@@ -28,6 +28,7 @@ Click the table headers to view the real-time list of deployed contracts on [con
 | Blast Mainnet               | ⏳      | ⏳                   | ⏳              | ✅                   | ✅              | ✅              |
 | Blast Sepolia               | ⏳      | ⏳                   | ⏳              | ✅                   | ❌              | ✅              |
 | IOTA Mainnet                | ⏳      | ⏳                   | ⏳              | ✅                   | ✅              | ✅              |
+| Monad Testnet               | ⏳      | ⏳                   | ⏳              | ✅                   | ❌              | ✅              |
 
 *PM = Paymaster
 
