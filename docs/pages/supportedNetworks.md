@@ -23,12 +23,12 @@ Click the table headers to view the real-time list of deployed contracts on [con
 | Polygon Amoy Testnet        | ✅      | ✅                   | ❌              | ✅                   | ❌              | ✅              |
 | Gnosis Mainnet              | ✅      | ✅                   | ✅              | ✅                   | ✅              | ✅              |
 | Gnosis Chiado Testnet       | ✅      | ✅                   | ❌              | ✅                   | ❌              | ✅              |
-| Sonic Mainnet               | ⏳      | ⏳                   | ⏳              | ✅                   | ✅              | ✅              |
-| Sonic Testnet               | ⏳      | ⏳                   | ⏳              | ✅                   | ❌              | ✅              |
-| Blast Mainnet               | ⏳      | ⏳                   | ⏳              | ✅                   | ✅              | ✅              |
-| Blast Sepolia               | ⏳      | ⏳                   | ⏳              | ✅                   | ❌              | ✅              |
+| Sonic Mainnet               | ✅      | ✅                   | ✅              | ✅                   | ✅              | ✅              |
+| Sonic Testnet               | ✅      | ✅                   | ❌              | ✅                   | ❌              | ✅              |
+| Blast Mainnet               | ✅      | ✅                   | ✅              | ✅                   | ✅              | ✅              |
+| Blast Sepolia               | ✅      | ✅                   | ❌              | ✅                   | ❌              | ✅              |
 | IOTA Mainnet                | ⏳      | ⏳                   | ⏳              | ✅                   | ✅              | ✅              |
-| Monad Testnet               | ⏳      | ⏳                   | ⏳              | ✅                   | ❌              | ✅              |
+| Monad Testnet               | ✅      | ✅                   | ❌              | ✅                   | ❌              | ✅              |
 
 *PM = Paymaster
 
