@@ -1,0 +1,218 @@
+import FusionDemo from "../../../src/components/Fusion";
+
+# Fusion
+
+*Make your EOA work like a smart contract account - no upgrades or pre-signatures required. Approve & swap with one signature, compatible with any EOA, works today. *
+
+[GitHub](https://github.com/bcnmy/examples/tree/main/nextjs-demo-fusion) 
+
+:::warning[This demo on testnets is slow because cross-chain intents have a lot of latency on testnets. Flick to mainnet mode to check out how zippy the meeNode is in production.]
+:::
+
+<FusionDemo/>
+
+# Building a single signature EOA cross-chain swap with MEE: A Step-by-Step Guide
+
+Building complex cross-chain transactions has never been easier. With Biconomy's Modular Execution Environment (MEE), you can create powerful multi-chain workflows in just a few steps. Let's walk through a real example that bridges USDC from Optimism to Base and swaps it for FUSION tokens via Uniswap - all with a single signature and simple code.
+
+## The Power of Supertransactions
+
+Before we dive into the code, let me share what makes this demo interesting. Imagine you want to:
+1. Move USDC from Optimism to Base
+2. Use that USDC to buy FUSION tokens on Base
+3. Have it all happen atomically with one signature
+
+Traditionally, this would be a painful process requiring multiple steps and signatures. But what if we could bundle these operations into a single "Supertransaction"? That's exactly what we're exploring here.
+
+All of this happens atomically, with just one signature from the user. Under the hood, we leverage smart accounts in an ERC-4337-like way to act on behalf of your EOA (Externally Owned Account), enabling this complex multi-chain orchestration while maintaining security and user control.
+
+## Building the Instructions
+
+### 1. First, let's set up our multichain contracts using `getMultichainContract`:
+
+```typescript
+import { getMultichainContract } from "@biconomy/abstractjs"
+import { erc20Abi } from "viem"
+import { optimismSepolia, baseSepolia } from "viem/chains"
+
+// Set up USDC multichain contract
+const mcUSDC = getMultichainContract({
+  abi: erc20Abi,
+  deployments: [
+    ["0x5fd84259d66Cd46123540766Be93DFE6D43130D7", optimismSepolia.id],
+    ["0x036CbD53842c5426634e7929541eC2318f3dCF7c", baseSepolia.id]
+  ]
+})
+
+// Set up Uniswap SwapRouter multichain contract
+const mcUniswapSwapRouter = getMultichainContract({
+  abi: UniswapSwapRouterAbi,
+  deployments: [
+    ["0x94cC0AaC535CCDB3C01d6787D6413C739ae12bc4", optimismSepolia.id],
+    ["0x94cC0AaC535CCDB3C01d6787D6413C739ae12bc4", baseSepolia.id]
+  ]
+})
+```
+
+Now that we have our contracts set up, let's build our instructions:
+
+### 2. Define the Trigger Condition
+
+```typescript
+const trigger: Trigger = {
+  chainId: optimismSepolia.id,
+  tokenAddress: mcUSDC.addressOn(optimismSepolia.id),
+  amount: sellAmount
+}
+```
+
+The trigger condition is a required parameter for a fusion quote that specifies the initial token, amount, and chain for the transaction. When the user signs and submits the transaction, this trigger amount will be transferred from their EOA to their smart account on the specified chain, initiating the cross-chain sequence.
+
+### 3. Create the Bridging Intent
+
+```typescript
+const intent: InstructionLike = mcNexus.build({
+  type: "intent",
+  data: {
+    amount: sellAmount,
+    mcToken: mcUSDC,
+    toChain: baseSepolia,
+    mode: "OPTIMISTIC"
+  }
+})
+```
+
+The `intent` instruction tells MEE to bridge our USDC from Optimism to Base. Notice the `OPTIMISTIC` mode - this allows subsequent instructions to execute without waiting for balance checks, enabling true atomic cross-chain operations.
+
+### 4. Set Up Token Approval
+
+```typescript
+const approval: InstructionLike  = mcNexus.build({
+  type: "approve",
+  data: {
+    amount: sellAmount,
+    chainId: baseSepolia.id,
+    tokenAddress: usdc,
+    spender: mcUniswapSwapRouter.addressOn(baseSepolia.id)
+  }
+})
+```
+
+Once our USDC arrives on Base, we'll need to approve the Uniswap router to spend it. This instruction handles that approval.
+
+### 5. Configure the Swap
+
+```typescript
+const swap: InstructionLike = mcUniswapSwapRouter.build({
+  type: "exactInputSingle",
+  data: {
+    chainId: baseSepolia.id,
+    args: [{
+      tokenIn: mcUSDC.addressOn(baseSepolia.id),
+      tokenOut: mcFUSION.addressOn(baseSepolia.id),
+      fee: 3000,
+      recipient: account.address,
+      amountIn: safeMultiplier(sellAmount, 0.8), // Account for potential slippage, compasability coming soon...
+      amountOutMinimum: 1n,
+      sqrtPriceLimitX96: 0n
+    }],
+    // Some complex userOps will sometimes require more gas than the default. All surpluses are returned to the users smart account in native token
+    gasLimit: 1000000n
+  }
+})
+```
+
+This instruction configures our Uniswap swap parameters. Note that we currently have to manually account for potential slippage and dust amounts during bridging, as cross-chain composability (where the output amount from the bridge becomes the exact input for the swap) is not yet supported. This limitation means we need to use conservative estimates and may leave small amounts of dust tokens behind.
+This significant limitation will be addressed in an upcoming release that enables true cross-chain composability - allowing the exact output from one instruction to be used as the input for another, even across different chains. When this feature ships, we'll provide a new demo showcasing seamless token bridging and swapping without any dust or manual amount calculations.
+
+### 6. Execute the Supertransaction
+
+```typescript
+const fusionQuote = await meeClient.getFusionQuote({
+  trigger,
+  instructions: [intent, approval, swap],
+  feeToken
+})
+
+const { hash } = await meeClient.executeFusionQuote({ fusionQuote })
+const receipt = await meeClient.getUserOperationReceipt(hash)
+```
+
+Finally, we bundle everything into a Fusion quote and execute it. Under the hood every instruction will be batched by chain so that gas costs and latency are minimized. The MEE handles all the complexity of:
+- Monitoring the trigger condition
+- Executing the bridge operation
+- Waiting for funds to arrive on Base
+- Executing the batched approval and swap
+
+## Gasless by Default
+
+When using tokens that support ERC20Permit (like USDC in this demo), the entire flow becomes completely gasless! MEE automatically detects permit support and handles all the complexity:
+- No gas needed for approvals
+- No gas needed for token transfers
+- Just one signature for the entire cross-chain flow
+- Works automatically - no extra code needed
+
+## Seamless Cross-Chain Zaps
+
+Imagine letting your users deposit into your protocol using any token from any chain. No more forcing users to:
+- Bridge tokens themselves
+- Source specific tokens on specific chains
+- Execute multiple transactions
+- Pay for gas on multiple chains
+
+Instead, users can zap directly into your pool or vault using whatever assets they already have in their EOA. MEE handles all the complexity of bridging, swapping, and depositing - all with a single signature and no gas costs (when using permit-compatible tokens).
+
+## The Challenge of Cross-Chain Composability
+
+One of the hardest problems in cross-chain development is handling the outputs of one operation as inputs to another. Let me explain why:
+
+Imagine you're trying to:
+1. Bridge 100 USDC from Optimism to Base
+2. Use that exact USDC to swap for FUSION tokens
+
+Sounds simple, right? But there's a catch: when tokens are bridged, you don't get exactly what you sent. Bridges often take fees, and the exact amount that arrives can vary. This means you can't know precisely how many tokens you'll have available for the swap until after the bridge operation completes.
+
+### The Current Workaround
+
+```typescript
+const swap: InstructionLike = mcUniswapSwapRouter.build({
+  type: "exactInputSingle",
+  data: {
+    args: [{
+      // We have to estimate conservatively to account for bridge fees
+      amountIn: safeMultiplier(sellAmount, 0.8), // 20% buffer for fees
+      // ... other swap parameters
+    }]
+  }
+})
+```
+
+Right now, we have to:
+1. Estimate conservatively how many tokens will arrive
+2. Leave a buffer for bridge fees
+3. Accept that some tokens might be left as "dust"
+
+### True Composability (Coming Soon!)
+
+We're about to release a major update that solves this. Here's how it will work:
+
+```typescript
+const swap: InstructionLike = mcUniswapSwapRouter.build({
+  type: "exactInputSingle",
+  data: {
+    args: [{
+      // Use the exact output from the bridge operation
+      amountIn: bridgeIntent.output.amount,
+      // ... other swap parameters
+    }]
+  }
+})
+```
+
+With true composability:
+- Instructions can reference the exact outputs of previous operations
+- No more manual estimates or buffers needed
+- Zero dust tokens left behind
+- Works seamlessly across different chains
+
+This update will make cross-chain operations as simple as writing single-chain transactions. Stay tuned - we'll update this demo as soon as the feature is live!

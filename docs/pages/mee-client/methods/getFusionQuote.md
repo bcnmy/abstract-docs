@@ -18,14 +18,8 @@ const fusionQuote = await meeClient.getFusionQuote({
     amount: parseUnits("0.1", 6)
   },
   instructions: [
-    mcNexus.build({
-      type: "intent",
-      data: {
-        amount: amountToSupply,
-        mcToken: mcUSDC,
-        toChain: base
-      }
-    })
+    mcNexus.build({ ... }),
+    mcNexus.build({ ... })
   ],
   feeToken: {
     address: mcUSDC.addressOn(optimism.id),
@@ -75,7 +69,7 @@ const fusionQuote = await meeClient.getFusionQuote({
 ```typescript
 import { parseUnits } from "viem";
 import { optimism, base } from "viem/chains";
-import { aave, mcUSDC } from "@biconomy/abstractjs";
+import { aave, mcUSDC, mcAaveV3Pool } from "@biconomy/abstractjs";
 
 const amountToSupply = parseUnits("0.1", 6);
 
@@ -104,13 +98,17 @@ const fusionQuote = await meeClient.getFusionQuote({
         spender: aave.pool.addressOn(base.id)
       }
     }),
-    aave.pool.on(base.id).supply({
-      args: [
-        mcUSDC.addressOn(base.id),
-        amountToSupply,
-        mcNexus.signer.address,
-        0
-      ]
+    mcAaveV3Pool.build({
+      type: "supply",
+      data: {
+        chainId: base.id,
+        args: [
+          mcUSDC.addressOn(base.id),
+          amountToSupply,  // 100 USDC
+          mcNexus.addressOn(base.id, true),
+          0
+        ]
+      }
     })
   ],
   feeToken: {

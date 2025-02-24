@@ -362,6 +362,18 @@ export const smartAccountsV2Sidebar = [
 ];
 
 export default defineConfig({
+	ogImageUrl:
+		"https://vocs.dev/api/og?logo=%logo&title=%title&description=%description",
+	description:
+		"Biconomy is the world's most popular account abstraction infrastructure platform",
+	title: "Biconomy",
+	titleTemplate: "%s | Biconomy Docs",
+	rootDir: "./docs",
+	editLink: {
+		pattern:
+			"https://github.com/bcnmy/documentation/edit/develop/docs/pages/:path",
+		text: "Edit on GitHub",
+	},
 	iconUrl: {
 		dark: "https://i.imgur.com/WyX6ebY.png",
 		light: "https://i.imgur.com/WyX6ebY.png",
@@ -691,6 +703,37 @@ export default defineConfig({
 								},
 							],
 						},
+						{
+							text: "Helpers",
+							link: "/mee-client/helpers",
+							collapsed: true,
+							items: [
+								{
+									text: "getMultichainContract",
+									link: "/mee-client/helpers/getMultichainContract",
+								},
+								{
+									text: "mcUniswapSwapRouter",
+									link: "/mee-client/helpers/mcUniswapSwapRouter",
+								},
+								{
+									text: "mcAaveV3Pool",
+									link: "/mee-client/helpers/mcAaveV3Pool",
+								},
+								{
+									text: "mcUSDC",
+									link: "/mee-client/helpers/mcUSDC",
+								},
+								{
+									text: "getExplorerTxLink",
+									link: "/mee-client/helpers/getExplorerTxLink",
+								},
+								{
+									text: "getMeeScanLink",
+									link: "/mee-client/helpers/getMeeScanLink",
+								},
+							],
+						},
 					],
 				},
 				{
@@ -762,6 +805,20 @@ export default defineConfig({
 			items: [
 				{ text: "Contracts & Audits", link: "/contractsAndAudits" },
 				{ text: "Supported Networks", link: "/supportedNetworks" },
+			],
+		},
+		{
+			text: "Demos",
+			link: "/demos",
+			items: [
+				{
+					text: "#001 SmartSessions",
+					link: "/demos/smartSessions",
+				},
+				{
+					text: "#002 Fusion",
+					link: "/demos/fusion",
+				},
 			],
 		},
 		{

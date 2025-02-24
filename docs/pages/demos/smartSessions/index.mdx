@@ -1,0 +1,135 @@
+import SmartSessionsDemo from "../../../src/components/SmartSessionsDemo";
+
+# Smart Sessions
+
+*What if your dapp could execute transactions on behalf of users, without requiring them to sign every time? Let's explore how Smart Sessions enable automated trading while maintaining security and user sovereignty.*
+
+[GitHub](https://github.com/bcnmy/examples/tree/main/nextjs-demo-smart-sessions) 
+
+<SmartSessionsDemo/>
+
+## The Concept
+
+Smart Sessions allow dapps to execute transactions on behalf of users within strictly defined boundaries. Think of it like giving your broker limited trading permissions - they can execute trades for you, but only within the parameters you've set.
+
+Smart Sessions are blockchain-native JWTs. While JWTs let users stay logged into web apps, Smart Sessions let dapps execute transactions on users' behalf - but with stronger security guarantees:
+
+| Web2 (JWTs) | Web3 (Smart Sessions) |
+|-------------|----------------------|
+| Stored in databases | Validated on-chain |
+| Server controls permissions | User defines exact limits |
+| Can be compromised if server is hacked | Enforced by blockchain |
+| Basic role-based access | Function & parameter-level control |
+
+For example:
+```typescript
+// Web2: Basic role-based permissions
+{
+  "role": "trader",
+  "permissions": ["execute_trades"]
+}
+
+// Web3: Granular, trustless control
+{
+  sessionRequestedInfo: [{
+    actionPoliciesInfo: [{
+      contractAddress: POOL_ADDRESS,
+      functionSelector: "trade",
+      rules: [{ 
+        condition: "LESS_THAN",
+        offsetIndex: 1,
+        ref: parseEther("1.0") // max 1 ETH per trade
+      }]
+    }]
+  }]
+}
+```
+
+Unlike traditional trading bots, you never give up control of your keys. Instead, you grant specific, limited permissions that are enforced by the blockchain itself. Set spend limits, timeouts, and contract restrictions - then let your strategy run automatically.
+
+## What Makes This Different?
+
+1. **True Self-Custody**: Your keys stay yours - we just automate within your rules
+2. **Gas-Free Experience**: All gas fees are covered by our Paymaster
+3. **Seamless Approvals**: No separate approval transactions needed
+4. **Developer Friendly**: Complex AA features with clean, simple code
+
+
+### How Sessions Work with AbstractJS
+
+1. **Session Creation**
+
+```typescript
+// Create a session with specific permissions
+const session = await client.grantPermission({
+   sessionRequestedInfo: [{
+      sessionPublicKey: sessionKey,
+      actionPoliciesInfo: [{
+      contractAddress: POOL_ADDRESS,
+      functionSelector: "0x...", // trade function
+      rules: [/* trading parameters */]
+      }]
+   }]
+})
+```
+
+2. **Permission Boundaries**
+   - Whitelist specific contract addresses
+   - Allow only certain functions (e.g., trading)
+   - Set maximum transaction amounts
+   - Define time-based constraints
+
+3. **Automated Execution**
+
+```typescript
+// Execute trades using session permissions
+const userOpHash = await sessionClient.usePermission({
+   calls: [{
+      to: POOL_ADDRESS,
+      data: encodeFunctionData({
+      abi: POOL_ABI,
+      functionName: "trade",
+      args: [/* trade parameters */]
+      })
+   }]
+})
+```
+
+## Security First
+
+Sessions are designed with security as the primary concern:
+
+- **Time-Bound**: Sessions automatically expire after 24 hours
+- **Limited Scope**: Each permission grant is strictly bounded to specific actions
+- **User Control**: Sessions can be revoked at any time
+- **On-Chain Verification**: All permissions and rules are verified on-chain
+
+## Technical Implementation
+
+### Key Components
+
+1. **Session Management**
+   - Single dapp session key pattern
+   - Universal action policy for trade validation
+   - Time-based session expiry
+
+2. **Trading Logic**
+   - EMA-based trend detection
+   - Automated buy/sell execution
+   - Position size management
+
+3. **Gas Optimization**
+   - Gasless transactions via Biconomy Paymaster
+   - Batched permission updates
+   - Efficient session validation
+
+## Try It Out
+
+1. Connect your wallet
+2. Grant trading permissions
+3. Watch the automated trading in action
+4. Revoke permissions any time
+
+For implementation details, check out the [complete source code](https://github.com/bcnmy/examples/tree/main/nextjs-demo-smart-sessions) or visit our [Smart Sessions documentation](/modules/validators/smartSessions).
+
+*Next: We'll explore combining Smart Sessions with cross-chain messaging for multi-chain automated trading strategies.*
