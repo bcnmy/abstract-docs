@@ -434,6 +434,8 @@ export default defineConfig({
 		},
 		{
 			text: "Quickstart Guides",
+			link: "/tutorials/quickstart",
+			collapsed: false,
 			items: [
 				{
 					text: "Cross-Chain TXs & Intents",
@@ -461,7 +463,7 @@ export default defineConfig({
 					text: "Batch Execution & Gasless TXs",
 					collapsed: true,
 					items: [
-						{ text: "Execute a Simple UserOp", link: "/quickstart" },
+						{ text: "Execute a Simple UserOp", link: "/tutorials/simple" },
 						{
 							text: "Sponsor Gas With Paymasters",
 							link: "/tutorials/gasless",
