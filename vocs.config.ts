@@ -391,6 +391,13 @@ export default defineConfig({
 			link: "https://x.com/biconomy",
 		},
 	],
+	topNav: [
+		{ text: "Examples", link: "https://github.com/bcnmy/examples" },
+		{
+			text: "API Docs",
+			link: "https://bcnmy.github.io/abstractjs",
+		},
+	],
 	sidebar: [
 		{
 			text: "Why Biconomy?",
