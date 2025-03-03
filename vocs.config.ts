@@ -391,6 +391,13 @@ export default defineConfig({
 			link: "https://x.com/biconomy",
 		},
 	],
+	topNav: [
+		{ text: "Examples", link: "https://github.com/bcnmy/examples" },
+		{
+			text: "API Docs",
+			link: "https://bcnmy.github.io/abstractjs",
+		},
+	],
 	sidebar: [
 		{
 			text: "Why Biconomy?",
@@ -427,6 +434,8 @@ export default defineConfig({
 		},
 		{
 			text: "Quickstart Guides",
+			link: "/tutorials/quickstart",
+			collapsed: false,
 			items: [
 				{
 					text: "Cross-Chain TXs & Intents",
@@ -454,7 +463,7 @@ export default defineConfig({
 					text: "Batch Execution & Gasless TXs",
 					collapsed: true,
 					items: [
-						{ text: "Execute a Simple UserOp", link: "/quickstart" },
+						{ text: "Execute a Simple UserOp", link: "/tutorials/simple" },
 						{
 							text: "Sponsor Gas With Paymasters",
 							link: "/tutorials/gasless",
