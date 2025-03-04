@@ -5,32 +5,34 @@ Click the table headers to view the real-time list of deployed contracts on [con
 :::
 
 
-| Network                      | Bundler | Sponsorship PM (Infra) | Token PM (Infra) | Sponsorship PM Contracts | [Token PM Contract](https://contractscan.xyz/contract/0x00000000301515A5410e0d768aF4f53c416edf19) | [Nexus Contract](https://contractscan.xyz/contract/0x0000002D6DB27c52E3C11c1Cf24072004AC75cBa) |
+| Network                      | Bundler | Sponsorship PM (Infra) | Token PM (Infra) | Sponsorship PM Contracts | [Token PM Contract](https://contractscan.xyz/contract/0x00000000301515A5410e0d768aF4f53c416edf19) | [Nexus Contracts] |
 |-----------------------------|---------|----------------------|-----------------|----------------------|-----------------|-----------------|
-| Ethereum Mainnet            | ✅      | ✅                   | ✅              | ✅                   | ✅              | ✅              |
-| Ethereum Sepolia            | ✅      | ✅                   | ✅              | ✅                   | ✅              | ✅              |
-| Base Mainnet                | ✅      | ✅                   | ✅              | ✅                   | ✅              | ✅              |
-| Base Testnet                | ✅      | ✅                   | ✅              | ✅                   | ✅              | ✅              |
-| OP Mainnet                  | ✅      | ✅                   | ✅              | ✅                   | ✅              | ✅              |
-| OP Sepolia Testnet          | ✅      | ✅                   | ✅              | ✅                   | ✅              | ✅              |
-| Scroll Mainnet              | ✅      | ✅                   | ✅              | ✅                   | ✅              | ✅              |
-| Scroll Sepolia Testnet      | ✅      | ✅                   | ✅              | ✅                   | ✅              | ✅              |
-| Arbitrum Mainnet            | ✅      | ✅                   | ✅              | ✅                   | ✅              | ✅              |
-| Arbitrum Sepolia Testnet    | ✅      | ✅                   | ✅              | ✅                   | ✅              | ✅              |
-| Binance Smart Chain Mainnet | ✅      | ✅                   | ✅              | ✅                   | ✅              | ✅              |
-| Binance Smart Chain Testnet | ✅      | ✅                   | ✅              | ✅                   | ✅              | ✅              |
-| Polygon Mainnet             | ✅      | ✅                   | ✅              | ✅                   | ✅              | ✅              |
-| Polygon Amoy Testnet        | ✅      | ✅                   | ❌              | ✅                   | ❌              | ✅              |
-| Gnosis Mainnet              | ✅      | ✅                   | ✅              | ✅                   | ✅              | ✅              |
-| Gnosis Chiado Testnet       | ✅      | ✅                   | ❌              | ✅                   | ❌              | ✅              |
-| Sonic Mainnet               | ✅      | ✅                   | ✅              | ✅                   | ✅              | ✅              |
-| Sonic Testnet               | ✅      | ✅                   | ❌              | ✅                   | ❌              | ✅              |
-| Blast Mainnet               | ✅      | ✅                   | ✅              | ✅                   | ✅              | ✅              |
-| Blast Sepolia               | ✅      | ✅                   | ❌              | ✅                   | ❌              | ✅              |
-| IOTA Mainnet                | ⏳      | ⏳                   | ⏳              | ✅                   | ✅              | ✅              |
-| Monad Testnet               | ✅      | ✅                   | ❌              | ✅                   | ❌              | ✅              |
+| Ethereum Mainnet            | ✅      | ✅                   | ✅              | ✅                   | ✅              | ✅ (v1.0.2)              |
+| Ethereum Sepolia            | ✅      | ✅                   | ✅              | ✅                   | ✅              | ✅ (v1.0.2)              |
+| Base Mainnet                | ✅      | ✅                   | ✅              | ✅                   | ✅              | ✅ (v1.0.2)              |
+| Base Sepolia                | ✅      | ✅                   | ✅              | ✅                   | ✅              | ✅ (v1.0.2)              |
+| OP Mainnet                  | ✅      | ✅                   | ✅              | ✅                   | ✅              | ✅ (v1.0.2)              |
+| OP Sepolia Testnet          | ✅      | ✅                   | ✅              | ✅                   | ✅              | ✅ (v1.0.2)              |
+| Scroll Mainnet              | ✅      | ✅                   | ✅              | ✅                   | ✅              | ✅ (v1.0.2)              |
+| Scroll Sepolia Testnet      | ✅      | ✅                   | ✅              | ✅                   | ✅              | ✅ (v1.0.2)              |
+| Arbitrum Mainnet            | ✅      | ✅                   | ✅              | ✅                   | ✅              | ✅ (v1.0.2)              |
+| Arbitrum Sepolia Testnet    | ✅      | ✅                   | ✅              | ✅                   | ✅              | ✅ (v1.0.2)              |
+| Binance Smart Chain Mainnet | ✅      | ✅                   | ✅              | ✅                   | ✅              | ✅ (v1.0.2)              |
+| Binance Smart Chain Testnet | ✅      | ✅                   | ✅              | ✅                   | ✅              | ✅ (v1.0.2)              |
+| Polygon Mainnet             | ✅      | ✅                   | ✅              | ✅                   | ✅              | ✅ (v1.0.2)              |
+| Polygon Amoy Testnet        | ✅      | ✅                   | ❌              | ✅                   | ❌              | ✅ (v1.0.2)              |
+| Gnosis Mainnet              | ✅      | ✅                   | ✅              | ✅                   | ✅              | ✅ (v1.0.2)              |
+| Gnosis Chiado Testnet       | ✅      | ✅                   | ❌              | ✅                   | ❌              | ✅ (v1.0.2)              |
+| Sonic Mainnet               | ✅      | ✅                   | ✅              | ✅                   | ✅              | ✅ (v1.0.2)              |
+| Sonic Blaze Testnet         | ✅      | ✅                   | ❌              | ✅                   | ❌              | ✅ (v1.0.2)              |
+| Blast Mainnet               | ✅      | ✅                   | ✅              | ✅                   | ✅              | ✅ (v1.0.2)              |
+| Blast Sepolia               | ✅      | ✅                   | ❌              | ✅                   | ❌              | ✅ (v1.0.2)              |
+| IOTA Mainnet                | ⏳      | ⏳                   | ⏳              | ✅                   | ✅              | ✅ (v1.0.2)              |
+| Monad Testnet               | ✅      | ✅                   | ❌              | ✅                   | ❌              | ✅ (v1.0.2)              |
 
 *PM = Paymaster
+*⏳ = Coming Soon
+*❌ = Not Supported
 
 Sponsorship PM Contract has two addresses: 
 Base and OP: [0x0000006087310897e0BFfcb3f0Ed3704f7146852](https://contractscan.xyz/contract/0x0000006087310897e0BFfcb3f0Ed3704f7146852)
