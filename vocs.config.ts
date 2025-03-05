@@ -803,6 +803,10 @@ export default defineConfig({
 									text: "getChainId",
 									link: "/nexus-client/methods/getChainId",
 								},
+								{
+									text: "upgradeSmartAccount",
+									link: "/nexus-client/methods/upgradeSmartAccount",
+								},
 							],
 						},
 					],
