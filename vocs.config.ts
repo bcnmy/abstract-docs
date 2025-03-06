@@ -365,7 +365,7 @@ export default defineConfig({
 	ogImageUrl:
 		"https://vocs.dev/api/og?logo=%logo&title=%title&description=%description",
 	description:
-		"Biconomy is the world's most popular account abstraction infrastructure platform",
+		"Biconomy is the universal interface to all blockchains",
 	title: "Biconomy",
 	titleTemplate: "%s | Biconomy Docs",
 	rootDir: "./docs",
