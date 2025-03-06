@@ -52,7 +52,7 @@
 # Dev access contracts
 ⚠️ Those contracts are not audited. They are not recommended for production use.
 
-## MEE Contracts
+## MEE Contracts Dev Access
 | Name    | Address    | 
 |-------------|-------------|
 |  MEE Entrypoint | `0xE854C84cD68fC434cB3B0042c29235D452cAD977` |
@@ -61,6 +61,7 @@
 Supported chains:
 | Network            | Supported     |
 | ------------------ | ----------- |
+| Ethereum Mainnet   | ✅           |
 | Ethereum Sepolia   | ✅           |
 | Base Testnet       | ✅           |
 | Base Mainnet       | ✅           |
@@ -78,6 +79,43 @@ Supported chains:
 | Binance Smart Chain Testnet         | ✅           |
 | Berachain Bartio Testnet         | ✅           |
 
+## MEE Contracts Dev Access 2
+| Name    | Address    | 
+|-------------|-------------|
+|  MEE Entrypoint | `0x9186C05E88B1061Ae49C0F275D9b4c5db0817E61` |
+|  MEE K1 Validator | `0xFbCbF8314DE6DA57ea2Bc4710115F5271041CA50` |
+| Eth Forwarder | `0x16007Dad4739b3094434B54072Fb9C094cE970c2` |
+
+Supported chains:
+| Network            | Supported     |
+| ------------------ | ----------- |
+| Soneium Mainnet   | ✅           |
+| Soneium Minato   | ✅           |
+| Base Sepolia       | ✅           |
+| Base Mainnet       | ✅           |
+| OP Sepolia Testnet | ✅           |
+| OP Mainnet         | ✅           |
+| Polygon Mainnet         | ✅           |
+| Polygon Amoy Testnet         | ✅           |
+| Scroll Sepolia Testnet         | ✅           |
+| Scroll Mainnet         | ✅           |
+| Arbitrum Sepolia Testnet         | ✅           |
+| Arbitrum Mainnet         | ✅           |
+| Odyssey Ithaca Testnet         | ✅           |
+
+MEE Contracts Dev Access 3
+| Name    | Address    | 
+|-------------|-------------|
+| Node Paymaster | `0x45a261F22cD22661bAB404Bc1b006b1ca2c5b553` |
+|  MEE Entrypoint | `0xc6556fe36AD80E35e665aD7F9A1CF628c026A9cF` |
+|  MEE K1 Validator | `0xa628C35260e94F620168271ee542be8eACeB3aA5` |
+| Eth Forwarder | `0xe6e310Edc9238eD9155A5aE1Bb0A1549ffe211e0` |
+
+Supported chains:
+| Network            | Supported     |
+| ------------------ | ----------- |
+| Odyssey Ithaca Testnet     | ✅           |
+| Base Sepolia       | ✅           |
 
 ## Nexus v1.1.0-alpha Experimental Contracts
 | Name    | Address    | 
