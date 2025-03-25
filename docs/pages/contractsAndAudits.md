@@ -1,6 +1,6 @@
 # Production Contracts
 
-## Nexus v1.0.2 Production Contracts
+## Genesis Mainnet Release
 | Name    | Address    | 
 |-------------|-------------|
 | Nexus implementation  | `0x000000aC74357BFEa72BBD0781833631F732cf19`  |
@@ -8,6 +8,17 @@
 | K1 Validator Factory  | `0x2828A0E0f36d8d8BeAE95F00E2BbF235e4230fAc`  | 
 | Account Factory  | `0x000000c3A93d2c5E02Cb053AC675665b1c4217F9`  |
 | Bootstrap  | `0x879fa30248eeb693dcCE3eA94a743622170a3658`  |
+
+## Nexus v1.0.2 Production Contracts
+<details markdown="1">
+| Name    | Address    | 
+|-------------|-------------|
+| Nexus implementation  | `0x000000aC74357BFEa72BBD0781833631F732cf19`  |
+| K1 Validator  | `0x0000002D6DB27c52E3C11c1Cf24072004AC75cBa`  | 
+| K1 Validator Factory  | `0x2828A0E0f36d8d8BeAE95F00E2BbF235e4230fAc`  | 
+| Account Factory  | `0x000000c3A93d2c5E02Cb053AC675665b1c4217F9`  |
+| Bootstrap  | `0x879fa30248eeb693dcCE3eA94a743622170a3658`  |
+</details>
 
 ## Nexus v1.0.1 Production Contracts
 | Name    | Address    | 
