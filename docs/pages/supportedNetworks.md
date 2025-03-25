@@ -1,9 +1,37 @@
 # Supported Networks (Chains)
 
+## Bicnomy Network: Genesis Mainnet Release
+
+| Network                     | Supported| Nexus version   | EIP-7702 Support |
+|-----------------------------|----------|-----------------|------------------|
+| Ethereum Mainnet            | ⏳        | Nexus v1.0.2   | ⏳                |
+| Ethereum Sepolia            | ✅        | Nexus v1.0.2   | ✅                |
+| Base Mainnet                | ✅        | Nexus v1.0.2   | ⏳                |
+| Base Sepolia                | ✅        | Nexus v1.0.2   | ⏳                |
+| Polygon Mainnet             | ✅        | Nexus v1.0.2   | ⏳                |
+| Polygon Amoy Testnet        | ✅        | Nexus v1.0.2   | ⏳                |
+| Arbitrum Mainnet            | ✅        | Nexus v1.0.2   | ⏳                |
+| Arbitrum Sepolia            | ✅        | Nexus v1.0.2   | ⏳                |
+| OP Mainnet                  | ✅        | Nexus v1.0.2   | ⏳                |
+| OP Sepolia Testnet          | ✅        | Nexus v1.0.2   | ⏳                |
+| BSC Mainnet                 | ✅        | Nexus v1.0.2   | ⏳                |
+| BSC Testnet                 | ✅        | Nexus v1.0.2   | ⏳                |
+| Sonic Mainnet               | ✅        | Nexus v1.0.2   | ⏳                |
+| Sonic Blaze Testnet         | ✅        | Nexus v1.0.2   | ⏳                |
+| Scroll Mainnet              | ✅        | Nexus v1.0.2   | ⏳                |
+| Scroll Sepolia Testnet      | ✅        | Nexus v1.0.2   | ⏳                |
+| Gnosis Mainnet              | ✅        | Nexus v1.0.2   | ⏳                |
+| Gnosis Chiado Testnet       | ✅        | Nexus v1.0.2   | ⏳                |
+| Avalanche Mainnet           | ✅        | Nexus v1.0.2   | ⏳                |
+| Avalanche Fuji Testnet      | ✅        | Nexus v1.0.2   | ⏳                |
+
+For contracts addresses and audit reports, see [here](https://docs.biconomy.io/contractsAndAudits).
+
+## ERC-4337 Infra
+
 :::info
 Click the table headers to view the real-time list of deployed contracts on [contractscan](https://contractscan.xyz/).
 :::
-
 
 | Network                      | Bundler | Sponsorship PM (Infra) | Token PM (Infra) | Sponsorship PM Contracts | [Token PM Contract](https://contractscan.xyz/contract/0x00000000301515A5410e0d768aF4f53c416edf19) | [Nexus Contracts] |
 |-----------------------------|---------|----------------------|-----------------|----------------------|-----------------|-----------------|

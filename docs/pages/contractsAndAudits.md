@@ -1,6 +1,6 @@
 # Production Contracts
 
-## Genesis Mainnet Release
+## Biconomy Network: Genesis Mainnet Release
 | Name    | Address    | 
 |-------------|-------------|
 | MEE EntryPoint & Paymaster | `0xE854C84cD68fC434cB3B0042c29235D452cAD977`  |
@@ -28,30 +28,38 @@
 | Account Factory  | `0x000000c3A93d2c5E02Cb053AC675665b1c4217F9`  |
 | Nexus Bootstrap v1.0.2 | `0x879fa30248eeb693dcCE3eA94a743622170a3658`  |
 
-### Supported chains
+## Audits
 
-| Network                     | Supported| Nexus version   | EIP-7702 Support |
-|-----------------------------|----------|-----------------|------------------|
-| Ethereum Mainnet            | ⏳        | Nexus v1.0.2   | ⏳                |
-| Ethereum Sepolia            | ✅        | Nexus v1.0.2   | ✅                |
-| Base Mainnet                | ✅        | Nexus v1.0.2   | ⏳                |
-| Base Sepolia                | ✅        | Nexus v1.0.2   | ⏳                |
-| Polygon Mainnet             | ✅        | Nexus v1.0.2   | ⏳                |
-| Polygon Amoy Testnet        | ✅        | Nexus v1.0.2   | ⏳                |
-| Arbitrum Mainnet            | ✅        | Nexus v1.0.2   | ⏳                |
-| Arbitrum Sepolia            | ✅        | Nexus v1.0.2   | ⏳                |
-| OP Mainnet                  | ✅        | Nexus v1.0.2   | ⏳                |
-| OP Sepolia Testnet          | ✅        | Nexus v1.0.2   | ⏳                |
-| BSC Mainnet                 | ✅        | Nexus v1.0.2   | ⏳                |
-| BSC Testnet                 | ✅        | Nexus v1.0.2   | ⏳                |
-| Sonic Mainnet               | ✅        | Nexus v1.0.2   | ⏳                |
-| Sonic Blaze Testnet         | ✅        | Nexus v1.0.2   | ⏳                |
-| Scroll Mainnet              | ✅        | Nexus v1.0.2   | ⏳                |
-| Scroll Sepolia Testnet      | ✅        | Nexus v1.0.2   | ⏳                |
-| Gnosis Mainnet              | ✅        | Nexus v1.0.2   | ⏳                |
-| Gnosis Chiado Testnet       | ✅        | Nexus v1.0.2   | ⏳                |
-| Avalanche Mainnet           | ✅        | Nexus v1.0.2   | ⏳                |
-| Avalanche Fuji Testnet      | ✅        | Nexus v1.0.2   | ⏳                |
+### Nexus
+
+| Audited by    | Links    | 
+|-------------|-------------|
+| Cyfrin  | [report](https://github.com/bcnmy/nexus/blob/dev/audits/CodeHawks-Cyfrin-Competition-170924.pdf)  |
+| Spearbit  | [report](https://github.com/bcnmy/nexus/blob/dev/audits/report-cantinacode-biconomy-0708-final.pdf)  + [erc-7739 add-on](https://github.com/bcnmy/nexus/blob/dev/audits/report-cantinacode-biconomy-erc7739-addon-final.pdf) 
+| Zenith  | [report](https://github.com/bcnmy/nexus/blob/b58b0260cbab6e9e5e8abdd3e061fe1628f0540d/audits/Biconomy-Nexus_Zenith-Audit-Report.pdf)  |
+
+### MEE Stack
+
+| Audited by    | Links    | 
+|-------------|-------------|
+| Zenith | [MEE contracts: MEE EP, Node PM, MEEK1 validator](https://github.com/bcnmy/mee-contracts/blob/main/audit/Zenith%20Audit%20Report%20-%20Biconomy%20MEE%20Contracts.pdf) |
+
+### Composability stack
+
+| Audited by    | Links    | 
+|-------------|-------------|
+| Zenith | [Composability stack report](https://github.com/bcnmy/composability/blob/main/audits/Biconomy-Composability_Zenith-Audit-Report.pdf) |
+
+
+### Paymasters
+<details markdown="1">
+
+| Audited by    | Links    | 
+|-------------|-------------|
+| Chainlight | [Sponsorship Paymaster report](https://github.com/bcnmy/gasdaddy/blob/6bb9ad9b74cb48cd9284461b31b5624edf8a6eb5/audits/ChainLight_Biconomy_Sponsorship_Paymaster_Security_Audit_v1_1.pdf) |
+| Chainlight | [Token Paymaster report](https://github.com/bcnmy/gasdaddy/blob/20239ae8bf5696d57341ff90e0be52e6038bf47f/audits/ChainLight_Biconomy_Token_Paymaster_Security_Audit_v1_0.pdf) |
+
+</details>
 
 ## Nexus v1.0.2 Production Contracts
 <details markdown="1">
@@ -65,6 +73,7 @@
 | Bootstrap  | `0x879fa30248eeb693dcCE3eA94a743622170a3658`  |
 
 </details>
+
 
 ## Nexus v1.0.1 Production Contracts
 <details markdown="1">
@@ -96,33 +105,3 @@
 | Token Paymaster | `0x00000000301515A5410e0d768aF4f53c416edf19` |
 
 </details>
-
-## Audits
-
-### Nexus
-
-| Audited by    | Links    | 
-|-------------|-------------|
-| Cyfrin  | [report](https://github.com/bcnmy/nexus/blob/dev/audits/CodeHawks-Cyfrin-Competition-170924.pdf)  |
-| Spearbit  | [report](https://github.com/bcnmy/nexus/blob/dev/audits/report-cantinacode-biconomy-0708-final.pdf)  + [erc-7739 add-on](https://github.com/bcnmy/nexus/blob/dev/audits/report-cantinacode-biconomy-erc7739-addon-final.pdf) 
-
-
-### MEE Stack
-
-| Audited by    | Links    | 
-|-------------|-------------|
-| sdsd | [MEE Entrypoint report]() |
-
-### Composability stack
-
-| Audited by    | Links    | 
-|-------------|-------------|
-| sdsd | [Composability stack report]() |
-
-
-### Paymasters
-
-| Audited by    | Links    | 
-|-------------|-------------|
-| Chainlight | [Sponsorship Paymaster report](https://github.com/bcnmy/gasdaddy/blob/6bb9ad9b74cb48cd9284461b31b5624edf8a6eb5/audits/ChainLight_Biconomy_Sponsorship_Paymaster_Security_Audit_v1_1.pdf) |
-| Chainlight | [Token Paymaster report](https://github.com/bcnmy/gasdaddy/blob/20239ae8bf5696d57341ff90e0be52e6038bf47f/audits/ChainLight_Biconomy_Token_Paymaster_Security_Audit_v1_0.pdf) |
