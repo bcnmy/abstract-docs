@@ -187,6 +187,7 @@ We need a new Nexus client that is associated with the session. This client will
 const smartSessionNexusClient = createSmartAccountClient({
     chain: baseSepolia,
     account: await toNexusAccount({
+        accountAddress: sessionData.granter,
         signer: sessionOwner,
         chain: baseSepolia,
         transport: http(),
