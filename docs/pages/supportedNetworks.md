@@ -4,7 +4,7 @@
 
 | Network                     | Supported| Nexus version   | EIP-7702 Support |
 |-----------------------------|----------|-----------------|------------------|
-| Ethereum Mainnet            | ⏳        | Nexus v1.0.2   | ⏳                |
+| Ethereum Mainnet            | ✅        | Nexus v1.0.2   | ⏳                |
 | Ethereum Sepolia            | ✅        | Nexus v1.0.2   | ✅                |
 | Base Mainnet                | ✅        | Nexus v1.0.2   | ⏳                |
 | Base Sepolia                | ✅        | Nexus v1.0.2   | ⏳                |
