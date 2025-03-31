@@ -49,7 +49,8 @@
 
 | Audited by    | Links    | 
 |-------------|-------------|
-| Zenith | [Composability stack report](https://github.com/bcnmy/composability/blob/main/audits/Biconomy-Composability_Zenith-Audit-Report.pdf) |
+| Zenith | [Report](https://github.com/bcnmy/composability/blob/main/audits/Biconomy-Composability_Zenith-Audit-Report.pdf) |
+| Pashov | [Report](https://github.com/bcnmy/composability/blob/9e090c24b195822f668f96cb4ff518a9b7ff712d/audits/2025-03-Composability-Pashov-Review.pdf) |
 
 ## Nexus v1.0.2 Production Contracts
 <details markdown="1">
