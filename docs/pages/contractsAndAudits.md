@@ -15,7 +15,7 @@
 | Name    | Address    | 
 |-------------|-------------|
 | Nexus implementation v1.2.0 | `0x⏳⏳⏳`  |
-| Account Factory  | `0x⏳⏳⏳`  |
+| Nexus Account Factory  | `0x⏳⏳⏳`  |
 | Nexus Bootstrap v1.2.0 | `0x⏳⏳⏳`  |
 
 </details>
@@ -37,6 +37,7 @@
 | Cyfrin  | [report](https://github.com/bcnmy/nexus/blob/dev/audits/CodeHawks-Cyfrin-Competition-170924.pdf)  |
 | Spearbit  | [report](https://github.com/bcnmy/nexus/blob/dev/audits/report-cantinacode-biconomy-0708-final.pdf)  + [erc-7739 add-on](https://github.com/bcnmy/nexus/blob/dev/audits/report-cantinacode-biconomy-erc7739-addon-final.pdf) 
 | Zenith  | [report](https://github.com/bcnmy/nexus/blob/b58b0260cbab6e9e5e8abdd3e061fe1628f0540d/audits/Biconomy-Nexus_Zenith-Audit-Report.pdf)  |
+| Pashov  | [report](https://github.com/bcnmy/nexus/blob/c516ec892f3314dbf4992576aee62229b6c31bb4/audits/Nexus-Pashov-Review_2025-03.pdf)  |
 
 ### MEE Stack
 
@@ -49,17 +50,6 @@
 | Audited by    | Links    | 
 |-------------|-------------|
 | Zenith | [Composability stack report](https://github.com/bcnmy/composability/blob/main/audits/Biconomy-Composability_Zenith-Audit-Report.pdf) |
-
-
-### Paymasters
-<details markdown="1">
-
-| Audited by    | Links    | 
-|-------------|-------------|
-| Chainlight | [Sponsorship Paymaster report](https://github.com/bcnmy/gasdaddy/blob/6bb9ad9b74cb48cd9284461b31b5624edf8a6eb5/audits/ChainLight_Biconomy_Sponsorship_Paymaster_Security_Audit_v1_1.pdf) |
-| Chainlight | [Token Paymaster report](https://github.com/bcnmy/gasdaddy/blob/20239ae8bf5696d57341ff90e0be52e6038bf47f/audits/ChainLight_Biconomy_Token_Paymaster_Security_Audit_v1_0.pdf) |
-
-</details>
 
 ## Nexus v1.0.2 Production Contracts
 <details markdown="1">
@@ -74,6 +64,7 @@
 
 </details>
 
+# Legacy Production Contracts
 
 ## Nexus v1.0.1 Production Contracts
 <details markdown="1">
@@ -103,5 +94,15 @@
 |-------------|-------------|
 | Sponsorship Paymaster | `0x00000072a5F551D6E80b2f6ad4fB256A27841Bbc` |
 | Token Paymaster | `0x00000000301515A5410e0d768aF4f53c416edf19` |
+
+</details>
+
+## Paymasters Audits
+<details markdown="1">
+
+| Audited by    | Links    | 
+|-------------|-------------|
+| Chainlight | [Sponsorship Paymaster report](https://github.com/bcnmy/gasdaddy/blob/6bb9ad9b74cb48cd9284461b31b5624edf8a6eb5/audits/ChainLight_Biconomy_Sponsorship_Paymaster_Security_Audit_v1_1.pdf) |
+| Chainlight | [Token Paymaster report](https://github.com/bcnmy/gasdaddy/blob/20239ae8bf5696d57341ff90e0be52e6038bf47f/audits/ChainLight_Biconomy_Token_Paymaster_Security_Audit_v1_0.pdf) |
 
 </details>
