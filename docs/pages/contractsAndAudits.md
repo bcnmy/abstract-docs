@@ -10,7 +10,6 @@
 | ETH Forwarder Addr:  | `0x000000Afe527A978Ecb761008Af475cfF04132a1`  |
 
 ### Nexus v1.2.0 => For chains with EIP-7702 support
-<details markdown="1">
 
 | Name    | Address    | 
 |-------------|-------------|
@@ -18,15 +17,23 @@
 | Nexus Account Factory  | `0x00000000fc7930C6F28401804b9606669A015Ff7`  |
 | Nexus Bootstrap v1.2.0 | `0x000000001D1D5004a02bAfAb9de2D6CE5b7B13de`  |
 
-</details>
+[GitHub](https://github.com/bcnmy/nexus/releases/tag/v1.2.0)
+
 
 
 ### Nexus v1.0.2 => For chains w/o EIP-7702 support
+
+<details markdown="1">
+
 | Name    | Address    | 
 |-------------|-------------|
 | Nexus implementation v1.0.2 | `0x000000aC74357BFEa72BBD0781833631F732cf19`  |
 | Account Factory  | `0x000000c3A93d2c5E02Cb053AC675665b1c4217F9`  |
 | Nexus Bootstrap v1.0.2 | `0x879fa30248eeb693dcCE3eA94a743622170a3658`  |
+
+[GitHub](https://github.com/bcnmy/nexus/releases/tag/v1.0.2)
+
+</details>
 
 ## Audits
 
