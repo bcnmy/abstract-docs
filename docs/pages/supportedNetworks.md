@@ -2,28 +2,28 @@
 
 ## Bicnomy Network: Genesis Mainnet Release
 
-| Network                     | Supported| Nexus versions   | EIP-7702 Support |
-|-----------------------------|----------|-----------------|------------------|
-| Ethereum Mainnet            | ✅        | v1.2.0, v1.0.2   | ⏳                |
-| Ethereum Sepolia            | ✅        | v1.2.0, v1.0.2   | ✅                |
-| Base Mainnet                | ✅        | v1.2.0, v1.0.2   | ⏳                |
-| Base Sepolia                | ✅        | v1.2.0, v1.0.2   | ⏳                |
-| Polygon Mainnet             | ✅        | v1.2.0, v1.0.2   | ⏳                |
-| Polygon Amoy Testnet        | ✅        | v1.2.0, v1.0.2   | ⏳                |
-| Arbitrum Mainnet            | ✅        | v1.2.0, v1.0.2   | ⏳                |
-| Arbitrum Sepolia            | ✅        | v1.2.0, v1.0.2   | ⏳                |
-| OP Mainnet                  | ✅        | v1.2.0, v1.0.2   | ⏳                |
-| OP Sepolia Testnet          | ✅        | v1.2.0, v1.0.2   | ⏳                |
-| BSC Mainnet                 | ✅        | v1.2.0, v1.0.2   | ⏳                |
-| BSC Testnet                 | ✅        | v1.2.0, v1.0.2   | ⏳                |
-| Sonic Mainnet               | ✅        | v1.2.0, v1.0.2   | ⏳                |
-| Sonic Blaze Testnet         | ✅        | v1.2.0, v1.0.2   | ⏳                |
-| Scroll Mainnet              | ✅        | v1.2.0, v1.0.2   | ⏳                |
-| Scroll Sepolia Testnet      | ✅        | v1.2.0, v1.0.2   | ⏳                |
-| Gnosis Mainnet              | ✅        | v1.2.0, v1.0.2   | ⏳                |
-| Gnosis Chiado Testnet       | ✅        | v1.2.0, v1.0.2   | ⏳                |
-| Avalanche Mainnet           | ✅        | v1.2.0, v1.0.2   | ⏳                |
-| Avalanche Fuji Testnet      | ✅        | v1.2.0, v1.0.2   | ⏳                |
+| Network                     | Supported| Nexus versions   | Chain supports EIP-7702 |
+|-----------------------------|----------|-----------------|-------------------------|
+| Ethereum Mainnet            | ✅        | v1.2.0, v1.0.2   | ⏳                       |
+| Ethereum Sepolia            | ✅        | v1.2.0, v1.0.2   | ✅                       |
+| Base Mainnet                | ✅        | v1.2.0, v1.0.2   | ⏳                       |
+| Base Sepolia                | ✅        | v1.2.0, v1.0.2   | ⏳                       |
+| Polygon Mainnet             | ✅        | v1.2.0, v1.0.2   | ⏳                       |
+| Polygon Amoy Testnet        | ✅        | v1.2.0, v1.0.2   | ⏳                       |
+| Arbitrum Mainnet            | ✅        | v1.2.0, v1.0.2   | ⏳                       |
+| Arbitrum Sepolia            | ✅        | v1.2.0, v1.0.2   | ⏳                       |
+| OP Mainnet                  | ✅        | v1.2.0, v1.0.2   | ⏳                       |
+| OP Sepolia Testnet          | ✅        | v1.2.0, v1.0.2   | ⏳                       |
+| BSC Mainnet                 | ✅        | v1.2.0, v1.0.2   | ⏳                       |
+| BSC Testnet                 | ✅        | v1.2.0, v1.0.2   | ⏳                       |
+| Sonic Mainnet               | ✅        | v1.2.0, v1.0.2   | ⏳                       |
+| Sonic Blaze Testnet         | ✅        | v1.2.0, v1.0.2   | ⏳                       |
+| Scroll Mainnet              | ✅        | v1.2.0, v1.0.2   | ⏳                       |
+| Scroll Sepolia Testnet      | ✅        | v1.2.0, v1.0.2   | ⏳                       |
+| Gnosis Mainnet              | ✅        | v1.2.0, v1.0.2   | ⏳                       |
+| Gnosis Chiado Testnet       | ✅        | v1.2.0, v1.0.2   | ⏳                       |
+| Avalanche Mainnet           | ✅        | v1.2.0, v1.0.2   | ⏳                       |
+| Avalanche Fuji Testnet      | ✅        | v1.2.0, v1.0.2   | ⏳                       |
 
 For contracts addresses and audit reports, see [here](https://docs.biconomy.io/contractsAndAudits).
 
