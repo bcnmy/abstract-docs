@@ -46,7 +46,7 @@ Never hardcode private keys in production code. This guide uses hardcoded keys f
 First, let's install the necessary dependencies:
 
 ```bash
-npm install @biconomy/abstractjs-canary viem
+npm install @biconomy/abstractjs viem
 ```
 
 Next, create a new file called `orchestration.js` and import the required dependencies:
@@ -65,7 +65,7 @@ import {
   toMultichainNexusAccount,
   UniswapSwapRouterAbi,
   greaterThanOrEqualTo
-} from "@biconomy/abstractjs-canary";
+} from "@biconomy/abstractjs";
 
 import {
   encodeFunctionData,
@@ -448,7 +448,7 @@ import {
   toMultichainNexusAccount,
   UniswapSwapRouterAbi,
   greaterThanOrEqualTo
-} from "@biconomy/abstractjs-canary";
+} from "@biconomy/abstractjs";
 
 import {
   encodeFunctionData,
@@ -583,15 +583,6 @@ Next, you can:
   - Add front-end interfaces to your orchestration flows
   - Implement dynamic routing based on gas costs or exchange rates
   - Create protocol-specific optimizations
-
-- **Dive Deeper**:
-  - Check out our [API Reference](/reference/orchestration) for detailed documentation
-  - Explore advanced constraint patterns
-  - Learn about security considerations for orchestration
-
-:::info
-Join our [Discord community](https://discord.gg/biconomy) to get help and connect with other developers building with Biconomy!
-:::
 
 ## Troubleshooting Guide
 

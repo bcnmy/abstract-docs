@@ -4,7 +4,7 @@
 enables developers to set smart account code to their EOA address. 
 
 This means that apps can set the Orchestrator smart account to their EOA address
-and get the best of both [EOA Orchestration]() and [Smart Account Orchestration]()
+and get the best of both EOA Orchestration and Smart Account Orchestration
 
 ### Key Benefits
 The key benefits of EIP-7702 powered Orchestration:
@@ -37,9 +37,32 @@ Leveraging EIP-7702 orchestration is done in two steps:
 Sign an authorization message which will set the Nexus smart account
 code to your wallet.
 
-To learn how to do this, read our [Setting EIP-7702 Delegations]() guide.
+Delegation is done by signign an EIP-7702 delegation message which will 
+delegate the account to the **Nexus 1.2.0.** implementation address. Nexus
+1.2.0. is our EIP-7702 compliant version of the Nexus smart accounts.
 
-### Execute
+
+```ts
+// This is the address of the EOA to which 
+// address we'll be "installing" the smart account to.
+const eoa = privateKeyToAccount('0xPrivateKey')
+
+// Create an instance of a viem wallet client and extend it with the 
+// required eip7702 actions.
+const walletClient = createWalletClient({
+  chain: odysseyTestnet,
+  account: eoa,
+  transport: http(),
+}).extend(eip7702Actions())
+
+const authorization = await walletClient.signAuthorization({
+  // Address of the Nexus Proxy Singleton
+  contractAddress: nexusProxyAddress 
+})
+```
+
+
+### Initialize the account
 Afer the EIP-7702 delegation has been set, you can use the same orchestration
 as you would for smart accounts, with the only difference beign that you'd 
 need to override the `accountAddress` parameter when initializing the 
@@ -58,5 +81,16 @@ const oNexus = await toMultichainNexusAccount({
 
 To learn how to use orcehstration with smart accounts (including EIP-7702),
 read the [Smart Account Orchestration](/multichain-orchestration/sca) guide.
+
+### Execute
+Create a connection to a Modular Execution Environmnet node:
+
+```ts
+const meeClient = await createMeeClient({
+  account: oNexus
+})
+```
+
+
 :::
 

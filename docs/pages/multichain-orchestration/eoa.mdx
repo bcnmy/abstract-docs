@@ -69,7 +69,7 @@ ERC20Permit trigger, otherwise it'll use the onchain transaction trigger.
 Here's a condensed code example showing the essential steps for implementing EOA-based orchestration:
 
 ```javascript
-import { createMeeClient, toMultichainNexusAccount, runtimeERC20BalanceOf, toFeeToken } from "@biconomy/abstractjs-canary";
+import { createMeeClient, toMultichainNexusAccount, runtimeERC20BalanceOf, toFeeToken } from "@biconomy/abstractjs";
 import { privateKeyToAccount } from "viem/accounts";
 import { base, optimism } from "viem/chains";
 import { http, parseUnits } from "viem";
