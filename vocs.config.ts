@@ -688,7 +688,7 @@ export default defineConfig({
 					text: 'QuickStart Guide',
 					link: '/multichain-orchestration/quickstart'
 				},
-				{ 
+				{
 					text: 'Using Different Account Types',
 					items: [
 						{
@@ -740,27 +740,17 @@ export default defineConfig({
 			collapsed: false,
 			items: [
 				{
-					text: 'Overview'
+					text: 'Overview',
+					link: '/multichain-smart-sessions/overview'
 				},
 				{
-					text: 'QuickStart Guide'
+					text: 'Granting a Smart Session',
+					link: '/multichain-smart-sessions/grant'
 				},
 				{
-					text: 'Configure a Smart Session',
-
-				},
-				{
-					text: 'Adding Sessions to Accounts',
-					items: [
-						{
-							text: 'New Account With Sessions'
-						},
-						{
-							text: 'Install Sessions to Existing Account'
-						}
-					]
+					text: 'Redeeming a Smart Session',
+					link: '/multichain-smart-sessions/redeem'
 				}
-				
 			]
 		},
 		{

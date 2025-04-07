@@ -1,0 +1,91 @@
+# Redeeming Smart Sessions Permissions
+
+After permissions have been granted, validators can redeem them to execute transactions across multiple chains.
+
+## Setup for Permission Redemption
+
+```typescript
+import { 
+  toNexusAccount,
+  createSmartAccountClient,
+  smartSessionActions
+} from '@biconomy/abstractjs';
+import { http } from 'viem';
+
+// Initialize the redeemer's account
+const redeemerAccount = yourRedeemerAccount; // The account that received permission
+
+// Create a Nexus account pointing to the original account address
+const emulatedAccount = await toNexusAccount({
+  accountAddress: nexusAccount.address, // The address that granted the permission
+  signer: redeemerAccount,
+  chain,
+  transport: http(rpcUrl)
+});
+
+// Create a client for the emulated account
+const emulatedClient = createSmartAccountClient({
+  account: emulatedAccount,
+  transport: http(bundlerUrl),
+  mock: true // Set to false in production
+});
+
+// Extend the client with Smart Sessions actions
+const smartSessionsClient = emulatedClient.extend(smartSessionActions());
+```
+
+## Using a Permission
+
+```typescript
+// Use the permission with the sessionDetails received during grant
+const userOpHash = await smartSessionsClient.usePermission({
+  sessionDetails, // The session details object returned from grantPermission
+  calls: [
+    { 
+      to: targetContractAddress, // The target contract address
+      data: "0x273ea3e3" // The function selector (e.g., increment())
+    }
+  ],
+  mode: "ENABLE_AND_USE" // Use "ENABLE_AND_USE" for the first usage, "USE" for subsequent uses
+});
+
+// Wait for the transaction to be processed
+const receipt = await emulatedClient.waitForUserOperationReceipt({
+  hash: userOpHash
+});
+
+// Check if the transaction was successful
+if (!receipt.success) {
+  throw new Error("Smart sessions module validation failed");
+}
+
+console.log("Permission used successfully:", receipt);
+```
+
+## Subsequent Permission Usage
+
+After the first usage, you can use the permission again with `USE` mode:
+
+```typescript
+// Use the permission again without enabling it
+const secondUserOpHash = await smartSessionsClient.usePermission({
+  sessionDetails,
+  calls: [
+    { 
+      to: targetContractAddress,
+      data: "0x273ea3e3" 
+    }
+  ],
+  mode: "USE" // Only "USE" for subsequent usages
+});
+
+const secondReceipt = await emulatedClient.waitForUserOperationReceipt({
+  hash: secondUserOpHash
+});
+
+console.log("Permission used again successfully:", secondReceipt);
+```
+
+## Multi-chain Permission Usage
+
+Coming Soon

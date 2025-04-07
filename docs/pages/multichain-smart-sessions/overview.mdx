@@ -1,0 +1,39 @@
+# Smart Sessions Overview
+
+Smart Sessions allow users to delegate specific permissions to external validators, enabling controlled and secure access to your smart account's functionality. This feature now supports operations across multiple blockchain networks.
+
+## Key Concepts
+
+- **Permission Granting**: Account owners can grant specific permissions to other addresses (redeemers)
+- **Permission Redemption**: Redeemers can execute transactions on behalf of the account owner within the scope of granted permissions
+- **Action Targeting**: Permissions can be limited to specific contract addresses and function selectors
+- **Policy Control**: Fine-grained control through action policies like `getSudoPolicy()`, `getTimeLockPolicy()`, `getSpendingLimitsPolicy()`, `getUsageLimitPolicy()`, `getValueLimitPolicy()`
+- **Multi-chain Support**: Grant and redeem permissions across different blockchain networks
+
+## How It Works
+
+The Smart Sessions module follows a three-step process:
+
+1. **Installation**: The module is installed on your Nexus account
+2. **Grant**: The account owner grants specific permissions to a redeemer address
+3. **Redemption**: The redeemer uses the granted permissions to execute transactions
+
+## Technical Architecture
+
+Smart Sessions is implemented as a validator module within the ERC7579-compatible Nexus accounts. Key components include:
+
+- **Smart Sessions Module**: Created with `toSmartSessionsModule()`
+- **Session Actions**: Extended functionality via `smartSessionActions()`
+- **Session Management**: Methods for granting and using permissions
+- **Emulated Accounts**: Allowing redeemers to act on behalf of the original account
+
+## Usage Modes
+
+When redeeming permissions, two modes are available:
+
+- `ENABLE_AND_USE`: Used for the first redemption of a permission
+- `USE`: Used for subsequent redemptions of the same permission
+
+## Multi-chain Capabilities
+
+Coming Soon
