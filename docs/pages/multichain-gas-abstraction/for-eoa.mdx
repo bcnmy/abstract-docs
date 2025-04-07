@@ -1,0 +1,222 @@
+# Paying for Gas With ERC20 Tokens From EOA Wallets
+
+Biconomy's AbstractJS enables users to pay for transaction gas fees using ERC20 tokens directly from their EOA wallets. This powerful feature eliminates the need for users to hold native tokens (like ETH) for gas fees. Instead, they can use supported ERC20 tokens like USDC or DAI to pay for transaction costs. The process works through fusion transactions, which combine a token approval with execution instructions in a single user signature. When the user signs the transaction, the Biconomy Modular Execution Environment (MEE) handles all the complexity of paying for gas with the specified ERC20 token.
+
+:::info[ERC20Permit Requirement]
+This functionality is **only available for tokens that support the ERC20Permit standard** (USDC, DAI, WBTC, etc.).
+:::
+
+## Single-Chain Example: Pay Gas with ERC20 on the Same Chain
+
+::::steps
+#### Setup Project Dependencies
+
+```typescript
+import {
+  createMeeClient,
+  getFusionQuote,
+  mcUSDC,
+  toFeeToken,
+  toMultichainNexusAccount,
+} from "@biconomy/abstractjs-canary";
+import {
+  encodeFunctionData,
+  erc20Abi,
+  http,
+  parseUnits,
+} from "viem";
+import { privateKeyToAccount } from "viem/accounts";
+import { base } from "viem/chains";
+
+// Set up EOA account
+const eoa = privateKeyToAccount("YOUR_PRIVATE_KEY");
+```
+
+#### Initialize Nexus Account and MEE Client
+
+```typescript
+async function paySameChainGasWithERC20() {
+  // Create nexus account
+  const nexusAccount = await toMultichainNexusAccount({
+    signer: eoa,
+    chains: [base],
+    transports: [http()],
+  });
+  
+  // Initialize MEE client
+  const meeClient = await createMeeClient({
+    account: nexusAccount,
+  });
+```
+
+#### Define Your Operation
+
+```typescript
+  // Define the operation to execute
+  const operation = await nexusAccount.build({
+    type: "default",
+    data: {
+      chainId: base.id,
+      calls: [
+        {
+          to: mcUSDC.addressOn(base.id),
+          data: encodeFunctionData({
+            abi: erc20Abi,
+            functionName: "transfer",
+            args: ["0xRecipientAddress", parseUnits("0.5", 6)],
+          }),
+          value: 0n,
+        }
+      ],
+    },
+  });
+```
+
+#### Get Fusion Quote
+
+```typescript
+  // Setup the token trigger and get fusion quote
+  const fusionQuote = await meeClient.getFusionQuote({
+    trigger: {
+      tokenAddress: mcUSDC.addressOn(base.id),
+      amount: parseUnits("1", 6), // 1 USDC
+      chainId: base.id,
+    },
+    feeToken: toFeeToken({
+      chainId: base.id,
+      mcToken: mcUSDC,
+    }),
+    instructions: [operation],
+  });
+  
+  console.log(`Fusion quote obtained: ${fusionQuote.quote.hash}`);
+  console.log(`Execution cost: $${fusionQuote.quote.paymentInfo.tokenValue}`);
+```
+
+:::info[How Fusion Works]
+The `getFusionQuote` method prepares a transaction that embeds your operation instructions into an ERC20 token approval. When signed, this single transaction authorizes both the token spend and the execution of your operations.
+:::
+
+#### Execute Fusion Transaction
+
+```typescript
+  // Execute the fusion quote with user signature
+  const { hash } = await meeClient.executeFusionQuote({
+    fusionQuote: fusionQuote,
+  });
+  
+  console.log(`Fusion transaction hash: ${hash}`);
+  
+  // This will trigger a wallet signature request to the user
+  // The user approves this single transaction which enables
+  // the token payment for gas fees
+  
+  // Wait for the supertransaction to complete
+  const receipt = await meeClient.waitForSupertransactionReceipt({ hash });
+  console.log(`Execution complete: ${receipt}`);
+}
+```
+
+:::info[User Experience]
+When `executeFusionQuote` is called, the user will receive a signature request in their wallet. This single signature approves both the token usage and the operation execution. Behind the scenes, the SDK creates an ERC20 approval transaction with embedded instructions.
+:::
+::::
+
+## Cross-Chain Example: Pay Gas with Base Token for Optimism Transaction
+
+This example demonstrates how to execute a transaction on Optimism while paying for gas with USDC tokens on Base.
+
+::::steps
+#### Setup Multi-Chain Environment
+
+```typescript
+import { base, optimism } from "viem/chains";
+
+async function payCrossChainGasWithERC20() {
+  // Create multichain nexus account
+  const nexusAccount = await toMultichainNexusAccount({
+    signer: eoa,
+    chains: [base, optimism],
+    transports: [http(), http()],
+  });
+  
+  const meeClient = await createMeeClient({ account: nexusAccount });
+```
+
+#### Define Cross-Chain Operation
+
+```typescript
+  // Define operation on Optimism
+  const optimismOperation = await nexusAccount.build({
+    type: "default",
+    data: {
+      chainId: optimism.id,
+      calls: [
+        {
+          to: "0xTargetContractOnOptimism",
+          data: encodeFunctionData({
+            abi: [/* Your function ABI */],
+            functionName: "yourFunction",
+            args: [/* Your function arguments */],
+          }),
+          value: 0n,
+        }
+      ],
+    },
+  });
+```
+
+:::info[Cross-Chain Execution]
+Even though the operation is on Optimism, the system allows you to pay for it with tokens from Base. The MEE handles all cross-chain complexities automatically.
+:::
+
+#### Get Cross-Chain Fusion Quote
+
+```typescript
+  // Get fusion quote (Base USDC pays for Optimism operation)
+  const fusionQuote = await meeClient.getFusionQuote({
+    trigger: {
+      tokenAddress: mcUSDC.addressOn(base.id),
+      amount: parseUnits("1", 6), // 1 USDC on Base
+      chainId: base.id,
+    },
+    feeToken: toFeeToken({
+      chainId: base.id,
+      mcToken: mcUSDC,
+    }),
+    instructions: [optimismOperation],
+  });
+  
+  console.log(`Cross-chain fusion quote: ${fusionQuote.quote.hash}`);
+  console.log(`Execution cost: $${fusionQuote.quote.paymentInfo.tokenValue}`);
+```
+
+
+#### Execute Cross-Chain Transaction
+
+```typescript
+  // Execute the fusion quote
+  const { hash } = await meeClient.executeFusionQuote({
+    fusionQuote: fusionQuote,
+  });
+  
+  // User will be prompted to sign the trigger transaction
+  // This single signature authorizes the cross-chain operation
+  
+  // Wait for the cross-chain operation to complete
+  const receipt = await meeClient.waitForSupertransactionReceipt({ hash });
+  console.log(`Cross-chain execution complete: ${receipt}`);
+}
+```
+
+:::info[Cross-Chain Trigger Transaction]
+For cross-chain operations, the user still only signs one transaction on the source chain (Base in this example). This single signature triggers the entire process, including the cross-chain execution on Optimism.
+:::
+::::
+
+## Key Considerations
+
+- **ERC20Permit Required**: Only works with tokens implementing the ERC20Permit standard
+- **Single Signature**: Users sign just one transaction for complex multi-step or cross-chain operations
+- **Simplified API**: The `getFusionQuote` and `executeFusionQuote` methods handle all the complexities of fusion transactions
+- **Cross-Chain Support**: Pay for operations on one chain with tokens from another chain

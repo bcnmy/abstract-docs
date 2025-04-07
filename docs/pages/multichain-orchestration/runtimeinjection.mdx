@@ -1,0 +1,156 @@
+## Overview
+
+When building multi-step transactions, especially across chains, you often need to use values that:
+- Result from previous operations
+- Change based on market conditions
+- Depend on the exact amount received from bridges or swaps
+
+Runtime injection solves this by creating placeholders that get filled with actual values during execution.
+
+
+## Limitations
+
+- Runtime values can only be used within parameters, not to determine which functions to call
+- All constraints must be satisfied or the instruction will not execute
+- Runtime values can't reference external APIs or off-chain data
+
+For advanced usage and additional functions, see the [API Reference](/reference/runtime-values).# Runtime Parameter Injection
+
+Runtime parameter injection allows function call parameters to be determined at execution time rather than when the transaction is created. This is crucial for cross-chain operations where exact token amounts can't be known in advance.
+
+
+## Basic Usage
+
+```javascript
+import { runtimeERC20BalanceOf, greaterThanOrEqualTo } from "@biconomy/abstractjs-canary";
+
+// Use the exact token balance at execution time
+const swapInstruction = await oNexus.build({
+  type: "composable",
+  data: {
+    // ...other parameters
+    args: [{
+      amountIn: runtimeERC20BalanceOf({
+        tokenAddress: "0xTokenAddress",
+        targetAddress: nexusAddress,
+        constraints: [greaterThanOrEqualTo(minAmount)]
+      }),
+      // Other arguments...
+    }]
+  }
+});
+```
+
+## Available Runtime Functions
+
+| Function | Purpose |
+|----------|---------|
+| `runtimeERC20BalanceOf` | Injects the balance of an ERC20 token at execution time |
+
+:::info
+The composability stack is _general purpose_, which means you can inject the output of _any_ function
+call, not only `balanceOf`. The `runtimeERC20BalanceOf` is a helper function which helps to inject the 
+balance of some ERC20 token, which is the most common case. The _AbstractJS_ SDK will be expended with more
+helper functions, which will be documented in the table above.
+:::
+
+## Constraints
+
+Constraints define conditions that must be met for execution to proceed. They serve several critical purposes in cross-chain orchestration:
+
+### Handling Slippage
+
+When bridging or swapping tokens, you never receive exactly the amount you expect due to fees, price movements, and slippage. Constraints ensure operations only proceed when acceptable amounts are received:
+
+```javascript
+// Only proceed if at least 90% of expected amount received (10% max slippage)
+const constraints = [
+  greaterThanOrEqualTo((expectedAmount * 90n) / 100n)
+];
+```
+
+### Enforcing Transaction Sequencing
+
+Constraints create implicit dependencies between instructions. For example, a swap on the destination chain won't execute until sufficient tokens have arrived from the bridge, creating a natural sequence:
+
+```javascript
+// This instruction will wait until the bridged amount has arrived
+// and only execute if the minimum amount constraint is satisfied
+const swapAfterBridge = await oNexus.build({
+  // ...
+  args: [{
+    amountIn: runtimeERC20BalanceOf({
+      tokenAddress: usdcOnOptimism,
+      targetAddress: nexusAddress,
+      constraints: [greaterThanOrEqualTo(minAmount)]
+    })
+  }]
+});
+```
+
+### Protecting User Assets
+
+Constraints act as safety mechanisms, preventing transactions from executing under unfavorable conditions. If bridge slippage is too high or an exchange rate becomes unfavorable, the constraint will prevent execution rather than proceeding with suboptimal parameters.
+
+## Cross-Chain Example
+
+This example bridges tokens from Base to Optimism, then swaps the exact received amount:
+
+```javascript
+// Bridge USDC from Base to Optimism
+const bridgeInstruction = await oNexus.build({
+  // Bridge configuration...
+});
+
+// Swap on Optimism using whatever amount was received
+const swapInstruction = await oNexus.build({
+  type: "composable",
+  data: {
+    chainId: optimism.id,
+    // ...swap configuration
+    args: [{
+      amountIn: runtimeERC20BalanceOf({
+        tokenAddress: usdcOnOptimism,
+        targetAddress: nexusOnOptimism,
+        constraints: [greaterThanOrEqualTo(minAmountToAccept)]
+      }),
+      // Other swap parameters...
+    }]
+  }
+});
+```
+
+## Best Practices
+
+1. **Add Constraints**: Always use constraints to handle minimum acceptable values
+2. **Use for Uncertain Amounts**: Apply runtime injection when amounts depend on external factors
+3. **Combine with Transfer**: Use with the transfer instruction to return all tokens to the user
+4. **Error Handling**: Plan for constraint failures by providing alternative paths
+
+## How Runtime Injection Works
+
+Runtime parameter injection is built on Biconomy's Composability Stack, which uses smart account fallback handlers to dynamically modify transactions during execution.
+
+### Architecture Overview
+
+When you use `runtimeERC20BalanceOf` in your code:
+
+1. The function call is encoded as a special "composable execution" call
+2. The smart account's fallback handler intercepts this transaction
+3. At execution time, the handler:
+   - Reads the current token balance from the blockchain
+   - Injects this value into the transaction parameters
+   - Forwards the modified transaction to the target contract
+
+This architecture eliminates the need to write custom smart contracts for basic composability patterns like using token balances or handling cross-chain values.
+
+![ComposerFallbackHandler](https://i.imgur.com/zESn9BO.png)
+
+### Under The Hood
+
+The fallback handler calls the `executeComposable` function with parameters that determine:
+- Which values to read from the blockchain
+- Where to inject these values in the function call
+- How to handle return values
+
+This all happens transparently when you use the AbstractJS SDK, letting you focus on building your application logic rather than transaction composition mechanics.

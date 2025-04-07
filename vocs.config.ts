@@ -432,237 +432,342 @@ export default defineConfig({
 				},
 			],
 		},
+		// {
+		// 	text: "Quickstart Guides",
+		// 	link: "/tutorials/quickstart",
+		// 	collapsed: false,
+		// 	items: [
+		// 		{
+		// 			text: "Cross-Chain TXs & Intents",
+		// 			collapsed: true,
+		// 			items: [
+		// 				{
+		// 					text: "Execute a Simple Supertransaction",
+		// 					link: "/mee/tutorials/execute-simple-supertx",
+		// 				},
+		// 				{
+		// 					text: "Build a Chain Abstracted App ✨",
+		// 					link: "/mee/tutorials/build-chainabstracted-app",
+		// 				},
+		// 				{
+		// 					text: "Build and Execute Intents",
+		// 					link: "/mee/tutorials/execute-intent",
+		// 				},
+		// 				{
+		// 					text: "Cross-Chain Gas Abstraction",
+		// 					link: "/mee/tutorials/pay-gas-across-chains",
+		// 				},
+		// 			],
+		// 		},
+		// 		{
+		// 			text: "Batch Execution & Gasless TXs",
+		// 			collapsed: true,
+		// 			items: [
+		// 				{ text: "Execute a Simple UserOp", link: "/tutorials/simple" },
+		// 				{
+		// 					text: "Sponsor Gas With Paymasters",
+		// 					link: "/tutorials/gasless",
+		// 				},
+		// 				{
+		// 					text: "Paying Gas with ERC20 Tokens",
+		// 					link: "/tutorials/tokenPaymaster",
+		// 				},
+		// 				{
+		// 					text: "Executing Batch Transactions",
+		// 					link: "/tutorials/batch",
+		// 				},
+		// 			],
+		// 		},
+		// 		{
+		// 			text: "Account Modules / Plugins",
+		// 			collapsed: true,
+		// 			items: [
+		// 				{
+		// 					text: "Sign Transactions with Passkeys",
+		// 					link: "/tutorials/passKey",
+		// 				},
+		// 				{
+		// 					text: "Create Multi-Sig Wallets",
+		// 					link: "/modules/validators/ownableValidator",
+		// 				},
+		// 				{
+		// 					text: "Add Automation with Session Keys",
+		// 					link: "/tutorials/smart-sessions",
+		// 				},
+		// 			],
+		// 		},
+		// 	],
+		// },
+		// {
+		// 	text: "Smart Accounts",
+		// 	items: [
+		// 		{ text: "Overview", link: "/account-providers/overview" },
+		// 		{ text: "Nexus", link: "/overview", collapsed: true },
+		// 	],
+		// },
+		// {
+		// 	text: "Execution Environments",
+		// 	items: [
+		// 		{ text: "Overview", link: "/explained/exec-environments" },
+		// 		{ text: "Modular Execution Environment", link: "/explained/mee" },
+		// 		{
+		// 			text: "Bundler and Paymaster",
+		// 			collapsed: true,
+		// 			link: "/explained/bundlers-paymasters",
+		// 			items: [
+		// 				{
+		// 					text: "Bundler Details",
+		// 					link: "/infra/bundler/integration",
+		// 				},
+		// 				{
+		// 					text: "Paymaster Details",
+		// 					link: "/infra/paymaster/integration",
+		// 					items: [
+		// 						{
+		// 							text: "Supported Tokens",
+		// 							link: "/infra/paymaster/supportedTokens",
+		// 						},
+		// 					],
+		// 				},
+		// 			],
+		// 		},
+		// 	],
+		// },
+		// {
+		// 	text: "Smart EOA Stack",
+		// 	items: [
+		// 		{
+		// 			text: "Give EOAs Smart Account Features",
+		// 			link: "/mee/fusion",
+		// 		},
+		// 		{
+		// 			text: "EIP7702 Guide for Wallets",
+		// 			link: "/eip7702/wallet-guide",
+		// 		},
+		// 	],
+		// },
+		// {
+		// 	text: "Account Modules",
+		// 	items: [
+		// 		{
+		// 			text: "Overview",
+		// 			link: "/modules",
+		// 		},
+		// 		// {
+		// 		//   link: "/modules/validators/k1Validator",
+		// 		//   text: "K1 Validator",
+		// 		//   collapsed: false,
+		// 		//   items: [
+		// 		//     {
+		// 		//       link: "/modules/validators/k1Validator/tutorial",
+		// 		//       text: "Tutorial",
+		// 		//     },
+		// 		//   ],
+		// 		// },
+		// 		{
+		// 			link: "/modules/validators/smartSessions",
+		// 			text: "Smart Sessions Module",
+		// 			collapsed: true,
+		// 			items: [
+		// 				{
+		// 					link: "/modules/validators/smartSessions/grantingSmartSessions",
+		// 					text: "Granting Smart Sessions",
+		// 				},
+		// 				{
+		// 					link: "/modules/validators/smartSessions/usingSmartSessions",
+		// 					text: "Using Smart Sessions",
+		// 				},
+		// 				{
+		// 					link: "/modules/validators/smartSessions/policies",
+		// 					text: "Policies",
+		// 					collapsed: false,
+		// 					items: [
+		// 						{
+		// 							link: "/modules/validators/smartSessions/policies/universalActionPolicy",
+		// 							text: "Universal Action Policy",
+		// 						},
+		// 						{
+		// 							link: "/modules/validators/smartSessions/policies/sudoPolicy",
+		// 							text: "Sudo Policy",
+		// 						},
+		// 						{
+		// 							link: "/modules/validators/smartSessions/policies/spendingLimitPolicy",
+		// 							text: "Spending Limit Policy",
+		// 						},
+		// 						{
+		// 							link: "/modules/validators/smartSessions/policies/timeRangePolicy",
+		// 							text: "Time Range Policy",
+		// 						},
+		// 						{
+		// 							link: "/modules/validators/smartSessions/policies/valueLimitPolicy",
+		// 							text: "Value Limit Policy",
+		// 						},
+		// 						{
+		// 							link: "/modules/validators/smartSessions/policies/usageLimitPolicy",
+		// 							text: "Usage Limit Policy",
+		// 						},
+		// 					],
+		// 				},
+		// 			],
+		// 		},
+		// 		{
+		// 			text: "Composability Module",
+		// 			collapsed: true,
+		// 			items: [
+		// 				{
+		// 					text: "Why?",
+		// 					link: "/composability",
+		// 				},
+		// 				{
+		// 					text: "How Composability Stack Works",
+		// 					link: "/composability/using-fallback-handlers",
+		// 				},
+		// 			],
+		// 		},
+		// 		{
+		// 			link: "/modules/validators/passkeyValidator",
+		// 			text: "Passkey Module",
+		// 		},
+		// 		{
+		// 			link: "/modules/validators/ownableValidator",
+		// 			text: "Ownables (Multisig) Module",
+		// 		},
+		// 	],
+		// },
+		// {
+		// 	link: "/dashboard",
+		// 	text: "Dashboard",
+		// 	items: [
+		// 		{ link: "/dashboard/paymaster", text: "Paymaster & Gas Tank Setup" },
+		// 		{
+		// 			link: "/dashboard/paymasterRules",
+		// 			text: "Configuring Paymaster Rules",
+		// 		},
+		// 		{
+		// 			link: "/dashboard/spendingLimits",
+		// 			text: "Spending Limits & Notifications",
+		// 		},
+		// 		{ link: "/dashboard/organization", text: "Organization Management" },
+		// 		{ link: "/dashboard/apis", text: "API Endpoints & Webhooks" },
+		// 	],
+		// },
+		// {
+		// 	text: "Resources",
+		// 	items: [
+		// 		{ text: "Contracts & Audits", link: "/contractsAndAudits" },
+		// 		{ text: "Supported Networks", link: "/supportedNetworks" },
+		// 	],
+		// },
+		// {
+		// 	text: "Demos",
+		// 	link: "/demos",
+		// 	items: [
+		// 		{
+		// 			text: "#001 SmartSessions",
+		// 			link: "/demos/smartSessions",
+		// 		},
+		// 		{
+		// 			text: "#002 Fusion",
+		// 			link: "/demos/fusion",
+		// 		},
+		// 	],
+		// },
 		{
-			text: "Quickstart Guides",
-			link: "/tutorials/quickstart",
+			text: 'LLM Code Reference',
+			link: '/multichain-orchestration/zerotohero'
+		},
+		{
+			text: 'Multichain Orchestration',
 			collapsed: false,
 			items: [
 				{
-					text: "Cross-Chain TXs & Intents",
-					collapsed: true,
-					items: [
-						{
-							text: "Execute a Simple Supertransaction",
-							link: "/mee/tutorials/execute-simple-supertx",
-						},
-						{
-							text: "Build a Chain Abstracted App ✨",
-							link: "/mee/tutorials/build-chainabstracted-app",
-						},
-						{
-							text: "Build and Execute Intents",
-							link: "/mee/tutorials/execute-intent",
-						},
-						{
-							text: "Cross-Chain Gas Abstraction",
-							link: "/mee/tutorials/pay-gas-across-chains",
-						},
-					],
+					text: 'Overview',
+					link: '/multichain-orchestration/overview'
 				},
 				{
-					text: "Batch Execution & Gasless TXs",
-					collapsed: true,
+					text: 'QuickStart Guide',
+					link: '/multichain-orchestration/quickstart'
+				},
+				{ 
+					text: 'Using Different Account Types',
 					items: [
-						{ text: "Execute a Simple UserOp", link: "/tutorials/simple" },
 						{
-							text: "Sponsor Gas With Paymasters",
-							link: "/tutorials/gasless",
+							text: 'Native EOA',
+							link: '/multichain-orchestration/eoa'
 						},
 						{
-							text: "Paying Gas with ERC20 Tokens",
-							link: "/tutorials/tokenPaymaster",
+							text: 'Smart Account',
+							link: '/multichain-orchestration/sca'
 						},
 						{
-							text: "Executing Batch Transactions",
-							link: "/tutorials/batch",
-						},
-					],
+							text: 'EIP-7702 EOA',
+							link: '/multichain-orchestration/eip7702'
+						}
+					]
 				},
 				{
-					text: "Account Modules / Plugins",
-					collapsed: true,
-					items: [
-						{
-							text: "Sign Transactions with Passkeys",
-							link: "/tutorials/passKey",
-						},
-						{
-							text: "Create Multi-Sig Wallets",
-							link: "/modules/validators/ownableValidator",
-						},
-						{
-							text: "Add Automation with Session Keys",
-							link: "/tutorials/smart-sessions",
-						},
-					],
-				},
-			],
+					text: 'Runtime Parameter Injection',
+					link: '/multichain-orchestration/runtimeinjection'
+				}
+			]
 		},
 		{
-			text: "Smart Accounts",
+			text: 'Multichain Gas Abstraction',
+			collapsed: false,
 			items: [
-				{ text: "Overview", link: "/account-providers/overview" },
-				{ text: "Nexus", link: "/overview", collapsed: true },
-			],
+				{
+					text: 'Overview'
+				},
+				{
+					text: 'Paying for Gas with ERC20 Tokens',
+					items: [
+						{
+							text: 'For EOA Accounts',
+							link: '/multichain-gas-abstraction/for-eoa'
+						},
+						{
+							text: 'For Smart Accounts'
+						}
+					]
+				},
+				{
+					text: 'Sponsoring Gas For Users'
+				}
+			]
 		},
+		{
+			text: 'Multichain Smart Sessions',
+			collapsed: false,
+			items: [
+				{
+					text: 'Overview'
+				},
+				{
+					text: 'QuickStart Guide'
+				},
+				{
+					text: 'Configure a Smart Session',
 
-		{
-			text: "Execution Environments",
-			items: [
-				{ text: "Overview", link: "/explained/exec-environments" },
-				{ text: "Modular Execution Environment", link: "/explained/mee" },
+				},
 				{
-					text: "Bundler and Paymaster",
-					collapsed: true,
-					link: "/explained/bundlers-paymasters",
+					text: 'Adding Sessions to Accounts',
 					items: [
 						{
-							text: "Bundler Details",
-							link: "/infra/bundler/integration",
+							text: 'New Account With Sessions'
 						},
 						{
-							text: "Paymaster Details",
-							link: "/infra/paymaster/integration",
-							items: [
-								{
-									text: "Supported Tokens",
-									link: "/infra/paymaster/supportedTokens",
-								},
-							],
-						},
-					],
-				},
-			],
-		},
-		{
-			text: "Smart EOA Stack",
-			items: [
-				{
-					text: "Give EOAs Smart Account Features",
-					link: "/mee/fusion",
-				},
-				{
-					text: "EIP7702 Guide for Wallets",
-					link: "/eip7702/wallet-guide",
-				},
-			],
-		},
-		{
-			text: "Account Modules",
-			items: [
-				{
-					text: "Overview",
-					link: "/modules",
-				},
-				// {
-				//   link: "/modules/validators/k1Validator",
-				//   text: "K1 Validator",
-				//   collapsed: false,
-				//   items: [
-				//     {
-				//       link: "/modules/validators/k1Validator/tutorial",
-				//       text: "Tutorial",
-				//     },
-				//   ],
-				// },
-				{
-					link: "/modules/validators/smartSessions",
-					text: "Smart Sessions Module",
-					collapsed: true,
-					items: [
-						{
-							link: "/modules/validators/smartSessions/grantingSmartSessions",
-							text: "Granting Smart Sessions",
-						},
-						{
-							link: "/modules/validators/smartSessions/usingSmartSessions",
-							text: "Using Smart Sessions",
-						},
-						{
-							link: "/modules/validators/smartSessions/policies",
-							text: "Policies",
-							collapsed: false,
-							items: [
-								{
-									link: "/modules/validators/smartSessions/policies/universalActionPolicy",
-									text: "Universal Action Policy",
-								},
-								{
-									link: "/modules/validators/smartSessions/policies/sudoPolicy",
-									text: "Sudo Policy",
-								},
-								{
-									link: "/modules/validators/smartSessions/policies/spendingLimitPolicy",
-									text: "Spending Limit Policy",
-								},
-								{
-									link: "/modules/validators/smartSessions/policies/timeRangePolicy",
-									text: "Time Range Policy",
-								},
-								{
-									link: "/modules/validators/smartSessions/policies/valueLimitPolicy",
-									text: "Value Limit Policy",
-								},
-								{
-									link: "/modules/validators/smartSessions/policies/usageLimitPolicy",
-									text: "Usage Limit Policy",
-								},
-							],
-						},
-					],
-				},
-				{
-					text: "Composability Module",
-					collapsed: true,
-					items: [
-						{
-							text: "Why?",
-							link: "/composability",
-						},
-						{
-							text: "How Composability Stack Works",
-							link: "/composability/using-fallback-handlers",
-						},
-					],
-				},
-				{
-					link: "/modules/validators/passkeyValidator",
-					text: "Passkey Module",
-				},
-				{
-					link: "/modules/validators/ownableValidator",
-					text: "Ownables (Multisig) Module",
-				},
-			],
-		},
-		// {
-		//   text: "Smart EOAs",
-		//   items: [
-		//     { text: "Wallet Integration Guide", link: "/eip7702/wallet-guide" },
-		//   ],
-		// },
-		{
-			link: "/dashboard",
-			text: "Dashboard",
-			items: [
-				{ link: "/dashboard/paymaster", text: "Paymaster & Gas Tank Setup" },
-				{
-					link: "/dashboard/paymasterRules",
-					text: "Configuring Paymaster Rules",
-				},
-				{
-					link: "/dashboard/spendingLimits",
-					text: "Spending Limits & Notifications",
-				},
-				{ link: "/dashboard/organization", text: "Organization Management" },
-				{ link: "/dashboard/apis", text: "API Endpoints & Webhooks" },
-			],
+							text: 'Install Sessions to Existing Account'
+						}
+					]
+				}
+				
+			]
 		},
 		{
 			text: "SDK Reference",
 			items: [
 				{
-					text: "Mee Client",
+					text: "MEE Client",
 					link: "/mee-client",
 					collapsed: false,
 					items: [
@@ -810,27 +915,6 @@ export default defineConfig({
 							],
 						},
 					],
-				},
-			],
-		},
-		{
-			text: "Resources",
-			items: [
-				{ text: "Contracts & Audits", link: "/contractsAndAudits" },
-				{ text: "Supported Networks", link: "/supportedNetworks" },
-			],
-		},
-		{
-			text: "Demos",
-			link: "/demos",
-			items: [
-				{
-					text: "#001 SmartSessions",
-					link: "/demos/smartSessions",
-				},
-				{
-					text: "#002 Fusion",
-					link: "/demos/fusion",
 				},
 			],
 		},

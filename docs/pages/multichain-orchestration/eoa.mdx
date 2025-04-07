@@ -1,0 +1,163 @@
+# Orchestration with Native EOA Accounts
+
+Biconomy orchestration for EOA accounts is done by leveraging an passthrough
+smart account comined with a trigger transaction from the EOA.
+
+The flow is as follows:
+
+:::steps
+#### Approve Spend
+The trigger transaction approves the "passthrough" orchestrator smart 
+account to spend funds from the EOA. The trigger transaction can be any
+EVM function call, but is usually a call to `approve` function on an ERC-20
+token _or_ an NFT transfer from the EOA to the orchestrator account.
+
+#### Orchestrate
+The orchestration starts once the "trigger" transaction has been included onchain.
+This is when the relayer nodes will start to execute desired function calls, 
+bridge/solver triggers, etc... on the orchestrator smart account. 
+
+This is where most of the execution happens, as the orchestration step can 
+include multiple function calls across multiple chains and multiple transactions.
+
+#### Return to EOA
+As the last step of the orchestration, it's common to encode function
+calls which return all of the assets that were the result of the orchestration
+back to the EOA.  
+
+This ensures that the user never has to access the smart account manually, nor
+do they even need to know about the orchestrator account address.
+:::
+
+## Trigger Types
+To trigger the native EOA account to start the orchestration, we use one of two 
+separate types of triggers:
+
+### Onchain Transaction Trigger
+The onchain transaction trigger takes the hash of the orchestration instructions
+and appends it after the useful `callData` of the transaction. 
+
+- The key benefit of the onchain transaction trigger is that it's general 
+purpose and the trigger transaction can be any EVM function call. 
+
+- The key drawback of the onchain transaction trigger is that the user has to
+have native gas tokens on their EOA to pay for the first "trigger" transaction.
+
+
+### ERC20Permit Trigger
+The ERC20Permit trigger uses the [ERC-2612](https://eips.ethereum.org/EIPS/eip-2612)
+signature to approve the orchestrator smart account to spend some tokens. It 
+packs the hash of the orchestration instructions in the `DateTime` field of the ERC20Permit 
+signature.
+
+- The key benefit of the ERC20Permit approach is that it's gasless. This means
+that the user can encode a full multichain orchestration sequence, without having
+any native gas tokens.
+
+- The key drawback of the ERC20Permit approach is that it only works with tokens
+which implement the `ERC-2612` standard. While this standard is common, it's by
+no means ubiquitous.
+
+## Selecting the Trigger Type
+
+The `AbstractJS` SDK will automatically check whether the token you're using
+as the trigger supports `ERC-2612` or no. If it supports it, it will use the 
+ERC20Permit trigger, otherwise it'll use the onchain transaction trigger.
+
+## Quick Code Reference
+
+Here's a condensed code example showing the essential steps for implementing EOA-based orchestration:
+
+```javascript
+import { createMeeClient, toMultichainNexusAccount, runtimeERC20BalanceOf, toFeeToken } from "@biconomy/abstractjs-canary";
+import { privateKeyToAccount } from "viem/accounts";
+import { base, optimism } from "viem/chains";
+import { http, parseUnits } from "viem";
+
+// 1. Initialize accounts and client
+const eoa = privateKeyToAccount("0x...your_private_key...");
+const oNexus = await toMultichainNexusAccount({
+  signer: eoa,
+  chains: [base, optimism],
+  transports: [http(), http()]
+});
+const meeClient = await createMeeClient({ account: oNexus });
+
+// 2. Define trigger - this is what the user signs
+const trigger = {
+  tokenAddress: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913", // USDC on Base
+  amount: parseUnits("10", 6),
+  chainId: base.id
+};
+
+// 3. Build instructions - what happens after the trigger
+const instructions = [
+  // Bridge from Base to Optimism
+  await oNexus.build({
+    type: "default",
+    data: {
+      chainId: base.id,
+      calls: [/* approval and bridge calls */]
+    }
+  }),
+  
+  // Use funds on destination chain with runtime values
+  await oNexus.build({
+    type: "composable",
+    data: {
+      chainId: optimism.id,
+      abi: someProtocolAbi,
+      to: "0xProtocolAddress",
+      functionName: "deposit",
+      args: [
+        // Use whatever amount arrived after bridging
+        runtimeERC20BalanceOf({
+          tokenAddress: "0xTokenOnOptimism",
+          targetAddress: oNexus.addressOn(optimism.id),
+          constraints: [/* minimum amount constraints */]
+        })
+      ]
+    }
+  }),
+  
+  // Return results to user's EOA
+  await oNexus.build({
+    type: "transfer",
+    data: {
+      chainId: optimism.id,
+      tokenAddress: "0xResultTokenAddress",
+      recipient: eoa.address,
+      amount: runtimeERC20BalanceOf({
+        tokenAddress: "0xResultTokenAddress",
+        targetAddress: oNexus.addressOn(optimism.id)
+      })
+    }
+  })
+];
+
+// 4. Get quote and execute
+const quote = await meeClient.getFusionQuote({
+  trigger: trigger,
+  feeToken: toFeeToken({
+    chainId: base.id,
+    tokenAddress: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913" // USDC
+  }),
+  instructions: instructions
+});
+
+// 5. Execute - this creates the transaction for user to sign
+const { hash } = await meeClient.executeFusionQuote({ fusionQuote: quote });
+
+// 6. Wait for orchestration to complete
+const receipt = await meeClient.waitForSupertransactionReceipt({ hash });
+```
+
+### Key Patterns to Remember
+
+1. **Trigger Transaction**: Usually an approval or transfer from EOA to Nexus
+2. **Runtime Values**: Use `runtimeERC20BalanceOf()` to handle dynamic amounts
+3. **Return Assets**: Always include a final step to return assets to the user's EOA
+4. **Constraints**: Add constraints when bridging or swapping to handle slippage
+5. **Chain IDs**: Specify the correct chainId for each instruction
+
+For complete implementations, refer to our examples on [GitHub](https://github.com/bcnmy/biconomy-client-sdk/tree/main/examples).
