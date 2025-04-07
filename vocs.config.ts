@@ -409,7 +409,20 @@ export default defineConfig({
 		},
 		{
 			text: "Pricing",
-			link: "https://biconomy.notion.site/Biconomy-Product-Pricing-6f4537a645af4b8985f4d43f2b045865",
+			link: "/pricing",
+		},
+		{
+			text: 'Biconomy Network',
+			items: [
+				{
+					text: 'Learn About The Biconomy Network',
+					link: 'https://blog.biconomy.io/launching-biconomy-network-the-application-layer-to-make-a-thousand-chains-feel-like-one-2/'
+				},
+				{
+					text: 'Biconomy Network Litepaper',
+					link: 'https://blog.biconomy.io/biconomy-network-litepaper/'
+				}
+			]
 		},
 		{
 			text: "AbstractJS SDK",
@@ -706,13 +719,40 @@ export default defineConfig({
 					]
 				},
 				{
-					text: 'Runtime Parameter Injection',
-					link: '/multichain-orchestration/runtimeinjection'
+					text: 'Learn Concepts',
+					items: [
+						{
+							text: 'Runtime Parameter Injection',
+							link: '/multichain-orchestration/runtimeinjection'
+						},
+					]
+				},
+				{
+					text: 'Instruction Builders',
+					collapsed: true,
+					items: [
+						{
+							text: 'Overview',
+							link: '/multichain-orchestration/instruction-builders/overview'
+						},
+						{
+							text: 'Default',
+							link: '/multichain-orchestration/instruction-builders/default'
+						},
+						{
+							text: 'Multichain',
+							link: '/multichain-orchestration/instruction-builders/multichain'
+						},
+						{
+							text: 'Composable',
+							link: '/multichain-orchestration/instruction-builders/composable'
+						}
+					]
 				}
 			]
 		},
 		{
-			text: 'Multichain Gas Abstraction',
+		text: 'Multichain Gas Abstraction',
 			collapsed: false,
 			items: [
 				{
@@ -726,7 +766,8 @@ export default defineConfig({
 							link: '/multichain-gas-abstraction/for-eoa'
 						},
 						{
-							text: 'For Smart Accounts'
+							text: 'For Smart Accounts',
+							link: '/multichain-gas-abstraction/for-sca'
 						}
 					]
 				},
@@ -929,10 +970,6 @@ export default defineConfig({
 				},
 				{ text: "V1 Docs", link: "https://legacy-docs.biconomy.io/" },
 			],
-		},
-		{
-			text: "The Biconomy Network",
-			items: [{ text: "Overview", link: "/network" }],
-		},
+		}
 	],
 });

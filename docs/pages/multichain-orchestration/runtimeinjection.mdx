@@ -7,6 +7,10 @@ When building multi-step transactions, especially across chains, you often need 
 
 Runtime injection solves this by creating placeholders that get filled with actual values during execution.
 
+## Support
+
+You can use runtime value injection in _most_ Instruction builders. If the parameter accepts the
+`RuntimeValue` type, you can use them.
 
 ## Limitations
 
@@ -14,15 +18,13 @@ Runtime injection solves this by creating placeholders that get filled with actu
 - All constraints must be satisfied or the instruction will not execute
 - Runtime values can't reference external APIs or off-chain data
 
-For advanced usage and additional functions, see the [API Reference](/reference/runtime-values).# Runtime Parameter Injection
-
 Runtime parameter injection allows function call parameters to be determined at execution time rather than when the transaction is created. This is crucial for cross-chain operations where exact token amounts can't be known in advance.
 
 
 ## Basic Usage
 
 ```javascript
-import { runtimeERC20BalanceOf, greaterThanOrEqualTo } from "@biconomy/abstractjs-canary";
+import { runtimeERC20BalanceOf, greaterThanOrEqualTo } from "@biconomy/abstractjs";
 
 // Use the exact token balance at execution time
 const swapInstruction = await oNexus.build({
