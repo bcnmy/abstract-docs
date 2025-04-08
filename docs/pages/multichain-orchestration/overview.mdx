@@ -37,40 +37,44 @@ By using Biconomy multichain orchestration developers can get:
 
 - **Single Signature, Multi-Chain Execution** <br/>
 The new Biconomy stack enables developers to encode complex multi-chain,
-multi-transaction sequences which the user approves with a *single signature*.  
+multi-transaction sequences which the user approves with a *single signature*.  <br/><br/>
+
 
 - **Standardized Stack & Comprehensive Coverage** <br/>
 The orchestration stack enables developers to use _any token_ and interact with
-_any protocol_. The developers can use the _shortcuts_ available within the AbstractJS
-SDK.
+_any protocol_. The developers can use the _shortcuts_ available within the 
+AbstractJS SDK.<br/><br/>
+
 
 - **Gas Abstracted** <br/>
 The user can pay for the execution of the entire sequence of operations with 
-native tokens or ERC20 tokens _on any chain_.
+native tokens or ERC20 tokens _on any chain_. <br/><br/>
 
 - **Asynchronous** <br/>
 The Biconomy orchestration stack can execute asynchronous actions, such as 
-triggering bridges, solvers, waiting for oracles, etc... 
+triggering bridges, solvers, waiting for oracles, etc... <br/><br/>
 
 - **Composable** <br/>
 Biconomy orchestration is fully composable, meaning that you can _inject_
 the output of one function call into _any_ paramter of the next function call,
-without writing smart contracts and even across multiple chains. 
+without writing smart contracts and even across multiple chains. <br/><br/>
 
 - **EOA & Smart Account Support** <br/>
 Multichain orchestration works nativelly for all accounts - both native EOAs, 
-smart accounts and EIP-7702 enabled EOAs.
+smart accounts and EIP-7702 enabled EOAs. <br/><br/>
 
 - **Non-Custodial** <br/>
 The execution is fully trustless and non-custodial, with all premission validation done onchain
-by validator contracts.
+by validator contracts. <br/><br/>
 
 ## Example 
 
-Imagine a user has 1000 USDC on Optimism, but wants to supply USDT to a lending
-protocol on Base. Then they want to take the lending position and put it into
-a yield booster. With the Biconomy orchestration stack, this can all be executed
-by the user, from their EOA account, with a single signature. 
+:::tip[Example Case]
+ Imagine a user has 1000 USDC on Optimism, but wants to supply USDT to a lending
+ protocol on Base. Then they want to take the lending position and put it into
+ a yield booster. With the Biconomy orchestration stack, this can all be executed
+ by the user, from their EOA account, with a single signature. 
+:::
 
 :::info
 Want to build this yourself? Check the [Orchestration QuickStart Guide](/multichain-orchestration/quickstart).
@@ -78,18 +82,27 @@ Want to build this yourself? Check the [Orchestration QuickStart Guide](/multich
 
 _How does it work?_
 
-:::steps
+::::steps
 #### Encode all Orchestration Instructions
 The developer uses the Biconomy AbstractJS SDK or our API to encode all of the 
 instructions needed to achieve the desired action. In this case, they would include:
 
-- Using a bridge or a solver to move the USDC from Optimism to Base
-- Swapping the _exact_ amount of USDC which was received from the bridge
+:::steps
+#### Move Funds Cross-Chain
+Using a bridge or a solver to move the USDC from Optimism to Base
+
+#### Swap
+Swapping the _exact_ amount of USDC which was received from the bridge
 to USDT by using Uniswap on Base
-- Supplying the _exact_ amount of USDT received from Uniswap to a lending protocol
+
+#### Supply
+Supplying the _exact_ amount of USDT received from Uniswap to a lending protocol
 on Base
-- Taking the _exact_ amount of "lending position" tokens and supplying them to
+
+#### Boost Yield
+Taking the _exact_ amount of "lending position" tokens and supplying them to
 a yield booster protocol on Base.
+:::
 
 #### Get a Quote for Execution from the Modular Execution Environment
 The set of nodes which execute the orchestration steps are called the 
@@ -133,5 +146,5 @@ All the user knows is that they used their EOA to sign a _single_ transaction,
 which then triggered a complex multichain sequence which resulted in some other
 desired token on their EOA.
 
-:::
+::::
 

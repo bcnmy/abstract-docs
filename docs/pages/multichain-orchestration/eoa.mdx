@@ -93,17 +93,14 @@ const trigger = {
 // 3. Build instructions - what happens after the trigger
 const instructions = [
   // Bridge from Base to Optimism
-  await oNexus.build({
+  await oNexus.buildComposable({
     type: "default",
-    data: {
-      chainId: base.id,
-      calls: [/* approval and bridge calls */]
-    }
+    data: // Encode call to bridge here!
   }),
   
   // Use funds on destination chain with runtime values
-  await oNexus.build({
-    type: "composable",
+  await oNexus.buildComposable({
+    type: "default",
     data: {
       chainId: optimism.id,
       abi: someProtocolAbi,
@@ -121,7 +118,7 @@ const instructions = [
   }),
   
   // Return results to user's EOA
-  await oNexus.build({
+  await oNexus.buildComposable({
     type: "transfer",
     data: {
       chainId: optimism.id,

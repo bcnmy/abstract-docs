@@ -412,6 +412,21 @@ export default defineConfig({
 			link: "/pricing",
 		},
 		{
+			text: "Integrated Signers",
+			collapsed: true,
+			items: [
+				{ text: "Privy", link: "/tutorials/signers/privy" },
+				{ text: "Web3Auth", link: "/tutorials/signers/web3auth" },
+				{ text: "Magic", link: "/tutorials/signers/magic" },
+				{ text: "Particle", link: "/tutorials/signers/particle" },
+				{ text: "Passport", link: "/tutorials/signers/passport" },
+				{ text: "Turnkey", link: "/tutorials/signers/turnkey" },
+				{ text: "Dynamic", link: "/tutorials/signers/dynamic" },
+				{ text: "Capsule", link: "/tutorials/signers/capsule" },
+				{ text: "DFNS", link: "/tutorials/signers/dfns" },
+			],
+		},
+		{
 			text: 'Biconomy Network',
 			items: [
 				{
@@ -423,27 +438,6 @@ export default defineConfig({
 					link: 'https://blog.biconomy.io/biconomy-network-litepaper/'
 				}
 			]
-		},
-		{
-			text: "AbstractJS SDK",
-			items: [
-				{ text: "Overview", link: "/abstractjs" },
-				{
-					text: "Integrated Signers",
-					collapsed: true,
-					items: [
-						{ text: "Privy", link: "/tutorials/signers/privy" },
-						{ text: "Web3Auth", link: "/tutorials/signers/web3auth" },
-						{ text: "Magic", link: "/tutorials/signers/magic" },
-						{ text: "Particle", link: "/tutorials/signers/particle" },
-						{ text: "Passport", link: "/tutorials/signers/passport" },
-						{ text: "Turnkey", link: "/tutorials/signers/turnkey" },
-						{ text: "Dynamic", link: "/tutorials/signers/dynamic" },
-						{ text: "Capsule", link: "/tutorials/signers/capsule" },
-						{ text: "DFNS", link: "/tutorials/signers/dfns" },
-					],
-				},
-			],
 		},
 		// {
 		// 	text: "Quickstart Guides",
@@ -665,13 +659,6 @@ export default defineConfig({
 		// 	],
 		// },
 		// {
-		// 	text: "Resources",
-		// 	items: [
-		// 		{ text: "Contracts & Audits", link: "/contractsAndAudits" },
-		// 		{ text: "Supported Networks", link: "/supportedNetworks" },
-		// 	],
-		// },
-		// {
 		// 	text: "Demos",
 		// 	link: "/demos",
 		// 	items: [
@@ -685,12 +672,9 @@ export default defineConfig({
 		// 		},
 		// 	],
 		// },
+
 		{
-			text: 'LLM Code Reference',
-			link: '/multichain-orchestration/zerotohero'
-		},
-		{
-			text: 'Multichain Orchestration',
+			text: 'Multichain Orchestration APIs',
 			collapsed: false,
 			items: [
 				{
@@ -700,6 +684,10 @@ export default defineConfig({
 				{
 					text: 'QuickStart Guide',
 					link: '/multichain-orchestration/quickstart'
+				},
+				{
+					text: 'Zero-to-Hero Guide',
+					link: '/multichain-orchestration/comprehensive'
 				},
 				{
 					text: 'Using Different Account Types',
@@ -752,11 +740,12 @@ export default defineConfig({
 			]
 		},
 		{
-		text: 'Multichain Gas Abstraction',
+		text: 'Multichain Gas Abstraction APIs',
 			collapsed: false,
 			items: [
 				{
-					text: 'Overview'
+					text: 'Overview',
+					link: '/multichain-gas-abstraction/overview'
 				},
 				{
 					text: 'Paying for Gas with ERC20 Tokens',
@@ -772,12 +761,13 @@ export default defineConfig({
 					]
 				},
 				{
-					text: 'Sponsoring Gas For Users'
+					text: 'Sponsoring Gas For Users',
+					link: '/multichain-gas-abstraction/sponsoring-gas'
 				}
 			]
 		},
 		{
-			text: 'Multichain Smart Sessions',
+			text: 'Smart Sessions',
 			collapsed: false,
 			items: [
 				{
@@ -785,17 +775,30 @@ export default defineConfig({
 					link: '/multichain-smart-sessions/overview'
 				},
 				{
-					text: 'Granting a Smart Session',
-					link: '/multichain-smart-sessions/grant'
+					text: 'Single Chain',
+					items: [
+						{
+							text: 'Granting a Smart Session',
+							link: '/multichain-smart-sessions/grant'
+						},
+						{
+							text: 'Redeeming a Smart Session',
+							link: '/multichain-smart-sessions/redeem'
+						}
+					]
 				},
-				{
-					text: 'Redeeming a Smart Session',
-					link: '/multichain-smart-sessions/redeem'
-				}
 			]
 		},
 		{
+			text: "Resources",
+			items: [
+				{ text: "Contracts & Audits", link: "/contractsAndAudits" },
+				{ text: "Supported Networks", link: "/supportedNetworks" },
+			],
+		},
+		{
 			text: "SDK Reference",
+			collapsed: true,
 			items: [
 				{
 					text: "MEE Client",

@@ -27,8 +27,8 @@ Runtime parameter injection allows function call parameters to be determined at 
 import { runtimeERC20BalanceOf, greaterThanOrEqualTo } from "@biconomy/abstractjs";
 
 // Use the exact token balance at execution time
-const swapInstruction = await oNexus.build({
-  type: "composable",
+const swapInstruction = await oNexus.buildComposable({
+  type: "default",
   data: {
     // ...other parameters
     args: [{
@@ -78,7 +78,7 @@ Constraints create implicit dependencies between instructions. For example, a sw
 ```javascript
 // This instruction will wait until the bridged amount has arrived
 // and only execute if the minimum amount constraint is satisfied
-const swapAfterBridge = await oNexus.build({
+const swapAfterBridge = await oNexus.buildComposable({
   // ...
   args: [{
     amountIn: runtimeERC20BalanceOf({
@@ -100,13 +100,13 @@ This example bridges tokens from Base to Optimism, then swaps the exact received
 
 ```javascript
 // Bridge USDC from Base to Optimism
-const bridgeInstruction = await oNexus.build({
+const bridgeInstruction = await oNexus.buildComposable({
   // Bridge configuration...
 });
 
 // Swap on Optimism using whatever amount was received
-const swapInstruction = await oNexus.build({
-  type: "composable",
+const swapInstruction = await oNexus.buildComposable({
+  type: "default",
   data: {
     chainId: optimism.id,
     // ...swap configuration

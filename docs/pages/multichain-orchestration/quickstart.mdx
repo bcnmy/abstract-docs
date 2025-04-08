@@ -1,607 +1,264 @@
-# Orchestration QuickStart Guide
+# QuickStart: Asynchronous Composable Orchestration
+This will be a short, zero-to-hero guide for building an orchestration flow. It will
+demonstrate the following features of the Biconomy stack: <br/><br/>
+- **Orchestration** <br/>
+The ability for the Biconomy stack to properly sequence multiple transactions across one or
+more chains. <br/><br/>
+- **Single-Signature Executeion** <br/>
+The ability to execute multiple transactions across multiple chains with a single
+user signature. <br/><br/>
+- **Application-Layer Composability** <br/>
+The ability to use the output or a state-change of one onchain function call as the
+input for the next one. For example, using the *exact* amount received from a DEX at
+runtime, as the input for the *supply* function of a lending platform in the next
+step. <br/><br/>
+- **Asynchronous Execution** <br/>
+The ability to wait for briges, solver or any other asynchronous actions to complete.
+E.g. the transaction on Optimism cannot continue until tokens have been bridged from
+Base to Optimsim. <br/><br/>
 
-This guide will walk you through building a complete multichain orchestration flow using Biconomy's AbstractJS SDK. You'll learn both the fundamental concepts and practical implementation details to create complex cross-chain transactions that users can execute with a single signature.
+- **Multichain Gas Abstraction** <br/>
+With the Biconomy stack, you can pay for execution of transactions on _any_ chain
+with ERC-20 tokens on any other chain. Additionally, when executing multiple transactions
+across multiple chains - the user pays only one fee on only one chain.
 
-## What is Multichain Orchestration?
+## Example Case
+In this example case, we'll:
+:::steps
+#### Bridge
+Call Across bridge to move USDC from Optimism to Base.
+Function calls being executed:
+- Call `approve` on USDC contract on Optimism (approve spend to Across)
+- Call `depositV3` on Across Spoke Pool contract
+#### Swap
+Use the *exact* amount received from Across to swap to USDT on Base
+- Call `approve` on USDC contract on Base (approve spend to Uniswap)
+- Call `swap` on Uniswap on Base
+:::
 
-Multichain orchestration is a powerful pattern that allows users to perform complex sequences of actions across multiple blockchains with just a single signature. Traditional blockchain interactions require users to sign separate transactions for each step in a process (approve, transfer, bridge, swap, etc.), often across different chains with different gas tokens.
+:::tip[Simple Demo Case]
+While bridge + swap is an interesting application of the Biconomy stack, the real
+power comes in orchestrating multiple instructions - for example "swap on source chain,
+bridge to destination, swap on destination, then supply to lending protocol". 
 
-Biconomy's orchestration stack solves this by:
-- Combining multiple transactions into a single user operation
-- Handling cross-chain coordination automatically
-- Processing transactions in the correct sequence
-- Adapting to runtime conditions and token amounts
-
-## Overview of Our Example
-
-In this guide, we'll build a DeFi workflow that demonstrates these capabilities:
-
-1. Transfers USDC from a user's EOA (Externally Owned Account) on Base chain
-2. Bridges the USDC to Optimism chain
-3. Swaps USDC to USDT on Optimism using Uniswap
-4. Deposits USDT into Aave to receive aUSDT (interest-bearing tokens)
-5. Returns the aUSDT tokens to the user's original EOA
-
-All of this happens with just one signature from the user, eliminating the need for multiple transactions, approvals, and chain-switching.
-
-:::info
-This flow demonstrates the power of Biconomy's orchestration stack: cross-chain transfers, token swaps, and DeFi protocol interactions - all bundled into a seamless user experience.
+Read our comprehensive [Zero-to-Hero Guide](/multichain-orchestration/comprehensive) to
+learn how to execute more complex transaction sequences.
 :::
 
 ## Prerequisites
 
-Before you begin, make sure you have:
+- Node.js installed
+- Private key for testing (never use production keys in test code)
+- Some USDC on Optimism in your account
 
-- **Development Environment**: Node.js installed on your machine
-- **Blockchain Knowledge**: Basic understanding of EVM blockchains, tokens, and DeFi concepts
-- **Test Wallet**: A private key for testing on testnets (never use production keys in code)
-- **Test Tokens**: Some test USDC on Base testnet (you can get these from testnet faucets)
+::::steps
+#### Setup
 
-:::warning
-Never hardcode private keys in production code. This guide uses hardcoded keys for simplicity, but in a real application, you should use environment variables or secure key management solutions.
-:::
-
-## Setup
-
-First, let's install the necessary dependencies:
+First, install the required packages:
 
 ```bash
 npm install @biconomy/abstractjs viem
 ```
 
-Next, create a new file called `orchestration.js` and import the required dependencies:
+Create a new file and add the basic imports:
 
 ```javascript
 import {
-  AavePoolAbi,
   createMeeClient,
-  getFusionQuote,
-  mcAaveV3Pool,
-  mcUniswapSwapRouter,
-  mcUSDC,
-  mcUSDT,
-  runtimeERC20BalanceOf,
-  toFeeToken,
   toMultichainNexusAccount,
-  UniswapSwapRouterAbi,
-  greaterThanOrEqualTo
+  runtimeERC20BalanceOf,
+  greaterThanOrEqualTo,
+  mcUSDC,
+  mcUSDT
 } from "@biconomy/abstractjs";
-
-import {
-  encodeFunctionData,
-  erc20Abi,
-  http,
-  parseUnits
-} from "viem";
-
+import { http, parseUnits, encodeFunctionData, erc20Abi } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { base, optimism } from "viem/chains";
+import { optimism, base } from "viem/chains";
 ```
 
-## Core Concepts
+#### Initialize Smart Account
 
-Before we start coding, let's understand some key concepts that power Biconomy's orchestration system:
-
-### Multichain Nexus Account
-
-A Multichain Nexus Account is a specialized smart contract account that:
-- Works across multiple blockchains with a single identity
-- Orchestrates transaction sequences in the correct order
-- Acts as a central coordination point for cross-chain operations
-- Handles token transfers and protocol interactions on behalf of the user
-
-In our architecture, the Nexus Account receives funds from the user's EOA, performs all the necessary operations across chains, and returns the final assets to the user.
-
-### Instructions
-
-Instructions are the building blocks of an orchestration sequence. Each instruction defines:
-- Which blockchain it should execute on
-- What actions to perform (token approvals, swaps, bridge calls, etc.)
-- What parameters to use for each action
-- Any dependencies or conditions that must be met before execution
-
-Instructions can be simple (like a token approval) or complex (like multiple contract interactions in sequence).
-
-### Triggers
-
-A trigger is the user-signed transaction that initiates the entire orchestration sequence. In Biconomy's system, this is typically:
-- A token transfer from the user's EOA to the Nexus Account, or
-- A token approval that allows the Nexus Account to transfer tokens from the user's EOA
-
-The trigger includes cryptographic proof of the user's consent to the entire orchestration sequence, not just the initial transaction.
-
-### Modular Execution Environment (MEE)
-
-The MEE is Biconomy's infrastructure that:
-- Monitors for trigger transactions on-chain
-- Executes instructions in the correct sequence
-- Handles cross-chain coordination
-- Manages gas payments and transaction confirmation
-
-## Step 1: Initialize Accounts and Client
-
-Let's set up the EOA account and create a multichain Nexus account to handle the orchestration:
+Set up a multichain smart account on both Optimism and Base:
 
 ```javascript
-// Generate an account from private key (use environment variables in production)
-const eoa = privateKeyToAccount(
-  "0x3e478f4e7c4be62e616d4b347de5431a4a6774899db4a72702b58e0cb92a1e00" // Replace with your test key
-);
+// Set up account (use environment variables in production)
+const eoa = privateKeyToAccount("0x...your_private_key...");
 
-// Log the address (useful for loading test tokens)
-console.log(`EOA Address: ${eoa.address}`);
-
-// Create a multichain Nexus account
-// This creates a smart contract account that can operate across multiple chains
-const oNexus = await toMultichainNexusAccount({
-  signer: eoa,                  // The EOA that controls this Nexus account
-  chains: [base, optimism],     // The chains this account will operate on
-  transports: [http(), http()]  // Network providers for each chain
+// Create multichain smart account
+const smartAccount = await toMultichainNexusAccount({
+  signer: eoa,
+  chains: [optimism, base],
+  transports: [http(), http()]
 });
 
-// Log the orchestrator account address
-console.log("Orchestrator Account address:", oNexus.addressOn(base.id));
-
-// Initialize the MEE client
-// This gives us access to Biconomy's Modular Execution Environment
+// Initialize the orchestration client
 const meeClient = await createMeeClient({
-  account: oNexus,
+  account: smartAccount
 });
+
+console.log("Smart account address on Optimism:", smartAccount.addressOn(optimism.id));
+console.log("Smart account address on Base:", smartAccount.addressOn(base.id));
 ```
 
-:::note
-The Nexus account serves as the orchestrator for our transaction sequence. When using Fusion execution mode, this account operates behind the scenes - users only interact with their familiar EOA wallet, while the Nexus account handles all the complex cross-chain operations.
+#### Important: Fund the Account
+This example is using _Smart Account_ based orchestration.  In order for smart account based orchestration
+to work, you need to put funds into the smart account.
+
+:::info[Note]
+The Biconomy stack supports orchestration from Native EOAs as well. 
+Read the [Native EOA Guide](/multichain-orchestration/eoa).
 :::
 
-## Step 2: Define the Amount and Trigger
-
-Now we'll define how much USDC we'll use and set up the trigger transaction:
+#### Define Bridge Instruction
 
 ```javascript
-// Amount of USDC to use (adjust as needed)
-// parseUnits converts 2.5 to the proper decimal representation (USDC uses 6 decimals)
-const amountConsumed = parseUnits("2.5", 6); // Equals 2,500,000 in raw units
+// Import the Across bridge helper function
+import { prepareAcrossBridgeTransaction } from "./across-encoder";
 
-// Define the trigger transaction
-// This is the transaction the user will actually sign - a transfer of USDC from their EOA 
-// to the Nexus account. This single transaction will kick off the entire orchestration sequence.
-const transferToNexusTrigger = {
-  tokenAddress: mcUSDC.addressOn(base.id), // The USDC token address on Base chain
-  amount: amountConsumed,                  // How much USDC to transfer
-  chainId: base.id,                        // Which chain this trigger executes on
-};
-```
+// Define the amount to bridge
+const amountToBridge = parseUnits("5", 6); // 5 USDC
 
-:::info[Understanding Triggers]
-The trigger transaction is special because it contains not just the initial token transfer, but also a cryptographic commitment to the entire orchestration sequence. 
-
-Behind the scenes, Biconomy:
-1. Hashes all the instructions into a Merkle tree
-2. Appends the Merkle root to the transaction data
-3. When the user signs this transaction, they're implicitly authorizing the entire sequence
-
-This allows a single user signature to securely authorize multiple cross-chain operations.
-:::
-
-## Step 3: Prepare the Bridge Transaction
-
-We'll use the Across bridge to move USDC from Base to Optimism:
-
-```javascript
-// First, let's prepare the bridge transaction details
-const callDepositAcrossSpokePool = {
-  to: "0x109bc137cb64eab7c0b1dddd1edf341467dc2d35", // Across Spoke Pool on Base
-  data: "0x..." // Encoded call to depositV3 (simplified for this guide)
-};
-
-// Approve the bridge contract to spend USDC
-const approveUsdcSpendToAcross = {
-  to: mcUSDC.addressOn(base.id),
-  data: encodeFunctionData({
-    abi: erc20Abi,
-    functionName: "approve",
-    args: [callDepositAcrossSpokePool.to, amountConsumed],
-  }),
-};
 
 // Build the bridge instruction
-const bridgeUsdcFromBaseToOptimism = await oNexus.build({
+const bridgeInstruction = await smartAccount.build({
+  type: "default",
+  data: // Encode call to bridge instructions here
+});
+```
+
+#### Define Runtime Value Injection
+
+Runtime value injection allows function parameters to be determined at execution time rather than when creating the transaction. This is essential for cross-chain operations where exact amounts can't be known in advance due to bridge fees, slippage, or other factors.
+
+When using `runtimeERC20BalanceOf`, the system will:
+1. Read the actual token balance at execution time
+2. Inject this value into the function parameters
+3. Apply any constraints to ensure sufficient value
+
+```javascript
+// Define execution constraints (minimum amount to accept from bridge)
+const executionConstraints = [
+  greaterThanOrEqualTo((amountToBridge * 90n) / 100n) // Accept 10% slippage
+];
+
+// Approve USDC spend to Uniswap on Base using the approve instruction builder
+const approveUsdcToUniswap = await smartAccount.buildComposable({
+  type: "approve",
+  data: {
+    chainId: base.id,
+    tokenAddress: mcUSDC.addressOn(base.id),
+    spender: uniswapRouter,
+    // Use the exact amount received from the bridge
+    amount: runtimeERC20BalanceOf({
+      targetAddress: smartAccount.addressOn(base.id),
+      tokenAddress: mcUSDC.addressOn(base.id),
+      constraints: executionConstraints
+    })
+  }
+});
+```
+
+#### Define Swap Instruction
+
+```javascript
+import { parseAbi } from 'viem'
+
+const uniswapRouterAbi = parseAbi([
+  "function exactInputSingle((address tokenIn, address tokenOut, uint24 fee, address recipient, uint256 amountIn, uint256 amountOutMinimum, uint160 sqrtPriceLimitX96)) returns (uint256 amountOut)"
+]);
+
+// Uniswap router address on Base
+const uniswapRouter = "0x2626664c2603336E57B271c5C0b26F421741e481";
+ 
+// Execute swap on Uniswap
+const swapOnUniswap = await smartAccount.buildComposable({
   type: "default",
   data: {
     chainId: base.id,
-    calls: [approveUsdcSpendToAcross, callDepositAcrossSpokePool],
-  },
-});
-```
-
-## Step 4: Define Execution Constraints
-
-A key challenge in cross-chain operations is that you can't know exactly how many tokens will arrive after a bridge or swap due to fees, slippage, and price movements. Execution constraints solve this problem:
-
-```javascript
-// Allow for up to 20% slippage from the bridge
-// This means the next steps will only proceed if at least 80% of the original amount arrives
-const executionConstraints = [
-  greaterThanOrEqualTo((amountConsumed * 80n) / 100n),
-];
-```
-
-:::info[Understanding Execution Constraints]
-Execution constraints are conditions that must be met for an instruction to execute. They provide:
-
-1. **Safety**: Prevent execution when conditions aren't favorable (e.g., too much slippage)
-2. **Sequencing**: Ensure operations happen in the correct order (e.g., wait for bridged funds)
-3. **Adaptability**: Allow the system to work with varying token amounts at runtime
-
-In our example, we're creating a constraint that ensures we received at least 80% of our original USDC amount after bridging. If less than that arrives, the subsequent operations won't execute - protecting the user from excessive slippage.
-
-Constraints can be combined and customized for different scenarios, like minimum balances, price conditions, or time-based restrictions.
-:::
-
-## Step 5: Define Swap Instructions
-
-Now, let's prepare instructions to swap USDC to USDT on Optimism using Uniswap. This involves two steps: approving Uniswap to spend our USDC, then executing the swap.
-
-```javascript
-// Approve Uniswap to spend the USDC that arrives on Optimism
-const approveUniswapToSpendUSDC = await oNexus.build({
-  type: "approve",                                // This is a token approval instruction
-  data: {
-    chainId: optimism.id,                        // Execute on Optimism chain
-    tokenAddress: mcUSDC.addressOn(optimism.id), // The token to approve
-    spender: mcUniswapSwapRouter.addressOn(optimism.id), // Who can spend the token
-    
-    // How much to approve - this is where runtime values come in!
-    amount: runtimeERC20BalanceOf({
-      targetAddress: oNexus.addressOn(optimism.id, true),
-      tokenAddress: mcUSDC.addressOn(optimism.id),
-      constraints: executionConstraints,
-    }),
-  },
-});
-
-// Swap USDC to USDT on Uniswap
-const swapUSDCtoUSDTOnUniswap = await oNexus.build({
-  type: "composable",                             // For complex protocol interactions
-  data: {
-    chainId: optimism.id,                         // Execute on Optimism chain
-    abi: UniswapSwapRouterAbi,                    // The contract ABI for function encoding
-    to: mcUniswapSwapRouter.addressOn(optimism.id), // Uniswap router address
-    functionName: "exactInputSingle",             // The specific function to call
-    args: [
-      {
-        tokenIn: mcUSDC.addressOn(optimism.id),   // From USDC
-        
-        // Use exactly how much USDC we have at runtime
-        amountIn: runtimeERC20BalanceOf({
-          tokenAddress: mcUSDC.addressOn(optimism.id),
-          targetAddress: oNexus.addressOn(optimism.id, true),
-          constraints: executionConstraints,
-        }),
-        
-        tokenOut: mcUSDT.addressOn(optimism.id),  // To USDT
-        recipient: oNexus.addressOn(optimism.id, true), // Recipient of USDT
-        amountOutMinimum: 0n,                     // In production, set appropriate slippage
-        fee: 100,                                  // 0.01% pool fee
-        sqrtPriceLimitX96: 0n,                    // No price limit
-      },
-    ],
-  },
-});
-```
-
-:::info[Understanding Runtime Values]
-One of the most powerful features of Biconomy's orchestration is runtime value injection. 
-
-**What it solves**: When bridging or swapping tokens, you never know exactly how many tokens you'll receive due to fees, slippage, and price movement. Traditional approaches would require overestimating, underestimating, or complex offchain calculations.
-
-**How it works**: The `runtimeERC20BalanceOf` function creates a placeholder that gets replaced with the actual token balance at execution time. This means:
-
-1. You don't need to predict exact amounts
-2. You can use 100% of whatever tokens are available
-3. The system adapts to actual on-chain conditions
-4. No tokens get stuck or leftover in intermediate accounts
-
-In our example, we're approving and swapping whatever amount of USDC actually arrives on Optimism after bridging, subject to our minimum constraints.
-:::
-
-## Step 6: Define Aave Deposit Instructions
-
-Next, let's prepare instructions to deposit USDT into Aave:
-
-```javascript
-// Approve Aave to spend the USDT received from the swap
-const approveAAVEtoSpendUSDT = await oNexus.build({
-  type: "approve",
-  data: {
-    chainId: optimism.id,
-    tokenAddress: mcUSDT.addressOn(optimism.id),
-    spender: mcAaveV3Pool.addressOn(optimism.id),
-    amount: runtimeERC20BalanceOf({
-      targetAddress: oNexus.addressOn(optimism.id, true),
-      tokenAddress: mcUSDT.addressOn(optimism.id),
-      constraints: executionConstraints,
-    }),
-  },
-});
-
-// Supply USDT to Aave
-const supplyUsdtToAAVE = await oNexus.build({
-  type: "composable",
-  data: {
-    abi: AavePoolAbi,
-    to: mcAaveV3Pool.addressOn(optimism.id),
-    chainId: optimism.id,
-    functionName: "supply",
-    args: [
-      mcUSDT.addressOn(optimism.id),
-      runtimeERC20BalanceOf({
-        targetAddress: oNexus.addressOn(optimism.id, true),
-        tokenAddress: mcUSDT.addressOn(optimism.id),
-        constraints: executionConstraints,
+    abi: uniswapRouterAbi,
+    to: uniswapRouter,
+    functionName: "exactInputSingle",
+    args: [{
+      tokenIn: mcUSDC.addressOn(base.id),
+      tokenOut: mcUSDT.addressOn(base.id),
+      fee: 500, // 0.05% fee tier
+      recipient: smartAccount.addressOn(base.id),
+      // Use the exact amount of USDC received from the bridge
+      amountIn: runtimeERC20BalanceOf({
+        targetAddress: smartAccount.addressOn(base.id),
+        tokenAddress: mcUSDC.addressOn(base.id),
+        constraints: executionConstraints
       }),
-      oNexus.addressOn(optimism.id, true),
-      0,
-    ],
-  },
+      amountOutMinimum: 0n, // For demo purposes, set proper slippage in production
+      sqrtPriceLimitX96: 0n // No price limit
+    }]
+  }
 });
 ```
 
-## Step 7: Return aUSDT to the User
-
-Finally, let's return the aUSDT tokens to the user's EOA:
+#### Execute the Orchestration
 
 ```javascript
-// Define the aUSDT token address on Optimism
-const aUSDTOptimismAddress = "0x6ab707Aca953eDAeFBc4fD23bA73294241490620";
-
-// Transfer aUSDT back to the user's EOA
-const moveAusdtBackToEOA = await oNexus.build({
-  type: "transfer",
-  data: {
-    amount: runtimeERC20BalanceOf({
-      tokenAddress: aUSDTOptimismAddress,
-      targetAddress: oNexus.addressOn(optimism.id, true),
-      constraints: [greaterThanOrEqualTo(parseUnits("0.3", 1))],
-    }),
-    chainId: optimism.id,
-    recipient: eoa.address,
-    tokenAddress: aUSDTOptimismAddress,
+// Execute the orchestration sequence
+const { hash } = await meeClient.execute({
+  // Pay for execution with USDC on Optimism
+  feeToken: {
+    address: mcUSDC.addressOn(optimism.id),
+    chainId: optimism.id
   },
-});
-```
-
-## Step 8: Get a Quote and Execute
-
-With all our instructions defined, we need to get a quote for execution costs and then execute the transaction sequence:
-
-```javascript
-// Get a quote for executing the entire sequence
-const quote = await meeClient.getFusionQuote({
-  // The trigger transaction that the user will sign
-  trigger: transferToNexusTrigger,
-  
-  // Specify which token to use for paying execution fees
-  // This allows users to pay for all gas fees using USDC instead of ETH/native tokens
-  feeToken: toFeeToken({
-    chainId: base.id,
-    mcToken: mcUSDC,
-  }),
-  
   // The sequence of instructions to execute
-  // These will be executed in order, with dependencies and constraints respected
   instructions: [
-    bridgeUsdcFromBaseToOptimism,
-    approveUniswapToSpendUSDC,
-    swapUSDCtoUSDTOnUniswap,
-    approveAAVEtoSpendUSDT,
-    supplyUsdtToAAVE,
-    moveAusdtBackToEOA,
-  ],
+    bridgeInstruction,
+    approveUsdcToUniswap,
+    swapOnUniswap
+  ]
 });
 
-console.log(`Got Quote: ${quote.quote.hash}`);
-console.log(`Execution cost: ${quote.quote.paymentInfo.tokenValue}`);
+console.log(`Orchestration started: ${hash}`);
 
-// Execute the Fusion quote
-// This generates the trigger transaction for the user to sign
-const { hash } = await meeClient.executeFusionQuote({
-  fusionQuote: quote,
-});
+```
 
-console.log(`Started execution: ${hash}`);
+#### Wait for Execution Result
 
-// Wait for the entire transaction sequence to complete
-// This might take a few minutes since it involves cross-chain operations
+```ts
+// Wait for the entire orchestration to complete
 const receipt = await meeClient.waitForSupertransactionReceipt({ hash });
-console.log(`Successful execution: ${receipt}`);
+console.log("Orchestration completed successfully!");
+
 ```
 
-:::info[Understanding Fusion Execution]
-Fusion execution is the process that ties everything together:
+::::
 
-1. **Quote Generation**: First, we get a quote that estimates the cost of executing all instructions
-2. **Fusion Transaction Creation**: The system creates a special transaction that embeds proof of the entire instruction sequence
-3. **User Signature**: The user signs just this one transaction
-4. **Execution**: Once signed, the MEE nodes detect the transaction on-chain and execute all instructions in sequence
-5. **Cross-Chain Coordination**: The system automatically handles waiting for bridges, coordinating across chains, and ensuring instructions execute in order
-6. **Result Delivery**: Finally, the system ensures the end result (aUSDT in our case) is delivered back to the user's original wallet
+## How It Works
 
-This entire process happens without requiring the user to switch chains, approve multiple transactions, or manually track the progress. From the user's perspective, they simply sign one transaction and later receive the final result.
-:::
+1. **Smart Account Initialization**: <br/>
+We create a multichain smart account that can operate on both Optimism and Base.
 
-## Complete Code Example
+2. **Bridge Execution**: 
+   - The bridge instruction runs on Optimism
+   - It approves USDC spending and calls Across bridge
 
-Here's the complete code for our orchestration flow:
+3. **Asynchronous Waiting**:
+   - After the bridge instruction completes, the system automatically waits for funds to arrive on Base
+   - No manual monitoring or intervention required
 
-```javascript
-import {
-  AavePoolAbi,
-  createMeeClient,
-  getFusionQuote,
-  mcAaveV3Pool,
-  mcUniswapSwapRouter,
-  mcUSDC,
-  mcUSDT,
-  runtimeERC20BalanceOf,
-  toFeeToken,
-  toMultichainNexusAccount,
-  UniswapSwapRouterAbi,
-  greaterThanOrEqualTo
-} from "@biconomy/abstractjs";
+4. **Runtime Value Injection**:
+   - When funds arrive on Base, the exact received amount is automatically injected into the next instructions
+   - The `runtimeERC20BalanceOf` function reads the actual token balance at execution time
+   - This handles any slippage from the bridge operation
 
-import {
-  encodeFunctionData,
-  erc20Abi,
-  http,
-  parseUnits
-} from "viem";
+5. **Constraint Enforcement**:
+   - The execution constraints ensure the swap only proceeds if a minimum amount was received
+   - If less than 90% of the expected amount arrives, the swap won't execute
 
-import { privateKeyToAccount } from "viem/accounts";
-import { base, optimism } from "viem/chains";
+6. **Swap Execution**:
+   - Once sufficient funds are available on Base, the USDC is approved for Uniswap
+   - The swap executes using exactly the amount received from the bridge
 
-const main = async () => {
-  // Generate an account from private key (use environment variables in production)
-  const eoa = privateKeyToAccount(
-    "0x3e478f4e7c4be62e616d4b347de5431a4a6774899db4a72702b58e0cb92a1e00" // Replace with your test key
-  );
+## Key Points
 
-  console.log(`EOA Address: ${eoa.address}`);
-
-  // Create a multichain Nexus account
-  const oNexus = await toMultichainNexusAccount({
-    signer: eoa,
-    chains: [base, optimism],
-    transports: [http(), http()]
-  });
-
-  console.log("Orchestrator Account address:", oNexus.addressOn(base.id));
-
-  // Initialize the MEE client
-  const meeClient = await createMeeClient({
-    account: oNexus,
-  });
-
-  // Amount of USDC to use
-  const amountConsumed = parseUnits("2.5", 6);
-
-  // Define the trigger transaction
-  const transferToNexusTrigger = {
-    tokenAddress: mcUSDC.addressOn(base.id),
-    amount: amountConsumed,
-    chainId: base.id,
-  };
-
-  // [Bridge configuration code goes here]
-  
-  // Define execution constraints
-  const executionConstraints = [
-    greaterThanOrEqualTo((amountConsumed * 80n) / 100n),
-  ];
-
-  // [Instructions code goes here]
-
-  // Get a quote for executing the entire sequence
-  const quote = await meeClient.getFusionQuote({
-    trigger: transferToNexusTrigger,
-    feeToken: toFeeToken({
-      chainId: base.id,
-      mcToken: mcUSDC,
-    }),
-    instructions: [
-      bridgeUsdcFromBaseToOptimism,
-      approveUniswapToSpendUSDC,
-      swapUSDCtoUSDTOnUniswap,
-      approveAAVEtoSpendUSDT,
-      supplyUsdtToAAVE,
-      moveAusdtBackToEOA,
-    ],
-  });
-
-  console.log(`Got Quote: ${quote.quote.hash}`);
-  console.log(`Execution cost: $${quote.quote.paymentInfo.tokenValue}`);
-
-  // Execute the quote
-  const { hash } = await meeClient.executeFusionQuote({
-    fusionQuote: quote,
-  });
-
-  console.log(`Started execution: ${hash}`);
-
-  // Wait for the transaction to complete
-  const receipt = await meeClient.waitForSupertransactionReceipt({ hash });
-  console.log(`Successful execution: ${receipt}`);
-};
-
-main().catch(console.error);
-```
-
-## How It All Works Together
-
-Let's summarize the complete flow of our orchestration:
-
-1. **User Experience**: The user signs just one transaction from their EOA wallet - a simple USDC transfer
-2. **Behind The Scenes**: 
-   - The USDC is transferred to the Nexus account on Base
-   - The Nexus account bridges the USDC to Optimism
-   - Once funds arrive on Optimism, they're approved and swapped to USDT
-   - The USDT is then approved and deposited into Aave
-   - The resulting aUSDT tokens are sent back to the user's original EOA
-
-From the user's perspective, this entire multi-step, cross-chain process appears as a single, seamless operation.
-
-## Architecture Overview
-
-The system components work together as follows:
-
-1. **User's EOA**: The externally owned account that initiates the transaction
-2. **Nexus Account**: The smart contract account that orchestrates all operations
-3. **MEE Nodes**: Biconomy's infrastructure that monitors and executes instructions
-4. **Runtime Values**: Dynamic values calculated at execution time
-5. **Execution Constraints**: Rules that determine when operations can proceed
-6. **Fusion Execution**: The mechanism that ties everything into a single user signature
-
-This architecture enables powerful, user-friendly experiences that abstract away the complexities of blockchain interactions.
-
-## What's Next?
-
-You've just built a complex multichain orchestration flow that allows users to:
-
-1. Start with USDC on Base
-2. End with an interest-bearing aUSDT position on Optimism
-3. Complete the entire operation with a single signature
-
-Next, you can:
-
-- **Explore Additional Patterns**:
-  - Intent-based swaps using 1inch or CoW Protocol
-  - Dollar-cost averaging across multiple chains
-  - Zapping into LP positions across chains
-  - Debt management across lending protocols
-
-- **Customize User Experiences**:
-  - Add front-end interfaces to your orchestration flows
-  - Implement dynamic routing based on gas costs or exchange rates
-  - Create protocol-specific optimizations
-
-## Troubleshooting Guide
-
-### Insufficient Funds
-- **Symptom**: Transaction reverts or fails to execute
-- **Cause**: Not enough tokens for operations or fees
-- **Solution**: Ensure your account has sufficient token balances and some native tokens for gas
-
-### Bridge Delays
-- **Symptom**: Orchestration seems stuck after the bridge step
-- **Cause**: Cross-chain bridges can take from 5-30 minutes depending on the provider
-- **Solution**: Be patient and monitor bridge status on the destination chain
-
-### Slippage Errors
-- **Symptom**: Transactions after bridging fail to execute
-- **Cause**: Constraints too strict for actual received amounts
-- **Solution**: Adjust your `executionConstraints` to allow for more slippage if needed
-
-### Invalid Function Calls
-- **Symptom**: Contract calls revert with error messages
-- **Cause**: Incorrect ABI, function parameters, or token addresses
-- **Solution**: Double-check all contract ABIs and verify token addresses on each chain
+- The entire orchestration is executed with a single signature from the smart account
+- No need to manually monitor bridge status or handle cross-chain coordination
+- Runtime values automatically adapt to actual on-chain conditions
+- Execution constraints provide safety guardrails for the operation
+- The orchestration handles the asynchronous nature of bridges transparently

@@ -57,7 +57,7 @@ const walletClient = createWalletClient({
 
 const authorization = await walletClient.signAuthorization({
   // Address of the Nexus Proxy Singleton
-  contractAddress: nexusProxyAddress 
+  contractAddress: '0x000000004F43C49e93C970E84001853a70923B03' 
 })
 ```
 
@@ -83,13 +83,9 @@ To learn how to use orcehstration with smart accounts (including EIP-7702),
 read the [Smart Account Orchestration](/multichain-orchestration/sca) guide.
 
 ### Execute
-Create a connection to a Modular Execution Environmnet node:
 
-```ts
-const meeClient = await createMeeClient({
-  account: oNexus
-})
-```
+The documentation for EIP-7702 powered execution is currently in development. 
+
 
 
 :::

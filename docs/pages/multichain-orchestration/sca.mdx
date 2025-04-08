@@ -3,19 +3,32 @@ Executing orchestration flows with smart accounts is the most powerful way of
 leveraging the orchestration flows. This means that the user funds are already
 in the Nexus _multichain smart account_ before starting orchestration. 
 
-Some of the core benefits of using the smart account based orchestration:
+### Key Benefits of Smart Account Based Orchestration
 
 - **Chain Abstraction / Unified Balances** <br/>
 Since the orchestration validator has access to an instance of a smart account 
 across multiple chains, it's able to trigger multiple chains at once to bridge
-one or more tokens to a desired destination chain. 
+one or more tokens to a desired destination chain. <br/> <br/>
 
 - **Multi-Chain Gas** <br/>
 When using smart account based orchestration, users can pay for execution with
-native tokens or ERC20 tokens across any supported chain. 
+native tokens or ERC20 tokens across any supported chain. <br/> <br/>
 
-The key drawback of the smart account based orchestration is that the user must
-first _deposit_ their funds to the Smart Account - creating onboarding friction.
+### Key Drawbacks of Smart Account Based Orchestration
+
+- **Depositing Assets** <br/>
+The users must deposit the assets into the Smart Account before using it. For users
+who come from EOA wallets, this creates additional onboarding friction. <br/> <br/>
+
+- **Fragmenting Liquidity** <br/>
+Unlike EOAs, Smart Accounts are not portable and users can have multiple Smart Account
+addresses across multiple apps. This means that the user balances get fragmented easily
+as they interact with more apps.  <br/> <br/>
+
+:::tip[Using EOA Based Orchestration]
+The Biconomy stack supports orchestration from both Smart Accounts and EOAs. Read the 
+EOA Orchestration Guide to use the EOA based system.
+:::
 
 ## Guide
 
@@ -103,7 +116,6 @@ const { hash } = await meeClient.executeQuote({
 })
 ```
 :::
-
 
 
 ## Code Example

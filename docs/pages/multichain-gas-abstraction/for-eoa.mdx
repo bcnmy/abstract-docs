@@ -1,207 +1,177 @@
-# Paying for Gas With ERC20 Tokens From EOAs
+# Tutorial: Paying for Gas With ERC-20 Tokens From an EOA Account
 
-Blockchain transactions traditionally require native tokens (like ETH) to pay
-for gas, creating a significant barrier for users who may only hold ERC20 tokens
-like USDC. Biconomy's ERC20 gas payment system solves this problem by
-allowing users to pay for transaction execution using their ERC20 tokens
-directly from standard Externally Owned Accounts (EOAs). This approach
-works with any regular EOA wallet—no special wallet implementation or
-upgrades required. 
+This tutorial demonstrates how to execute a transaction on Base while paying for gas fees with USDC on Optimism. We'll use Fusion execution to create a simple transaction that users can sign without needing native tokens for gas.
 
-Users simply sign a standard ERC20 transfer transaction,
-and behind the scenes, this single signature initiates complex operations
-without requiring any native tokens. This system is fully backwards
-compatible with existing wallets and doesn't require users to switch to
-smart contract wallets or learn new transaction patterns. The result
-is a seamless user experience where blockchain complexity is abstracted
-away, and users can interact with dApps using only the tokens they
-already have.
+## Overview
 
-:::info[Supported Tokens]
-The support for tokens paying for gas from EOAs is not universal. 
-
-There are two prerequisites:
-
-1. The token is `ERC20Permit` compliant.
-2. The execution node is willing to accept is as payment for gas.
-:::
-
-## Example Using USDC to Pay for Transaction on Optimsim
-
-Using Fusion execution, you can allow users to:
-
-- Pay for transaction fees using USDC instead of ETH
-- Execute transactions without holding native tokens
-- Enjoy a simplified UX with fewer approval steps
+In blockchain applications, users typically need to hold native tokens on each chain they interact with. With Biconomy's Fusion execution, users can:
+- Execute transactions on one chain (Base) while paying for gas with tokens on another chain (Optimism)
+- Use ERC20 tokens like USDC instead of native tokens for gas fees
+- Create seamless cross-chain experiences without managing multiple gas tokens
 
 ## Prerequisites
 
-- A private key for testing (use environment variables in production)
-- USDC tokens on Optimism
-- Basic understanding of AbstractJS SDK
+- Node.js installed
+- A wallet with some USDC on Optimism
+- Basic understanding of EVM transactions
 
-## Implementation
+## Steps to Implement Fusion Execution
+
+:::steps
+#### Setting Up Your Environment
+
+First, let's import the necessary dependencies and set up our account:
 
 ```javascript
-import {
-  createMeeClient,
-  toMultichainNexusAccount,
-  toFeeToken,
-  mcUSDC,
-} from "@biconomy/abstractjs";
-import { http, parseUnits, encodeFunctionData, erc20Abi } from "viem";
+import { createMeeClient, executeFusionQuote, getMeeScanLink, mcUSDC, toMultichainNexusAccount, waitForSupertransactionReceipt, type Instruction, type Trigger } from "@biconomy/abstractjs-canary";
+import { http, zeroAddress } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { optimism } from "viem/chains";
-
-const main = async () => {
-  // Initialize account and client
-  const eoa = privateKeyToAccount("0x...your_private_key...");
-  const oNexus = await toMultichainNexusAccount({
-    signer: eoa,
-    chains: [optimism],
-    transports: [http()],
-  });
-  const meeClient = await createMeeClient({
-    account: oNexus,
-  });
-
-  // Define the transaction we want to execute
-  // This example calls a hypothetical DeFi protocol
-  const targetProtocolAddress = "0x123...your_target_contract_address";
-  const actionInstruction = await oNexus.build({
-    type: "default",
-    data: {
-      chainId: optimism.id,
-      calls: [
-        {
-          to: targetProtocolAddress,
-          data: encodeFunctionData({
-            abi: [
-              /* Your contract ABI */
-            ],
-            functionName: "someFunction",
-            args: [
-              /* Your arguments */
-            ],
-          }),
-        },
-      ],
-    },
-  });
-
-  // Define how much USDC to use
-  const usdcAmount = parseUnits("0.1", 6); // 0.1 USDC
-
-  // Define the user's transaction - this is what the user will actually sign
-  // It's simply a transfer of USDC that kicks off the whole process
-  const userTransaction = {
-    tokenAddress: mcUSDC.addressOn(optimism.id),
-    amount: usdcAmount,
-    chainId: optimism.id,
-  };
-
-  // Get a quote for executing the transaction using USDC as fee token
-  const quote = await meeClient.getFusionQuote({
-    trigger: userTransaction, // The user's USDC transfer that initiates everything
-    feeToken: toFeeToken({
-      chainId: optimism.id,
-      mcToken: mcUSDC,
-    }),
-    instructions: [actionInstruction], // What happens after the user's transaction
-  });
-
-  console.log(`Estimated cost: ${quote.quote.paymentInfo.tokenValue}`);
-
-  // Execute the transaction
-  const { hash } = await meeClient.executeFusionQuote({
-    fusionQuote: quote,
-  });
-
-  console.log(`Transaction started: ${hash}`);
-
-  // Wait for transaction to complete
-  const receipt = await meeClient.waitForSupertransactionReceipt({ hash });
-  console.log(`Transaction completed: ${receipt}`);
-};
-
-main().catch(console.error);
+import { base, optimism } from "viem/chains";
 ```
 
-## How It Works
+#### Initialize Accounts and Client
 
-1. **User Signs One Transaction**: The user simply signs a transaction to transfer a small amount of USDC
-2. **Behind the Scenes Magic**: This USDC transfer automatically triggers your actual transaction
-3. **Fee Payment**: The USDC is used to pay for all gas fees instead of requiring ETH
-4. **Transaction Execution**: Your target transaction executes on Optimism without the user needing ETH
-
-## Key Components
-
-### The User Transaction
+Now we'll set up the EOA (Externally Owned Account) and create a Nexus account for orchestration:
 
 ```javascript
-const userTransaction = {
-  tokenAddress: mcUSDC.addressOn(optimism.id),
-  amount: usdcAmount,
+const eoa = privateKeyToAccount('0xEOA_ADDRESS')
+const oNexus = await toMultichainNexusAccount({
+  chains: [optimism, base],
+  transports: [http()],
+  signer: eoa,
+})
+const meeClient = await createMeeClient({
+  account: oNexus
+})
+```
+
+In this code:
+- We create an EOA from a private key (in production, use environment variables)
+- We create a Nexus account that can operate on both Optimism and Base
+- We initialize the MEE client which will handle orchestration
+
+#### Define the Trigger Transaction
+
+The trigger transaction is what the user will actually sign. Since USDC supports ERC20Permit, we can use it directly for gas payment:
+
+```javascript
+// We'll use the fact that USDC supports ERC20Permit
+// to enable the Biconomy Stack to use it to pay for gas.
+const trigger: Trigger = {
+  // Amount refers to the amount of USDC our instructions
+  // would use. In this case it'll be zero, since we're not
+  // doing anything useful in our instructions, but if you're
+  // going to be using USDC in your instructions, just set this
+  // to the amount of USDC the instructions will need
+  amount: 0n,
   chainId: optimism.id,
-};
+  tokenAddress: mcUSDC.addressOn(optimism.id)
+}
 ```
 
-This represents the only transaction the user actually signs - a simple USDC transfer. When the user signs this transaction, they're also implicitly authorizing the more complex transaction you want to execute.
+This trigger defines:
+- Which token to use (USDC on Optimism)
+- How much of that token our instructions need (0 in this example)
+- Which chain the trigger executes on (Optimism)
 
-### What Happens After The User's Transaction
+#### Define the Instruction
+
+Next, we define what we want to execute. In this example, we're creating a simple instruction that doesn't do anything useful - it just sends 0 ETH to the zero address on Base:
 
 ```javascript
-instructions: [actionInstruction];
+const instruction: Instruction = {
+  // One instruction can contain multiple
+  // function calls. This will be a demo
+  // instruction that does nothing - it just
+  // sends 0 ETH to 0x000....
+  calls: [{
+    to: zeroAddress,
+    value: 0n
+  }],
+  // The chain where the instruction will be executed
+  chainId: base.id
+}
 ```
 
-This defines what should happen automatically after the user's USDC transfer. It could be:
+Note that while our trigger is on Optimism, the instruction executes on Base - demonstrating cross-chain functionality.
 
-- Interacting with a DeFi protocol
-- Swapping tokens
-- Executing an NFT purchase
-- Any other on-chain action
+#### Get a Quote for Execution
 
-### Fee Token Configuration
+Now we need to get a quote for executing our instruction using USDC on Optimism as the fee token:
 
 ```javascript
-feeToken: toFeeToken({
-  chainId: optimism.id,
-  mcToken: mcUSDC,
-});
+const fusionQuote = await meeClient.getFusionQuote({
+  trigger: trigger,
+  // Important: Fee token *has* to be the same as the trigger
+  // token, when using this flow!
+  feeToken: {
+    address: mcUSDC.addressOn(optimism.id),
+    chainId: optimism.id
+  },
+  instructions: [instruction]
+})
 ```
 
-This tells the system to use USDC on Optimism to pay for all execution costs, so users don't need ETH.
+Important note: When using this flow, the fee token must be the same as the trigger token.
 
-### Fusion Quote
+#### Execute the Transaction
 
-The `getFusionQuote` call calculates the estimated cost of execution in USDC terms, including:
+With our quote ready, we can now execute the transaction:
 
-- Gas fees for the actual transaction
-- Swap costs for converting USDC to ETH
-- Relayer service fees
+```javascript
+const { hash } = await meeClient.executeFusionQuote({
+  fusionQuote
+})
+```
 
-## Best Practices
+This creates the transaction that the user will sign. When the user signs this transaction, it will:
+1. Approve the usage of USDC on Optimism for fees
+2. Execute the instruction on Base
 
-1. **Explain the User Experience**: Make it clear to users that they only need to sign a USDC transfer, and your application will handle everything else
-2. **Amount Calculation**: Request slightly more USDC than the estimated fee to account for price fluctuations
-3. **Error Handling**: Implement proper error handling for cases where fees change or transactions fail
-4. **Transaction Monitoring**: Use `waitForSupertransactionReceipt` to monitor execution status
+#### Wait for Completion and Track Status
 
-## Advanced Use Cases
+Finally, we wait for the transaction to complete and get a link to track it:
 
-This pattern can be extended to:
+```javascript
+const receipt = await meeClient.waitForSupertransactionReceipt({
+  hash
+})
+// Get link to https://meescan.biconomy.io explorer
+// which will allow you to track it
+const meeScanLink = getMeeScanLink(hash)
+```
 
-- Execute multiple operations in sequence after the user's single transaction
-- Create cross-chain experiences where users only sign once
-- Build complex DeFi interactions with a simple user experience
+The `waitForSupertransactionReceipt` function will pause execution until the transaction is confirmed. The `getMeeScanLink` function provides a URL to Biconomy's explorer where you can track the transaction's status.
+:::
 
-By using this approach, you can create a seamless experience where users interact with Optimism dApps without ever needing to hold ETH.
+## Making Smart Contract Account Invisible
+For a truly seamless user experience, you can include a transfer instruction as the final step in your instructions array. This automatically returns any resulting assets (tokens, NFTs, positions) from the smart account back to the user's original EOA. Users simply sign one transaction from their familiar wallet and later receive the end results directly there, without ever needing to know about or interact with the intermediary smart account that facilitated the cross-chain operations.
 
-## Technical Detail: How Fusion Works
+## How It Works Behind the Scenes
 
-Behind the scenes:
+When executing this cross-chain flow:
 
-1. When the user signs the USDC transfer transaction, we append a cryptographic commitment to the real transaction we want to execute
-2. When the USDC transfer is detected on-chain, Biconomy's infrastructure verifies this commitment
-3. The system then executes your actual transaction, paying for gas with the USDC
-4. All this happens without the user needing to know about the complexity
+1. The user signs a transaction with USDC on Optimism
+2. The Biconomy infrastructure uses this to pay for gas fees
+3. The system handles the cross-chain orchestration
+4. The instruction is executed on Base
+5. All of this happens without the user needing to hold ETH on Base
+
+## Real-World Applications
+
+While this example is simple, you can use this pattern to:
+
+- Allow users to interact with Base dApps without holding ETH on Base
+- Enable cross-chain DeFi interactions using only USDC on Optimism
+- Create multi-chain experiences with simplified token management
+- Reduce onboarding friction for new users
+
+## Next Steps
+
+To extend this example for real applications:
+- Replace the empty instruction with meaningful contract interactions on Base
+- Add proper error handling
+- Implement a UI for users to interact with
+- Consider adding multiple instructions across different chains
+
+By leveraging cross-chain Fusion execution with ERC20 gas payments, you can create a much smoother user experience that eliminates one of the major friction points in blockchain applications.
