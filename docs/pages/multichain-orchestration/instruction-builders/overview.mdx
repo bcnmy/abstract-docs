@@ -18,13 +18,36 @@ const oNexus = await toMultichainNexusAccount({
 })
 ```
 
-Then you will have the `.build` method exposed on this account instance:
+Then you will have the `.buildComposable` method exposed on this account instance. This 
+will encode composable Instructions which can use advanced features like 
+[Runtime Parameter Injection](/multichain-orchestration/runtimeinjection)
 
 ```ts
-const instruction = await oNexus.build({
+const instruction = await oNexus.buildComposable({
   type: '' // The type of helper you're using
   data: {} // Type safe data for that type of helper
 })
 ```
+
+Alternatively, if you only need to execute static `callData`, you can use the 
+`.build` helper.
+
+```ts
+const instruction = await oNexus.build({
+  type: 'default',
+  data: {
+    calls: [{
+      to: '0xTarget',
+      data: encodeFunctionData(...) // Here you can use any callData encoder
+    }],
+    chainId: optimism.id
+  }
+})
+```
+
+:::warning[No Mixing]
+Do NOT mix-and-match instructions built with `.build` with instructions built with 
+`.buildComposable`
+:::
 
 Learn about how to use different types of helpers in their docs

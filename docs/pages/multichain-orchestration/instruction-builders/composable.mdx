@@ -1,4 +1,4 @@
-# Composable Instruction Builder
+# Default Instruction Builder
 
 The composable instruction builder is used to make function calls which will 
 inject dynamic runtime parameters.
@@ -7,8 +7,8 @@ The builder accepts the `abi` of the contract being called, the `chainId`
 where the contract is deployed and the `contractAddress`. 
 
 ```ts
-const composableInstruction = await oNexus.build({
-  type: 'composable',
+const composableInstruction = await oNexus.buildComposable({
+  type: 'default',
   data: {
     abi: erc20Abi,
     functionName: 'transfer',
