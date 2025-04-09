@@ -842,7 +842,6 @@ export default defineConfig({
 		{
 			text: "Demos",
 			collapsed: true,
-			link: "/demos",
 			items: [
 				{
 					text: "#001 SmartSessions",
@@ -1011,7 +1010,7 @@ export default defineConfig({
 			],
 		},
 		{
-			text: "Legacy Account Docs",
+			text: "Legacy Account Abstraction Docs",
 			collapsed: true,
 			items: [
 				{
