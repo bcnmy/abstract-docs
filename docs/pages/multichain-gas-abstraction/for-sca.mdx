@@ -1,0 +1,140 @@
+# Paying for Gas with ERC20 Tokens on Smart Accounts
+
+## Introduction
+
+When your funds are already on a Biconomy smart account, you can pay for transaction gas fees using ERC20 tokens like USDC instead of native tokens like ETH. This guide demonstrates how to execute transactions from a funded smart account using USDC to cover gas costs.
+
+:::warning[Fund Account]
+This approach requires your smart account to already be funded with the ERC20 tokens you wish to use for gas payment. You must transfer these tokens to the smart account before attempting the transaction execution shown in this guide.
+:::
+
+## Implementation
+
+```javascript
+import {
+  createMeeClient,
+  toMultichainNexusAccount,
+  toFeeToken,
+  mcUSDC
+} from "@biconomy/abstractjs";
+import { http, encodeFunctionData } from "viem";
+import { privateKeyToAccount } from "viem/accounts";
+import { optimism } from "viem/chains";
+
+const main = async () => {
+  // Initialize EOA, smart account, and client
+  const eoa = privateKeyToAccount("0x...your_private_key...");
+  const smartAccount = await toMultichainNexusAccount({
+    signer: eoa,
+    chains: [optimism],
+    transports: [http()]
+  });
+  const meeClient = await createMeeClient({
+    account: smartAccount
+  });
+
+  // Define the transaction you want to execute
+  const targetContractAddress = "0x123...your_target_contract";
+  const transactionInstruction = await smartAccount.build({
+    type: "default",
+    data: {
+      chainId: optimism.id,
+      calls: [{
+        to: targetContractAddress,
+        data: encodeFunctionData({
+          abi: [/* Your contract ABI */],
+          functionName: "yourFunction",
+          args: [/* Your arguments */]
+        })
+      }]
+    }
+  });
+
+  // Execute the transaction using USDC on the smart account for gas
+  const { hash } = await meeClient.execute({
+    // Specify USDC as the token to use for gas payment
+    feeToken: toFeeToken({
+      chainId: optimism.id,
+      mcToken: mcUSDC
+    }),
+    // The transaction to execute
+    instructions: [transactionInstruction]
+  });
+
+  console.log(`Transaction started: ${hash}`);
+
+  // Wait for transaction to complete
+  const receipt = await meeClient.waitForSupertransactionReceipt({ hash });
+  console.log(`Transaction completed: ${receipt}`);
+};
+
+main().catch(console.error);
+```
+
+## How It Works
+
+1. **Pre-funded Smart Account**: Your smart account must already have USDC tokens. This is a prerequisite before executing this flow.
+
+2. **Transaction Definition**: Define the transaction you want to execute on Optimism.
+
+3. **Fee Token Selection**: Specify USDC as the token to pay for gas instead of ETH.
+
+4. **Direct Execution**: Unlike Fusion execution, this directly uses the smart account's funds without requiring a separate user transaction.
+
+## Checking Smart Account Balance
+
+Before executing transactions, verify your smart account has sufficient tokens:
+
+```javascript
+import { getUnifiedERC20Balance } from "@biconomy/abstractjs";
+
+// Check balance of USDC on the smart account
+const balance = await getUnifiedERC20Balance({
+  account: smartAccount,
+  mcToken: mcUSDC
+});
+
+console.log(`Smart Account USDC Balance: ${balance.unified}`);
+```
+
+## Funding Your Smart Account
+
+If your smart account needs USDC, fund it first with a standard transfer:
+
+```javascript
+// Example code to fund your smart account with USDC
+const fundingTx = await eoa.sendTransaction({
+  to: mcUSDC.addressOn(optimism.id),
+  data: encodeFunctionData({
+    abi: erc20Abi,
+    functionName: "transfer",
+    args: [smartAccount.addressOn(optimism.id), usdcAmount]
+  })
+});
+```
+
+## Key Differences from Fusion Execution
+
+| Direct Smart Account Execution | Fusion Execution |
+|--------------------------------|------------------|
+| Requires pre-funding smart account | User signs from EOA, no pre-funding needed |
+| No user transaction required | Requires user to sign a transaction |
+| Simpler code flow | More setup code required |
+| Requires user to manually fund account | Automatically handles fund transfer |
+
+## When to Use This Approach
+
+This approach is best for:
+
+- Applications where users regularly interact with the same smart account
+- Scenarios where smart accounts are already funded with tokens
+- Backend systems or automated processes that manage smart accounts
+- Applications that want to minimize transaction steps for repeat users
+
+## Limitations
+
+- Smart account must be pre-funded with the ERC20 token used for gas
+- Users need to perform a separate funding transaction before this flow
+- Requires users to understand they have a smart account
+
+For scenarios where users shouldn't need to know about smart accounts or pre-fund them, consider using the Fusion execution approach instead.
