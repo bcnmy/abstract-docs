@@ -120,7 +120,7 @@ const amountToBridge = parseUnits("5", 6); // 5 USDC
 
 
 // Build the bridge instruction
-const bridgeInstruction = await smartAccount.build({
+const bridgeInstruction = await smartAccount.buildComposable({
   type: "default",
   data: // Encode call to bridge instructions here
 });

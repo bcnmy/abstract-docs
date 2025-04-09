@@ -236,7 +236,7 @@ const main = async () => {
    * approve + execute flow for using Across to bridge USDC from Base to
    * Optimism
    */
-  const bridgeUsdcFromBaseToOptimism = await oNexus.build({
+  const bridgeUsdcFromBaseToOptimism = await oNexus.buildComposable({
     type: "default",
     data: {
       chainId: base.id,
@@ -280,7 +280,7 @@ const main = async () => {
    * convenience, we've encoded helpers for common function calls, such as ERC20
    * transfer, ERC20 approve, etc...
    */
-  const approveUniswapToSpendUSDC = await oNexus.build({
+  const approveUniswapToSpendUSDC = await oNexus.buildComposable({
     type: "approve",
     data: {
       chainId: optimism.id,
@@ -324,7 +324,7 @@ const main = async () => {
    * by AbstractJS as a convenience. You can always create your own
    * contracts and use your own ABIs!
    */
-  const swapUSDCtoUSDTOnUniswap = await oNexus.build({
+  const swapUSDCtoUSDTOnUniswap = await oNexus.buildComposable({
     type: "composable",
 
     data: {
@@ -356,7 +356,7 @@ const main = async () => {
     },
   });
 
-  const approveAAVEtoSpendUSDT = await oNexus.build({
+  const approveAAVEtoSpendUSDT = await oNexus.buildComposable({
     type: "approve",
     data: {
       chainId: optimism.id,
