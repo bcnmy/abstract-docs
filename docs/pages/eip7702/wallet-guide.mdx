@@ -1,10 +1,10 @@
-# EIP7702 Integration Guide for Wallets
+# EIP-7702 Overview
 
-## Why EIP7702
-EIP7702 is an upcoming upgrade to Ethereum and EVM blockchains which enables
+## Why EIP-7702
+EIP-7702 is an upcoming upgrade to Ethereum and EVM blockchains which enables
 wallets to convert the user EOA wallets into Smart Accounts
 
-With EIP7702, wallets can drastically improve the UX for their users by offering smart
+With EIP-7702, wallets can drastically improve the UX for their users by offering smart
 account features, such as:
 
 ---
@@ -32,9 +32,9 @@ signer can only execute the exact transactions approved by the wallet/user. This
 dollar cost averaging, TWAP selling, yield rebalancing, ...
 
 
-## The Most Comprehensive EIP7702 Solutions Suite
+## The Most Comprehensive EIP-7702 Solutions Suite
 
-At Biconomy, we have built the most comprehensive EIP7702 solution on the market, enabling
+At Biconomy, we have built the most comprehensive EIP-7702 solution on the market, enabling
 wallets to add all of the above mentioned features, as well as many advanced - Biconomy 
 stack specific features:
 
@@ -60,7 +60,7 @@ without installing a separate module.
 
 
 :::info
-If you're a wallet team looking for an EIP7702 strategy - [Contact Us](https://calendly.com/balaghi)
+If you're a wallet team looking for an EIP-7702 strategy - [Contact Us](https://calendly.com/balaghi)
 :::
 
 ## Quickstart Guide for Developers
@@ -85,12 +85,12 @@ the authorization to a singleton contract - which means that no new contracts wi
 const eoa = privateKeyToAccount('0xPrivateKey')
 
 // Create an instance of a viem wallet client and extend it with the 
-// required eip7702 actions.
+// required EIP-7702 actions.
 const walletClient = createWalletClient({
   chain: odysseyTestnet,
   account: eoa,
   transport: http(),
-}).extend(eip7702Actions())
+}).extend(EIP-7702Actions())
 
 const authorization = await walletClient.signAuthorization({
   // Address of the Nexus Proxy Singleton
