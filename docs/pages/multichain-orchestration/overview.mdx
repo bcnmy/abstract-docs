@@ -1,5 +1,6 @@
 # Multichain Orchestration Overview
 
+### Limitations of EOAs & Bundlers
 The EVM blockchain execution stack has been severely limited by the idea that 
 one user signature equals exactly one onchain function call. The most notable 
 example of this has been the notorious _approve + execute_ flow, which is a more
@@ -9,14 +10,17 @@ While this basic case is slowly being resolved by the introduction of `batchExec
 calls on smart accounts and standards like ERC-5792 or EIP-7702, modern blockchain
 apps require much more complex actions than a simple batch of static function calls. 
 
+### Blockchain is becoming multichain
 With the proliferation of multiple EVM L2s/L3s and non-Ethereum L1s - modern apps work
 in an environment where user accounts and balances, protocol contracts and liquidity 
 are spread across many independent blockchains.
 
+### Challenges of controling for dynamic runtime conditions
 Additionally, the exact `callData` for all function calls is not always known ahead of 
 time, since it can be influenced by slippages incurred by swaps, bridges, intents
 or by some other runtime conditions. 
 
+### Biconomy MEE - The ultimate onchain execution stack
 These, and many other challenges drove us to build the ultimate transaction execution
 stack. Multi-chain native and fully composable (able to control for runtime conditions), 
 Biconomy orchestration is built to enable modern blockchain developers to build

@@ -1,0 +1,19 @@
+# Getting Production API Keys
+
+Developers can use and test the AbstractJS SDK and access the Modular Execution
+Environment (the Biconomy Network) without getting an API key. However, using
+the infrastructure this way has rate limits applied to it. 
+
+## Going to Production
+
+In order to get higher rate limits, go to 
+[Biconomy Dashboard](https://dashboard.biconomy.io) and create a new 
+MEE stack project. There you will have an API key which you can add when
+initializing the `MeeClient` in AbstractJS.
+
+```ts
+const meeClient = await createMeeClient({
+  account: oNexus,
+  apiKey: 'mee_your_api_key_here'
+});
+```

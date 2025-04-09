@@ -393,10 +393,24 @@ export default defineConfig({
 	],
 	topNav: [
 		{ text: "Examples", link: "https://github.com/bcnmy/examples" },
+		// {
+		// 	text: "API Docs",
+		// 	link: "https://bcnmy.github.io/abstractjs",
+		// },
+		
 		{
-			text: "API Docs",
-			link: "https://bcnmy.github.io/abstractjs",
-		},
+			text: 'Biconomy Network',
+			items: [
+				{
+					text: 'Overview',
+					link: 'https://blog.biconomy.io/launching-biconomy-network-the-application-layer-to-make-a-thousand-chains-feel-like-one-2/'
+				},
+				{
+					text: 'Litepaper',
+					link: 'https://blog.biconomy.io/launching-biconomy-network-the-application-layer-to-make-a-thousand-chains-feel-like-one-2/'
+				},
+			]
+		}
 	],
 	sidebar: [
 		{
@@ -410,6 +424,10 @@ export default defineConfig({
 		{
 			text: "Pricing",
 			link: "/pricing",
+		},
+		{
+			text: 'Get API Key',
+			link: '/api-key'
 		},
 		{
 			text: "Integrated Signers",
@@ -426,19 +444,19 @@ export default defineConfig({
 				{ text: "DFNS", link: "/tutorials/signers/dfns" },
 			],
 		},
-		{
-			text: 'Biconomy Network',
-			items: [
-				{
-					text: 'Learn About The Biconomy Network',
-					link: 'https://blog.biconomy.io/launching-biconomy-network-the-application-layer-to-make-a-thousand-chains-feel-like-one-2/'
-				},
-				{
-					text: 'Biconomy Network Litepaper',
-					link: 'https://blog.biconomy.io/biconomy-network-litepaper/'
-				}
-			]
-		},
+		// {
+		// 	text: 'Biconomy Network',
+		// 	items: [
+		// 		{
+		// 			text: 'Learn About The Biconomy Network',
+		// 			link: 'https://blog.biconomy.io/launching-biconomy-network-the-application-layer-to-make-a-thousand-chains-feel-like-one-2/'
+		// 		},
+		// 		{
+		// 			text: 'Biconomy Network Litepaper',
+		// 			link: 'https://blog.biconomy.io/biconomy-network-litepaper/'
+		// 		}
+		// 	]
+		// },
 		// {
 		// 	text: "Quickstart Guides",
 		// 	link: "/tutorials/quickstart",
