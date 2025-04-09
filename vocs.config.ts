@@ -397,7 +397,6 @@ export default defineConfig({
 		// 	text: "API Docs",
 		// 	link: "https://bcnmy.github.io/abstractjs",
 		// },
-		
 		{
 			text: 'Biconomy Network',
 			items: [
@@ -428,6 +427,19 @@ export default defineConfig({
 		{
 			text: 'Get API Key',
 			link: '/api-key'
+		},
+		{
+			text: 'QuickStart',
+			items: [
+				{
+					text: 'Multichain Orchestration',
+					link: '/multichain-orchestration/quickstart'
+				},
+				{
+					text: 'Pay for Gas With ERC-20 Tokens',
+					link: '/multichain-gas-abstraction/for-sca'
+				}
+			]
 		},
 		{
 			text: "Integrated Signers",
@@ -523,13 +535,16 @@ export default defineConfig({
 		// 		},
 		// 	],
 		// },
-		// {
-		// 	text: "Smart Accounts",
-		// 	items: [
-		// 		{ text: "Overview", link: "/account-providers/overview" },
-		// 		{ text: "Nexus", link: "/overview", collapsed: true },
-		// 	],
-		// },
+		{
+			text: "Smart Accounts & Smart EOAs",
+			collapsed: true,
+			items: [
+				{ text: "Smart Accounts Overview", link: "/account-providers/overview" },
+				{ text: "Nexus Smart Account", link: "/overview", collapsed: true },
+				{ text: "EIP-7702: Smart EOAs Overview", link: '/eip7702/wallet-guide' },
+				{ text: 'Companion Accounts Overview', link: '/mee/fusion'}
+			],
+		},
 		// {
 		// 	text: "Execution Environments",
 		// 	items: [
@@ -676,20 +691,6 @@ export default defineConfig({
 		// 		{ link: "/dashboard/apis", text: "API Endpoints & Webhooks" },
 		// 	],
 		// },
-		// {
-		// 	text: "Demos",
-		// 	link: "/demos",
-		// 	items: [
-		// 		{
-		// 			text: "#001 SmartSessions",
-		// 			link: "/demos/smartSessions",
-		// 		},
-		// 		{
-		// 			text: "#002 Fusion",
-		// 			link: "/demos/fusion",
-		// 		},
-		// 	],
-		// },
 
 		{
 			text: 'Multichain Orchestration APIs',
@@ -698,10 +699,6 @@ export default defineConfig({
 				{
 					text: 'Overview',
 					link: '/multichain-orchestration/overview'
-				},
-				{
-					text: 'QuickStart Guide',
-					link: '/multichain-orchestration/quickstart'
 				},
 				{
 					text: 'Zero-to-Hero Guide',
@@ -758,7 +755,7 @@ export default defineConfig({
 			]
 		},
 		{
-		text: 'Multichain Gas Abstraction APIs',
+		text: 'Gas Abstraction APIs',
 			collapsed: false,
 			items: [
 				{
@@ -785,7 +782,7 @@ export default defineConfig({
 			]
 		},
 		{
-			text: 'Smart Sessions',
+			text: 'Smart Sessions APIs',
 			collapsed: false,
 			items: [
 				{
@@ -808,10 +805,53 @@ export default defineConfig({
 			]
 		},
 		{
+			text: 'Learn Concepts',
+			collapsed: true,
+			items: [
+				{
+					text: 'EIP-7702 Guide for Apps 🔗',
+					link: 'https://blog.biconomy.io/a-comprehensive-eip-7702-guide-for-apps/'
+				},
+				{
+					text: 'Companion Accounts & Fusion 🔗',
+					link: 'https://blog.biconomy.io/introduction-to-companion-accounts-fusion/'
+				},
+				{
+					text: 'Supertransactions 🔗',
+					link: 'https://blog.biconomy.io/introduction-to-supertransactions-2/'
+				},
+				{
+					text: 'Compsability Stack 🔗',
+					link: 'https://blog.biconomy.io/introduction-to-the-composability-stack/'
+				},
+				{
+					text: 'Modular Execution Environment 🔗',
+					link: 'https://blog.biconomy.io/learn-modular-execution-environment-mee/'
+				}
+			]
+		},
+		{
 			text: "Resources",
+			collapsed: true,
 			items: [
 				{ text: "Contracts & Audits", link: "/contractsAndAudits" },
 				{ text: "Supported Networks", link: "/supportedNetworks" },
+			],
+		},
+
+		{
+			text: "Demos",
+			collapsed: true,
+			link: "/demos",
+			items: [
+				{
+					text: "#001 SmartSessions",
+					link: "/demos/smartSessions",
+				},
+				{
+					text: "#002 Fusion",
+					link: "/demos/fusion",
+				},
 			],
 		},
 		{
@@ -976,7 +1016,7 @@ export default defineConfig({
 			items: [
 				{
 					collapsed: true,
-					text: "V2 Docs & Infrastructure",
+					text: "V2 Accounts & EPv6 Infra",
 					items: smartAccountsV2Sidebar,
 				},
 				{ text: "V1 Docs", link: "https://legacy-docs.biconomy.io/" },
