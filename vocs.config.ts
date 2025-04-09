@@ -406,7 +406,7 @@ export default defineConfig({
 				},
 				{
 					text: 'Litepaper',
-					link: 'https://blog.biconomy.io/launching-biconomy-network-the-application-layer-to-make-a-thousand-chains-feel-like-one-2/'
+					link: 'https://blog.biconomy.io/biconomy-network-litepaper/'
 				},
 			]
 		}
