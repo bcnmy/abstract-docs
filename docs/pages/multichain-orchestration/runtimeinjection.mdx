@@ -48,6 +48,79 @@ const swapInstruction = await oNexus.buildComposable({
 | Function | Purpose |
 |----------|---------|
 | `runtimeERC20BalanceOf` | Injects the balance of an ERC20 token at execution time |
+| `runtimeEncodeAbiParameters` | Builds a `bytes` object, encoding several runtime and/or static params together. |
+
+### runtimeERC20BalanceOf
+This method allows injecting the ERC20 token balance of a given address as argument.
+This is useful to transfer the all the tokens of a given account w/o even knowing the amount of those tokens.
+#### Example usage
+<details markdown="1">
+
+```
+const instructions: Instruction[] = await mcNexus.buildComposable({
+      type: "default",
+      data: {
+        to: testnetMcUSDC.addressOn(chain.id),
+        abi: erc20Abi,
+        functionName: "transfer",
+        args: [
+          b0b,
+          runtimeERC20BalanceOf({
+            targetAddress: a11ce,
+            tokenAddress: testnetMcUSDC.addressOn(chain.id)
+          })
+        ],
+        chainId: chain.id
+      }
+    })
+```
+This example transfers the amount equal to b0b's USDC balance to a11ce.
+</details>
+
+### runtimeEncodeAbiParameters
+This function is useful, when some method requires an arg which is `bytes`, that is built out of several elements abi.encoded together.
+This function allows those elements to be runtime injected into the ABI encoding. It can be useful for methods similar to [Uniswap Router's `execute`](https://docs.uniswap.org/contracts/universal-router/technical-reference#command-inputs) method.
+#### Example usage
+<details markdown="1">
+
+```
+const instructions: Instruction[] = await mcNexus.buildComposable({
+      type: "default",
+      data: {
+        to: fooContractAddress,
+        abi: FOO_CONTRACT_ABI as Abi,
+        functionName: "foo",
+        args: [
+          bar,
+          baz,
+          // qux
+          runtimeEncodeAbiParameters(
+            [
+              { name: "x", type: "uint256" },
+              { name: "y", type: "uint256" },
+              { name: "z", type: "bool" }
+            ],
+            [
+              420n,
+              runtimeERC20BalanceOf({
+                targetAddress: mcNexus.addressOn(chain.id, true),
+                tokenAddress: testnetMcUSDC.addressOn(chain.id),
+                constraints: []
+              }),
+              true
+            ]
+          ),
+          corge,
+          waldo
+        ],
+        chainId: chain.id
+      }
+    })
+```
+In this example `qux` argument is expected to be `abi.encode(x,y,z)` and we inject the runtime value as the `y` argument,
+
+</details>
+
 
 :::info
 The composability stack is _general purpose_, which means you can inject the output of _any_ function
