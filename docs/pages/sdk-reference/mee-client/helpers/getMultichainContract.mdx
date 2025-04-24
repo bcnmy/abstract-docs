@@ -1,0 +1,111 @@
+# getMultichainContract
+
+Creates a contract instance that can encode function calls and read state across multiple chains. The SDK provides several pre-configured multichain contracts like mcUSDC, mcUniswapSwapRouter, and mcAaveV3Pool that can be used out of the box.
+
+## Usage
+
+```typescript
+import { arbitrumSepolia, optimismSepolia, baseSepolia } from "viem/chains"
+import { getMultichainContract, UniswapSwapRouterAbi } from "@biconomy/abstractjs"
+import { erc20Abi } from "viem"
+
+const mcUniswapSwapRouter = getMultichainContract<typeof UniswapSwapRouterAbi>({
+  abi: UniswapSwapRouterAbi,
+  deployments: [
+    ["0x101F443B4d1b059569D643917553c771E1b9663E", arbitrumSepolia.id],
+    ["0x94cC0AaC535CCDB3C01d6787D6413C739ae12bc4", optimismSepolia.id],
+    ["0x94cC0AaC535CCDB3C01d6787D6413C739ae12bc4", baseSepolia.id]
+  ]
+})
+
+// Encode a uniswap swap on Base
+const swap = mcUniswapSwapRouter.build({
+  type: "exactInputSingle",
+  data: {
+    chainId: baseSepolia.id,
+    args: [{
+      tokenIn: usdc,
+      tokenOut: fuse,
+      fee: 3000,
+      recipient: account.address,
+      deadline: BigInt(Math.floor(Date.now() / 1000) + 900),
+      amountIn: runtimeERC20BalanceOf({
+        targetAddress: account.address,
+        tokenAddress: usdc
+      }),
+      amountOutMinimum: 1n,
+      sqrtPriceLimitX96: 0n
+    }],
+    // Some complex userOps will sometimes require more gas than the default. All surpluses are returned to the users smart account in native token
+    gasLimit: 1000000n
+  }
+})
+
+// The multichainContract.build() result can be passed to a get{Quote,FusionQuote} call, 
+// in the same way that you might pass a mcNexus.build() result
+const quote = await mcNexus.getQuote({
+  instructions: [..., swap, ...],
+  feeToken: { ... }
+})
+```
+
+## Parameters
+
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| abi | Abi | Yes | The contract's ABI |
+| deployments | [Address, number][] | Yes | Array of tuples containing [address, chainId] for each deployment |
+
+## Response
+
+Returns a MultichainContract instance with the following methods:
+
+| Method | Description |
+|--------|-------------|
+| on(chainId) | Returns a chain-specific contract instance |
+| read(params) | Reads contract state across multiple chains |
+| build(params) | Builds an instruction for function execution |
+| addressOn(chainId) | Gets contract address for specific chain |
+
+## Pre-configured Contracts
+
+The SDK provides several pre-configured multichain contracts:
+
+- mcUSDC - USDC token contract (source: https://github.com/bcnmy/abstractjs/blob/develop/src/sdk/constants/tokens/__AUTO_GENERATED__.ts#L18)
+- mcUniswapSwapRouter - Uniswap SwapRouter contract (source: https://github.com/bcnmy/abstractjs/blob/develop/src/sdk/constants/protocols/index.ts#L29)
+- mcAaveV3Pool - Aave V3 Pool contract (source: https://github.com/bcnmy/abstractjs/blob/develop/src/sdk/constants/protocols/index.ts#L19)
+
+## Example
+
+```typescript
+import { getMultichainContract } from "@biconomy/abstractjs"
+import { erc20Abi } from "viem"
+import { optimism, base } from "viem/chains"
+
+// Create a multichain contract instance
+const myToken = getMultichainContract({
+  abi: erc20Abi,
+  deployments: [
+    ["0x1234...5678", optimism.id], // Optimism deployment
+    ["0x8765...4321", base.id]      // Base deployment
+  ]
+})
+
+// Build a transfer instruction
+const instruction = await myToken.build({
+  type: "transfer",
+  data: {
+    chainId: optimism.id,
+    args: [recipient, amount]
+  }
+})
+
+// Read balances across chains
+const balances = await myToken.read({
+  onChains: [optimism, base],
+  functionName: "balanceOf",
+  args: [address],
+  account: smartAccount
+})
+```
+

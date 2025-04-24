@@ -542,7 +542,7 @@ export default defineConfig({
 				{ text: "Smart Accounts Overview", link: "/account-providers/overview" },
 				{ text: "Nexus Smart Account", link: "/overview", collapsed: true },
 				{ text: "EIP-7702: Smart EOAs Overview", link: '/eip7702/wallet-guide' },
-				{ text: 'Companion Accounts Overview', link: '/mee/fusion'}
+				{ text: 'Companion Accounts Overview', link: '/mee/fusion' }
 			],
 		},
 		// {
@@ -755,7 +755,7 @@ export default defineConfig({
 			]
 		},
 		{
-		text: 'Gas Abstraction APIs',
+			text: 'Gas Abstraction APIs',
 			collapsed: false,
 			items: [
 				{
@@ -856,152 +856,173 @@ export default defineConfig({
 		{
 			text: "SDK Reference",
 			collapsed: true,
+			link: "/sdk-reference",
 			items: [
 				{
 					text: "MEE Client",
-					link: "/mee-client",
+					link: "/sdk-reference/mee-client",
 					collapsed: false,
 					items: [
 						{
 							text: "Multichain Account",
-							link: "/mee-client/account",
+							link: "/sdk-reference/mee-client/account",
 							collapsed: false,
 							items: [
 								{
 									text: "build",
-									link: "/mee-client/account/methods/build",
+									link: "/sdk-reference/mee-client/account/methods/build",
+								},
+								{
+									text: "buildComposable",
+									link: "/sdk-reference/mee-client/account/methods/buildComposable",
 								},
 								{
 									text: "deploymentOn",
-									link: "/mee-client/account/methods/deploymentOn",
+									link: "/sdk-reference/mee-client/account/methods/deploymentOn",
 								},
 								{
 									text: "addressOn",
-									link: "/mee-client/account/methods/addressOn",
+									link: "/sdk-reference/mee-client/account/methods/addressOn",
+								},
+								{
+									text: "isDelegated",
+									link: "/sdk-reference/mee-client/account/methods/isDelegated",
+								},
+								{
+									text: "unDelegate",
+									link: "/sdk-reference/mee-client/account/methods/unDelegate",
+								},
+								{
+									text: "waitForTransactionReceipt",
+									link: "/sdk-reference/mee-client/account/methods/waitForTransactionReceipt",
 								},
 							],
 						},
 						{
 							text: "Methods",
-							link: "/mee-client/methods",
+							link: "/sdk-reference/mee-client/methods",
 							collapsed: false,
 							items: [
 								{
 									text: "getQuote",
-									link: "/mee-client/methods/getQuote",
+									link: "/sdk-reference/mee-client/methods/getQuote",
 								},
 								{
 									text: "executeQuote",
-									link: "/mee-client/methods/executeQuote",
+									link: "/sdk-reference/mee-client/methods/executeQuote",
 								},
 								{
 									text: "getFusionQuote",
-									link: "/mee-client/methods/getFusionQuote",
+									link: "/sdk-reference/mee-client/methods/getFusionQuote",
 								},
 								{
 									text: "executeFusionQuote",
-									link: "/mee-client/methods/executeFusionQuote",
+									link: "/sdk-reference/mee-client/methods/executeFusionQuote",
 								},
 								{
 									text: "waitForSuperTransactionReceipt",
-									link: "/mee-client/methods/waitForSuperTransactionReceipt",
+									link: "/sdk-reference/mee-client/methods/waitForSuperTransactionReceipt",
+								},
+								{
+									text: "getSuperTransactionReceipt",
+									link: "/sdk-reference/mee-client/methods/getSuperTransactionReceipt",
 								},
 							],
 						},
 						{
 							text: "Helpers",
-							link: "/mee-client/helpers",
+							link: "/sdk-reference/mee-client/helpers",
 							collapsed: true,
 							items: [
 								{
+									text: "runtimeERC20BalanceOf",
+									link: "/sdk-reference/mee-client/helpers/runtimeERC20BalanceOf",
+								},
+								{
+									text: "runtimeEncodeAbiParameters",
+									link: "/sdk-reference/mee-client/helpers/runtimeEncodeAbiParameters",
+								},
+								{
 									text: "getMultichainContract",
-									link: "/mee-client/helpers/getMultichainContract",
-								},
-								{
-									text: "mcUniswapSwapRouter",
-									link: "/mee-client/helpers/mcUniswapSwapRouter",
-								},
-								{
-									text: "mcAaveV3Pool",
-									link: "/mee-client/helpers/mcAaveV3Pool",
+									link: "/sdk-reference/mee-client/helpers/getMultichainContract",
 								},
 								{
 									text: "mcUSDC",
-									link: "/mee-client/helpers/mcUSDC",
+									link: "/sdk-reference/mee-client/helpers/mcUSDC",
 								},
 								{
 									text: "getExplorerTxLink",
-									link: "/mee-client/helpers/getExplorerTxLink",
+									link: "/sdk-reference/mee-client/helpers/getExplorerTxLink",
 								},
 								{
 									text: "getMeeScanLink",
-									link: "/mee-client/helpers/getMeeScanLink",
+									link: "/sdk-reference/mee-client/helpers/getMeeScanLink",
 								},
 							],
 						},
 					],
 				},
 				{
-					text: "Nexus Client",
+					text: "Bundler Client",
 					collapsed: true,
-					link: "/nexus-client",
+					link: "/sdk-reference/bundler-client",
 					items: [
 						{
 							text: "Methods",
-							link: "/nexus-client/methods",
+							link: "/sdk-reference/bundler-client/methods",
 							collapsed: false,
 							items: [
 								{
 									text: "sendUserOperation",
-									link: "/nexus-client/methods/sendUserOperation",
+									link: "/sdk-reference/bundler-client/methods/sendUserOperation",
 								},
 								{
 									text: "waitForUserOperationReceipt",
-									link: "/nexus-client/methods/waitForUserOperationReceipt",
+									link: "/sdk-reference/bundler-client/methods/waitForUserOperationReceipt",
 								},
 								{
 									text: "debugUserOperation",
-									link: "/nexus-client/methods/debugUserOperation",
+									link: "/sdk-reference/bundler-client/methods/debugUserOperation",
 								},
 								{
 									text: "prepareUserOperation",
-									link: "/nexus-client/methods/prepareUserOperation",
+									link: "/sdk-reference/bundler-client/methods/prepareUserOperation",
 								},
 								{
 									text: "prepareTokenPaymasterUserOp",
-									link: "/nexus-client/methods/prepareTokenPaymasterUserOp",
+									link: "/sdk-reference/bundler-client/methods/prepareTokenPaymasterUserOp",
 								},
 								{
 									text: "sendTokenPaymasterUserOp",
-									link: "/nexus-client/methods/sendTokenPaymasterUserOp",
+									link: "/sdk-reference/bundler-client/methods/sendTokenPaymasterUserOp",
 								},
 								{
 									text: "sendTransaction",
-									link: "/nexus-client/methods/sendTransaction",
+									link: "/sdk-reference/bundler-client/methods/sendTransaction",
 								},
 								{
 									text: "estimateUserOperationGas",
-									link: "/nexus-client/methods/estimateUserOperationGas",
+									link: "/sdk-reference/bundler-client/methods/estimateUserOperationGas",
 								},
 								{
 									text: "getUserOperation",
-									link: "/nexus-client/methods/getUserOperation",
+									link: "/sdk-reference/bundler-client/methods/getUserOperation",
 								},
 								{
 									text: "getUserOperationReceipt",
-									link: "/nexus-client/methods/getUserOperationReceipt",
+									link: "/sdk-reference/bundler-client/methods/getUserOperationReceipt",
 								},
 								{
 									text: "getSupportedEntryPoints",
-									link: "/nexus-client/methods/getSupportedEntryPoints",
+									link: "/sdk-reference/bundler-client/methods/getSupportedEntryPoints",
 								},
 								{
 									text: "getChainId",
-									link: "/nexus-client/methods/getChainId",
+									link: "/sdk-reference/bundler-client/methods/getChainId",
 								},
 								{
 									text: "upgradeSmartAccount",
-									link: "/nexus-client/methods/upgradeSmartAccount",
+									link: "/sdk-reference/bundler-client/methods/upgradeSmartAccount",
 								},
 							],
 						},
