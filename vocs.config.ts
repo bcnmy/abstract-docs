@@ -536,14 +536,20 @@ export default defineConfig({
 		// 	],
 		// },
 		{
-			text: "Smart Accounts & Smart EOAs",
+			text: "Smart Accounts",
 			collapsed: true,
 			items: [
 				{ text: "Smart Accounts Overview", link: "/account-providers/overview" },
-				{ text: "Nexus Smart Account", link: "/overview", collapsed: true },
+				{ text: "Nexus Smart Account", link: "/overview", collapsed: true },				
+			],
+		},
+		{
+			text: 'Smart EOAs (EIP-7702 & Fusion)',
+			collapsed: true,
+			items: [
 				{ text: "EIP-7702: Smart EOAs Overview", link: '/eip7702/wallet-guide' },
 				{ text: 'Companion Accounts Overview', link: '/mee/fusion'}
-			],
+			]
 		},
 		// {
 		// 	text: "Execution Environments",
@@ -749,6 +755,10 @@ export default defineConfig({
 						{
 							text: 'Composable',
 							link: '/multichain-orchestration/instruction-builders/composable'
+						},
+						{
+							text: 'Raw CallData',
+							link: '/multichain-orchestration/instruction-builders/rawcalldata'
 						}
 					]
 				}

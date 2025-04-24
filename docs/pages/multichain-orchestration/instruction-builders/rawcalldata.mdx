@@ -1,0 +1,16 @@
+# Raw CallData Builder
+The raw calldata builder will execute the exact callData provided from the outside. This builder
+is useful when working with already prepared callData.
+
+## Using Raw CallData Builder
+
+```ts
+const instruction = await oNexus.buildComposable({
+  type: 'rawCalldata',
+  data: {
+    calldata: '0xCallData',
+    chainId: <target-chain-id>,
+    to: '0xContractAddress',
+  }
+})
+```
