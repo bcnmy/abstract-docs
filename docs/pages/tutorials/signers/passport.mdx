@@ -113,13 +113,13 @@ import { KeySigner } from "@0xpass/key-signer";
 import { createPassportClient } from "@0xpass/passport-viem";
 import { http } from "viem";
 import { baseSepolia } from "viem/chains";
-import { createSmartAccountClient, NexusClient, toNexusAccount } from "@biconomy/abstractjs";
+import { createBicoBundlerClient, NexusClient, toNexusAccount } from "@biconomy/abstractjs";
 
 const connect = async () => {
   try {
     const bundlerUrl = `https://bundler.biconomy.io/api/v3/84532/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44`
 
-    const nexusClient: NexusClient = createSmartAccountClient({
+    const nexusClient: NexusClient = createBicoBundlerClient({
         chain: baseSepolia,
         account: await toNexusAccount({
             signer: signer,

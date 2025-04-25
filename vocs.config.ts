@@ -877,25 +877,31 @@ export default defineConfig({
 									link: "/sdk-reference/mee-client/account/methods/buildComposable",
 								},
 								{
-									text: "deploymentOn",
-									link: "/sdk-reference/mee-client/account/methods/deploymentOn",
-								},
-								{
-									text: "addressOn",
-									link: "/sdk-reference/mee-client/account/methods/addressOn",
-								},
-								{
-									text: "isDelegated",
-									link: "/sdk-reference/mee-client/account/methods/isDelegated",
-								},
-								{
-									text: "unDelegate",
-									link: "/sdk-reference/mee-client/account/methods/unDelegate",
-								},
-								{
-									text: "waitForTransactionReceipt",
-									link: "/sdk-reference/mee-client/account/methods/waitForTransactionReceipt",
-								},
+									text: "more*",
+									collapsed: true,
+									items: [
+										{
+											text: "deploymentOn",
+											link: "/sdk-reference/mee-client/account/methods/more/deploymentOn",
+										},
+										{
+											text: "addressOn",
+											link: "/sdk-reference/mee-client/account/methods/more/addressOn",
+										},
+										{
+											text: "isDelegated",
+											link: "/sdk-reference/mee-client/account/methods/more/isDelegated",
+										},
+										{
+											text: "unDelegate",
+											link: "/sdk-reference/mee-client/account/methods/more/unDelegate",
+										},
+										{
+											text: "waitForTransactionReceipts",
+											link: "/sdk-reference/mee-client/account/methods/more/waitForTransactionReceipts",
+										},
+									],
+								}
 							],
 						},
 						{
@@ -924,8 +930,54 @@ export default defineConfig({
 									link: "/sdk-reference/mee-client/methods/waitForSuperTransactionReceipt",
 								},
 								{
-									text: "getSuperTransactionReceipt",
-									link: "/sdk-reference/mee-client/methods/getSuperTransactionReceipt",
+									text: "more*",
+									collapsed: true,
+									items: [
+										{
+											text: "getSuperTransactionReceipt",
+											link: "/sdk-reference/mee-client/methods/more/getSuperTransactionReceipt",
+										},
+										{
+											text: "execute",
+											link: "/sdk-reference/mee-client/methods/more/execute",
+										},
+										{
+											text: "executeSignedQuote",
+											link: "/sdk-reference/mee-client/methods/more/executeSignedQuote",
+										},
+										{
+											text: "signQuote",
+											link: "/sdk-reference/mee-client/methods/more/signQuote",
+										},
+										{
+											text: "getGasToken",
+											link: "/sdk-reference/mee-client/methods/more/getGasToken",
+										},
+										{
+											text: "getInfo",
+											link: "/sdk-reference/mee-client/methods/more/getInfo",
+										},
+										{
+											text: "getOnChainQuote",
+											link: "/sdk-reference/mee-client/methods/more/getOnChainQuote",
+										},
+										{
+											text: "getPermitQuote",
+											link: "/sdk-reference/mee-client/methods/more/getPermitQuote",
+										},
+										{
+											text: "signOnChainQuote",
+											link: "/sdk-reference/mee-client/methods/more/signOnChainQuote",
+										},
+										{
+											text: "signPermitQuote",
+											link: "/sdk-reference/mee-client/methods/more/signPermitQuote",
+										},
+										{
+											text: "getPaymentToken",
+											link: "/sdk-reference/mee-client/methods/more/getPaymentToken",
+										},
+									],
 								},
 							],
 						},
@@ -947,16 +999,34 @@ export default defineConfig({
 									link: "/sdk-reference/mee-client/helpers/getMultichainContract",
 								},
 								{
-									text: "mcUSDC",
-									link: "/sdk-reference/mee-client/helpers/mcUSDC",
-								},
-								{
-									text: "getExplorerTxLink",
-									link: "/sdk-reference/mee-client/helpers/getExplorerTxLink",
-								},
-								{
-									text: "getMeeScanLink",
-									link: "/sdk-reference/mee-client/helpers/getMeeScanLink",
+									text: "more*",
+									collapsed: true,
+									items: [
+										{
+											text: "mcUSDC",
+											link: "/sdk-reference/mee-client/helpers/more/mcUSDC",
+										},
+										{
+											text: "getExplorerTxLink",
+											link: "/sdk-reference/mee-client/helpers/more/getExplorerTxLink",
+										},
+										{
+											text: "getMeeScanLink",
+											link: "/sdk-reference/mee-client/helpers/more/getMeeScanLink",
+										},
+										{
+											text: "getJiffyScanLink",
+											link: "/sdk-reference/mee-client/helpers/more/getJiffyScanLink",
+										},
+										{
+											text: "mcAaveV3Pool	",
+											link: "/sdk-reference/mee-client/helpers/more/mcAaveV3Pool",
+										},
+										{
+											text: "mcUniswapSwapRouter",
+											link: "/sdk-reference/mee-client/helpers/more/mcUniswapSwapRouter",
+										},
+									],
 								},
 							],
 						},
@@ -967,6 +1037,10 @@ export default defineConfig({
 					collapsed: true,
 					link: "/sdk-reference/bundler-client",
 					items: [
+						{
+							text: "Account",
+							link: "/sdk-reference/bundler-client/account",
+						},
 						{
 							text: "Methods",
 							link: "/sdk-reference/bundler-client/methods",
@@ -985,10 +1059,6 @@ export default defineConfig({
 									link: "/sdk-reference/bundler-client/methods/debugUserOperation",
 								},
 								{
-									text: "prepareUserOperation",
-									link: "/sdk-reference/bundler-client/methods/prepareUserOperation",
-								},
-								{
 									text: "prepareTokenPaymasterUserOp",
 									link: "/sdk-reference/bundler-client/methods/prepareTokenPaymasterUserOp",
 								},
@@ -997,36 +1067,126 @@ export default defineConfig({
 									link: "/sdk-reference/bundler-client/methods/sendTokenPaymasterUserOp",
 								},
 								{
-									text: "sendTransaction",
-									link: "/sdk-reference/bundler-client/methods/sendTransaction",
-								},
-								{
-									text: "estimateUserOperationGas",
-									link: "/sdk-reference/bundler-client/methods/estimateUserOperationGas",
-								},
-								{
-									text: "getUserOperation",
-									link: "/sdk-reference/bundler-client/methods/getUserOperation",
-								},
-								{
-									text: "getUserOperationReceipt",
-									link: "/sdk-reference/bundler-client/methods/getUserOperationReceipt",
-								},
-								{
-									text: "getSupportedEntryPoints",
-									link: "/sdk-reference/bundler-client/methods/getSupportedEntryPoints",
-								},
-								{
-									text: "getChainId",
-									link: "/sdk-reference/bundler-client/methods/getChainId",
-								},
-								{
 									text: "upgradeSmartAccount",
 									link: "/sdk-reference/bundler-client/methods/upgradeSmartAccount",
 								},
+								{
+									text: "more*",
+									collapsed: true,
+									items: [
+										{
+											text: "estimateUserOperationGas",
+											link: "/sdk-reference/bundler-client/methods/more/estimateUserOperationGas",
+										},
+										{
+											text: "getUserOperation",
+											link: "/sdk-reference/bundler-client/methods/more/getUserOperation",
+										},
+										{
+											text: "getUserOperationReceipt",
+											link: "/sdk-reference/bundler-client/methods/more/getUserOperationReceipt",
+										},
+										{
+											text: "getSupportedEntryPoints",
+											link: "/sdk-reference/bundler-client/methods/more/getSupportedEntryPoints",
+										},
+										{
+											text: "getChainId",
+											link: "/sdk-reference/bundler-client/methods/more/getChainId",
+										},
+										{
+											text: "sendTransaction",
+											link: "/sdk-reference/bundler-client/methods/more/sendTransaction",
+										},
+										{
+											text: "writeContract",
+											link: "/sdk-reference/bundler-client/methods/more/writeContract",
+										},
+										{
+											text: "signMessage",
+											link: "/sdk-reference/bundler-client/methods/more/signMessage",
+										},
+										{
+											text: "prepareUserOperationWithoutSignature",
+											link: "/sdk-reference/bundler-client/methods/more/prepareUserOperationWithoutSignature",
+										},
+										{
+											text: "prepareUserOperation",
+											link: "/sdk-reference/bundler-client/methods/more/prepareUserOperation",
+										},
+										{
+											text: "getGasFeeValues",
+											link: "/sdk-reference/bundler-client/methods/more/getGasFeeValues",
+										},
+										{
+											text: "getUserOperationStatus",
+											link: "/sdk-reference/bundler-client/methods/more/getUserOperationStatus",
+										},
+										{
+											text: "waitForConfirmedUserOperationReceipt",
+											link: "/sdk-reference/bundler-client/methods/more/waitForConfirmedUserOperationReceipt",
+										},
+										{
+											text: "accountId",
+											link: "/sdk-reference/bundler-client/methods/more/accountId",
+										},
+										{
+											text: "getActiveHook",
+											link: "/sdk-reference/bundler-client/methods/more/getActiveHook",
+										},
+										{
+											text: "getFallbackBySelector",
+											link: "/sdk-reference/bundler-client/methods/more/getFallbackBySelector",
+										},
+										{
+											text: "getInstalledExecutors",
+											link: "/sdk-reference/bundler-client/methods/more/getInstalledExecutors",
+										},
+										{
+											text: "getInstalledValidators",
+											link: "/sdk-reference/bundler-client/methods/more/getInstalledValidators",
+										},
+										{
+											text: "installModule",
+											link: "/sdk-reference/bundler-client/methods/more/installModule",
+										},
+										{
+											text: "isModuleInstalled",
+											link: "/sdk-reference/bundler-client/methods/more/isModuleInstalled",
+										},
+										{
+											text: "supportsExecutionMode",
+											link: "/sdk-reference/bundler-client/methods/more/supportsExecutionMode",
+										},
+										{
+											text: "supportsModule",
+											link: "/sdk-reference/bundler-client/methods/more/supportsModule",
+										},
+										{
+											text: "uninstallModule",
+											link: "/sdk-reference/bundler-client/methods/more/uninstallModule",
+										}
+									]
+								}
 							],
 						},
 					],
+				},
+
+			],
+		},
+		{
+			text: "Account Migrations",
+			link: "/migrations",
+			collapsed: false,
+			items: [
+				{
+					text: "V2 to Nexus Migration",
+					link: "/migrations/v2ToNexus",
+				},
+				{
+					text: "Nexus to Nexus Upgrade",
+					link: "/migrations/nexusToNexus",
 				},
 			],
 		},

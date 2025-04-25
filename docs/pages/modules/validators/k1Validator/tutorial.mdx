@@ -11,7 +11,7 @@ First, import the necessary dependencies and set up your smart account:
 ```typescript
 import { createWalletClient, http } from "viem";
 import { baseSepolia } from "viem/chains";
-import { createSmartAccountClient, ModuleType, K1_VALIDATOR } from "@biconomy/account";
+import { createBicoBundlerClient, ModuleType, K1_VALIDATOR } from "@biconomy/account";
 
 // Setup your wallet client
 const walletClient = createWalletClient({
@@ -21,7 +21,7 @@ const walletClient = createWalletClient({
 });
 
 // Create your smart account
-const smartAccount = createSmartAccountClient({ ... });
+const smartAccount = createBicoBundlerClient({ ... });
 ```
 
 Now, let's install the K1Validator module:

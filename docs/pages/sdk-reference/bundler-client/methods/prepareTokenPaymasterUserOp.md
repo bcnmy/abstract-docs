@@ -10,9 +10,9 @@ This method prepares a user operation with token paymaster configuration, includ
 :::code-group
 
 ```typescript [example.ts]
-import { nexusClient } from "./nexusClient"
+import { bicoBundlerClient } from "./bicoBundlerClient"
 
-const userOp = await nexusClient.prepareTokenPaymasterUserOp({
+const userOp = await bicoBundlerClient.prepareTokenPaymasterUserOp({
   calls: [
     {
       to: recipientAddress,
@@ -25,7 +25,7 @@ const userOp = await nexusClient.prepareTokenPaymasterUserOp({
 })
 ```
 
-```typescript [nexusClient.ts] filename="nexusClient.ts"
+```typescript [bicoBundlerClient.ts] filename="bicoBundlerClient.ts"
 import { privateKeyToAccount } from "viem/accounts";
 import { createBicoBundlerClient, toNexusAccount } from "@biconomy/abstractjs";
 import { baseSepolia } from "viem/chains"; 
@@ -35,7 +35,7 @@ const privateKey = "PRIVATE_KEY";
 const account = privateKeyToAccount(`0x${privateKey}`)
 const bundlerUrl = "https://bundler.biconomy.io/api/v3/84532/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44"; 
 
-const nexusClient = createBicoBundlerClient({
+const bicoBundlerClient = createBicoBundlerClient({
   account: await toNexusAccount({ 
     signer: account, 
     chain: baseSepolia,

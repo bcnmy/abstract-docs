@@ -10,9 +10,9 @@ This method combines the preparation and sending of a user operation that uses t
 :::code-group
 
 ```typescript [example.ts]
-import { createBicoBundlerClient } from "./nexusClient"
+import { createBicoBundlerClient } from "./bicoBundlerClient"
 
-const hash = await nexusClient.sendTokenPaymasterUserOp({
+const hash = await bicoBundlerClient.sendTokenPaymasterUserOp({
   calls: [
     {
       to: recipientAddress,
@@ -24,7 +24,7 @@ const hash = await nexusClient.sendTokenPaymasterUserOp({
 })
 ```
 
-```typescript [nexusClient.ts] filename="nexusClient.ts"
+```typescript [bicoBundlerClient.ts] filename="bicoBundlerClient.ts"
 import { privateKeyToAccount } from "viem/accounts";
 import { createBicoBundlerClient, toNexusAccount } from "@biconomy/abstractjs";
 import { baseSepolia } from "viem/chains"; 
@@ -34,7 +34,7 @@ const privateKey = "PRIVATE_KEY";
 const account = privateKeyToAccount(`0x${privateKey}`)
 const bundlerUrl = "https://bundler.biconomy.io/api/v3/84532/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44"; 
 
-const nexusClient = createBicoBundlerClient({
+const bicoBundlerClient = createBicoBundlerClient({
   account: await toNexusAccount({ 
     signer: account, 
     chain: baseSepolia,
@@ -69,4 +69,4 @@ The method will throw an error if:
 ## Related Methods
 
 - [prepareTokenPaymasterUserOp](./prepareTokenPaymasterUserOp.md) - If you need more control over the preparation step
-- [sendTransaction](./sendTransaction.md) - For sending transactions without token paymaster 
+- [sendTransaction](./more/sendTransaction.md) - For sending transactions without token paymaster 

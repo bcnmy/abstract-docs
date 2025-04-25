@@ -108,15 +108,42 @@ Composable transactions enable:
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| type | `string` | Yes | The type of composable action (`"default"`, `"transfer"`, `"approval"`) |
+| type | `string` | Yes | The type of composable action (`"default"`, `"transfer"`, `"approval"`, `"batch"`, `"rawCalldata"`, `"transferFrom"`, `"approve"`) |
 | data | `object` | Yes | Type-specific configuration parameters |
+
+### Type-Specific Data Parameters
+
+Depending on the `type` parameter, the `data` object requires different fields:
+
+#### `"default"`
+- `to`: `Address` - The target contract address
+- `abi`: `Abi` - The ABI of the contract
+- `functionName`: `string` - The function to call
+- `args`: `Array<any>` - Function arguments, can include runtime values
+- `chainId`: `number` - The chain ID for execution
+- `gasLimit?`: `bigint` - Optional gas limit
+- `value?`: `bigint` - Optional native token value
+
+#### `"transfer"`
+- `recipient`: `Address` - The recipient address
+- `tokenAddress`: `Address` - The token contract address
+- `amount`: `bigint` or runtime value - Amount to transfer
+- `chainId`: `number` - The chain ID for execution
+
+#### `"batch"`
+- `instructions`: `Instruction[]` - Array of instructions to execute in batch
+
+#### `"rawCalldata"`
+- `to`: `Address` - The target contract address
+- `calldata`: `string` - The encoded calldata
+- `chainId`: `number` - The chain ID for execution
 
 ## Runtime Functions
 
 | Function | Purpose |
 |----------|---------|
-| [`runtimeERC20BalanceOf`](/sdk-reference/mee-client/account/methods/runtimeERC20BalanceOf) | Gets token balance at execution time |
-| [`runtimeEncodeAbiParameters`](/sdk-reference/mee-client/account/methods/runtimeEncodeAbiParameters) | Encodes complex data with runtime values |
+| [`runtimeERC20BalanceOf`](/sdk-reference/mee-client/helpers/runtimeERC20BalanceOf) | Gets token balance at execution time |
+| [`runtimeEncodeAbiParameters`](/sdk-reference/mee-client/helpers/runtimeEncodeAbiParameters) | Encodes complex data with runtime values |
 
 ## Examples
 
@@ -223,6 +250,63 @@ const encodedParamsInstruction = await mcNexus.buildComposable({
       param5
     ],
     chainId: chainId
+  }
+});
+```
+
+### Using Raw Calldata
+
+This example shows how to use pre-encoded calldata:
+
+```typescript
+const rawCalldata = encodeFunctionData({
+  abi: erc20Abi,
+  functionName: "approve",
+  args: [spenderAddress, amount]
+});
+
+const rawCalldataInstruction = await mcNexus.buildComposable({
+  type: "rawCalldata",
+  data: {
+    to: tokenAddress,
+    calldata: rawCalldata,
+    chainId: chainId
+  }
+});
+```
+
+### Batching Multiple Instructions
+
+This example shows how to batch multiple instructions together:
+
+```typescript
+// Create multiple instructions
+const transferInstruction = await mcNexus.buildComposable({
+  type: "transfer",
+  data: {
+    recipient: recipientAddress,
+    tokenAddress: mcUSDC.addressOn(chainId),
+    amount: amount,
+    chainId: chainId
+  }
+});
+
+const contractInstruction = await mcNexus.buildComposable({
+  type: "default",
+  data: {
+    to: contractAddress,
+    abi: CONTRACT_ABI,
+    functionName: "foo",
+    args: [param1, param2],
+    chainId: chainId
+  }
+});
+
+// Batch them together
+const batchedInstructions = await mcNexus.buildComposable({
+  type: "batch",
+  data: {
+    instructions: [...transferInstruction, ...contractInstruction]
   }
 });
 ```

@@ -63,11 +63,11 @@ import { DfnsApiClient } from "@dfns/sdk"
 import { AsymmetricKeySigner } from "@dfns/sdk-keysigner"
 import { AccountSource, createWalletClient, http } from "viem"
 import { toAccount } from "viem/accounts"
-import { createSmartAccountClient, NexusClient, toNexusAccount } from "@biconomy/abstractjs";
+import { createBicoBundlerClient, NexusClient, toNexusAccount } from "@biconomy/abstractjs";
 
 const bundlerUrl = `https://bundler.biconomy.io/api/v3/84532/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44`
 
-const nexusClient: NexusClient = createSmartAccountClient({
+const nexusClient: NexusClient = createBicoBundlerClient({
     chain: baseSepolia,
     account: await toNexusAccount({
         signer: smartAccountOwner,

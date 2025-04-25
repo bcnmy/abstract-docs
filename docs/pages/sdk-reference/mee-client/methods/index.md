@@ -10,6 +10,7 @@ The MEE Client extends a base HTTP client with specialized actions for cross-cha
 2. **Execute cross-chain instructions** - Run transactions on multiple chains 
 3. **Work with Fusion transactions** - Enable EOA users to use advanced features
 4. **Track transaction status** - Monitor the progress of your transactions
+5. **Query token information** - Get details about supported payment tokens
 
 ## Core Methods
 
@@ -98,6 +99,23 @@ console.log(`Fusion transaction hash: ${hash}`);
 
 [Learn more about executeFusionQuote](./executeFusionQuote.md)
 
+### getPaymentToken
+
+Retrieves detailed information about a specific payment token on a given blockchain, including whether it supports ERC20Permit.
+
+```typescript
+const tokenInfo = await meeClient.getPaymentToken({
+  chainId: 1, // Ethereum Mainnet
+  tokenAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48" // USDC
+});
+
+console.log(`Token: ${tokenInfo.symbol}`);
+console.log(`Decimals: ${tokenInfo.decimals}`);
+console.log(`Permit Enabled: ${tokenInfo.permitEnabled}`);
+```
+
+[Learn more about getPaymentToken](./more/getPaymentToken.md)
+
 ### getSupertransactionReceipt
 
 Retrieves the receipt for a supertransaction with details about its execution across multiple chains.
@@ -111,7 +129,26 @@ console.log("Transaction status:", receipt.transactionStatus);
 console.log("Explorer links:", receipt.explorerLinks);
 ```
 
-[Learn more about getSupertransactionReceipt](./getSupertransactionReceipt.md)
+[Learn more about getSupertransactionReceipt](./more/getSupertransactionReceipt.md)
+
+### waitForSupertransactionReceipt
+
+Waits for a supertransaction to complete and returns the receipt when all operations have reached a final state.
+
+```typescript
+const receipt = await meeClient.waitForSupertransactionReceipt({ 
+  hash 
+});
+
+if (receipt.transactionStatus === "MINED_SUCCESS") {
+  console.log("Transaction completed successfully!");
+  // Process transaction results
+} else {
+  console.error("Transaction failed:", receipt.transactionStatus);
+}
+```
+
+[Learn more about waitForSupertransactionReceipt](./waitForSupertransactionReceipt.md)
 
 ## Configuration
 
@@ -175,6 +212,10 @@ console.log("Transaction completed with status:", receipt.transactionStatus);
 receipt.userOps.forEach((userOp, i) => {
   console.log(`Operation ${i} on chain ${userOp.chainId}: ${userOp.executionStatus}`);
 });
+
+// Alternative: Use waitForSupertransactionReceipt to automatically wait for completion
+// const receipt = await meeClient.waitForSupertransactionReceipt({ hash });
+// console.log("All operations completed with status:", receipt.transactionStatus);
 ```
 
 ## Type Definitions
@@ -186,6 +227,8 @@ type MeeClient = BaseMeeClient & {
   executeQuote: (params: SignQuoteParams) => Promise<ExecuteSignedQuotePayload>
   getFusionQuote: (params: GetFusionQuoteParams) => Promise<GetFusionQuotePayload>
   executeFusionQuote: (params: ExecuteFusionQuoteParams) => Promise<ExecuteFusionQuotePayload>
+  getPaymentToken: (params: GetPaymentTokenParams) => Promise<PaymentToken>
   getSupertransactionReceipt: (params: GetSupertransactionReceiptParams) => Promise<GetSupertransactionReceiptPayload>
+  waitForSupertransactionReceipt: (params: { hash: Hex }) => Promise<GetSupertransactionReceiptPayload>
 }
 ```

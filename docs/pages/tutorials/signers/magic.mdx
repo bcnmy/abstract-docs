@@ -40,14 +40,14 @@ Next, use the Magic account to initialize the Biconomy Nexus Client:
 ```typescript
 import { OAuthExtension } from "@magic-ext/oauth"
 import { Magic as MagicBase } from "magic-sdk"
-import { createSmartAccountClient, NexusClient, toNexusAccount } from "@biconomy/abstractjs"; 
+import { createBicoBundlerClient, NexusClient, toNexusAccount } from "@biconomy/abstractjs"; 
 import { baseSepolia } from "viem/chains";
 import { http } from "viem";
 
 const main = async () => {
     const bundlerUrl = `https://bundler.biconomy.io/api/v3/84532/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44`
 
-    const nexusClient: NexusClient = createSmartAccountClient({
+    const nexusClient: NexusClient = createBicoBundlerClient({
         chain: baseSepolia,
         account: await toNexusAccount({
             signer: smartAccountOwner,

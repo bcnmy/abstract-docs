@@ -17,18 +17,20 @@ Use this method when you want a simplified approach to waiting for transaction c
 ## Usage
 
 ```typescript
-const receipt = await meeClient.waitForSuperTransactionReceipt({ hash });
+const receipt = await meeClient.waitForSupertransactionReceipt({ hash });
 ```
 
 ## Parameters
 
-| Parameter | Type | Description |
-| --------- | ---- | ----------- |
-| `hash` | `Hex` | The hash of the super transaction to wait for |
+| Parameter | Type | Required | Description |
+| --------- | ---- | ----------- | ----------- |
+| `hash` | `Hex` | Yes | The hash of the super transaction to wait for |
+| `confirmations?` | `number` | No | Optional number of confirmations to wait for (optional, example seen in tests: 3) |
+| `waitForReceipts?` | `boolean` | No | Set internally to true - will ensure receipts are included in the response |
 
 ## Returns
 
-Returns a promise that resolves to an object containing:
+Returns a promise that resolves to a `WaitForSupertransactionReceiptPayload` object containing:
 
 | Property | Type | Description |
 | -------- | ---- | ----------- |
@@ -38,6 +40,8 @@ Returns a promise that resolves to an object containing:
 | `paymentInfo` | `FilledPaymentInfo` | Payment information object (see below) |
 | `userOps` | `MeeFilledUserOpDetails[]` | Array of user operations (see below) |
 | `explorerLinks` | `Url[]` | Array of links to view the transaction on block explorers |
+| `transactionStatus` | `"MINED_SUCCESS" \| "MINED_FAIL" \| "PENDING" \| "FAILED"` | Overall status of the transaction |
+| `receipts` | `Array<TransactionReceipt>` | Array of blockchain transaction receipts |
 
 ### FilledPaymentInfo Object
 
@@ -74,10 +78,12 @@ Returns a promise that resolves to an object containing:
 
 - Polls the MEE explorer API by calling `getSupertransactionReceipt` until all user operations are no longer in a "PENDING" state
 - Uses the client's `pollingInterval` (defaults to 1000ms) between checks
-- Throws an error if any user operation fails or contains invalid execution data
+- Throws an error if any user operation fails (status "FAILED" or "MINED_FAIL")
 - Automatically generates relevant block explorer links for the transaction
 
-## Example
+## Examples
+
+### Basic Usage
 
 ```typescript
 import { createMeeClient } from '@biconomy/abstractjs';
@@ -95,7 +101,7 @@ const { hash } = await meeClient.executeQuote({ quote });
 try {
   const receipt = await meeClient.waitForSupertransactionReceipt({ hash });
   
-  if (receipt.transactionStatus === "SUCCESS") {
+  if (receipt.transactionStatus === "MINED_SUCCESS") {
     console.log("Transaction completed successfully!");
     console.log("View transaction:");
     receipt.explorerLinks.forEach(link => console.log(link));
@@ -110,11 +116,32 @@ try {
 }
 ```
 
+### With Confirmations Parameter
+
+Based on the test files, you can specify the number of confirmations to wait for:
+
+```typescript
+// Execute a signed quote
+const executeSignedQuoteResponse = await meeClient.executeSignedQuote({
+  signedQuote
+});
+
+// Wait for the transaction with 3 confirmations
+const superTransactionReceipt = await meeClient.waitForSupertransactionReceipt({
+  hash: executeSignedQuoteResponse.hash,
+  confirmations: 3
+});
+
+// Check explorerLinks
+expect(superTransactionReceipt.explorerLinks.length).toBeGreaterThan(0);
+```
+
 ## Comparison with getSupertransactionReceipt
 
 While `getSupertransactionReceipt` provides a snapshot of the current transaction state and returns immediately, `waitForSupertransactionReceipt` simplifies the process by:
 
 1. Repeatedly polling `getSupertransactionReceipt` at regular intervals
 2. Automatically handling the waiting logic for you
-3. Only resolving once all operations have reached a final state
-4. Providing a more convenient API for sequential workflows
+3. Only resolving once all operations have reached a final state (no longer "PENDING")
+4. Throwing errors automatically if the transaction fails
+5. Providing a more convenient API for sequential workflows

@@ -17,7 +17,7 @@ MEE Client enables developers to:
 ```bash
 npm install @biconomy/abstractjs viem @rhinestone/module-sdk
 # or
-yarn add @biconomy/abstractjs viem @rhinestone/modulehttps://mee-node.biconomy.iobstractjs viem @rhinestone/module-sdk
+yarn add @biconomy/abstractjs viem @rhinestone/module-sdk
 ```
 
 ## Quick Start
@@ -26,45 +26,7 @@ Here's how to initialize the MEE Client:
 
 ```typescript
 import { privateKeyToAccount } from "viem/accounts";
-import { createMeeClient, toMultich### MultichainSmartAccount Configuration
-
-When creating a multichain account using `toMultichainNexusAccount`, the following parameters are required:
-
-| Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
-| chains | `Chain[]` | Yes | - | Array of chains the account will interact with |
-| transports | `Transport[]` | Yes | - | Array of transports for each chain (must match 
-## Developer Notice
-
-> **Note:** You are using the Developer Preview version of Biconomy MEE. The underlying contracts are currently under audit.
-the order of chains) |
-| signer | `Account` | Yes | - | The signer account that controls the smart account |
-
-The `MultichainSmartAccount` returned by `toMultichainNexusAccount` provides several useful methods:
-
-- `deploymentOn(chainId)`: Get the deployment information for a specific chain
-- `getUnifiedERC20Balance(mcToken)`: Check token balances across all configured chains
-- `buildBridgeInstructions({...})`: Create instructions for bridging tokens between chains
-- `build({...})`: Build various types of instructions (default, intent, batch, etc.)
-
-Example usage:
-
-```typescript
-// Get deployment on specific chain
-const optimismDeployment = mcNexus.deploymentOn(10);
-
-// Check token balance across chains
-const balance = await mcNexus.getUnifiedERC20Balance(mcUSDC);
-
-// Build bridge transaction
-const bridgeInstructions = await mcNexus.buildBridgeInstructions({
-  amount: BigInt("1000000"), // 1 USDC
-  mcToken: mcUSDC,
-  toChain: base
-});
-```
-
-ainNexusAccount } from "@biconomy/abstractjs";
+import { createMeeClient, toMultichainNexusAccount } from "@biconomy/abstractjs";
 import { baseSepolia, mainnet } from "viem/chains";
 import { http } from "viem";
 
@@ -99,6 +61,42 @@ const { hash } = await meeClient.executeQuote({ quote });
 console.log(`Transaction hash: ${hash}`);
 ```
 
+## MultichainSmartAccount Configuration
+
+When creating a multichain account using `toMultichainNexusAccount`, the following parameters are required:
+
+| Parameter | Type | Required | Default | Description |
+|-----------|------|----------|---------|-------------|
+| chains | `Chain[]` | Yes | - | Array of chains the account will interact with |
+| transports | `Transport[]` | Yes | - | Array of transports for each chain (must match the order of chains) |
+| signer | `Account` | Yes | - | The signer account that controls the smart account |
+
+The `MultichainSmartAccount` returned by `toMultichainNexusAccount` provides several useful methods:
+
+- `deploymentOn(chainId)`: Get the deployment information for a specific chain
+- `getUnifiedERC20Balance(mcToken)`: Check token balances across all configured chains
+- `buildBridgeInstructions({...})`: Create instructions for bridging tokens between chains
+- `build({...})`: Build various types of instructions (default, intent, batch, etc.)
+
+Example usage:
+
+```typescript
+// Get deployment on specific chain
+const optimismDeployment = mcNexus.deploymentOn(10);
+
+// Check token balance across chains
+const balance = await mcNexus.getUnifiedERC20Balance(mcUSDC);
+
+// Build bridge transaction
+const bridgeInstructions = await mcNexus.buildBridgeInstructions({
+  amount: BigInt("1000000"), // 1 USDC
+  mcToken: mcUSDC,
+  toChain: base
+});
+```
+
+## Developer Notice
+
 ## Configuration Options
 
 When creating a MEE Client, you can configure the following parameters:
@@ -121,13 +119,15 @@ Execute a sequence that withdraws funds from Aave on one chain and deposits to C
 const crossChainDeFi = await meeClient.executeQuote({
   quote: await meeClient.getQuote({
     instructions: [
-      // 1. Withdraw from Aave on O..romAaveInstructions,
+      // 1. Withdraw from Aave on Optimism
+      ...withdrawFromAaveInstructions,
       // 2. Bridge funds to Base
-      ...bridgeToBaseInstructions./Compound on Base
+      ...bridgeToBaseInstructions,
+      // 3. Deposit to Compound on Base
       ...depositToCompoundInstructions
     ],
     feeToken: {
-     ./(optimism.id),
+      address: mcUSDC.addressOn(optimism.id),
       chainId: optimism.id
     }
   })

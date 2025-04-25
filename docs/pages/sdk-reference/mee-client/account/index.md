@@ -49,14 +49,13 @@ The `MultichainNexusAccount` provides several powerful methods to interact with 
 
 These methods help you create different types of instructions for cross-chain operations:
 
-- [**buildBridgeInstructions**](/sdk-reference/mee-client/account/methods/buildBridgeInstructions) - Bridge tokens between different chains
 - [**buildComposable**](/sdk-reference/mee-client/account/methods/buildComposable) - Create composable transactions with runtime parameter injection
 
 ### Balance & Information Methods
 
 These methods provide information about your account and balances:
 
-- [**getUnifiedERC20Balance**](/sdk-reference/mee-client/account/methods/getUnifiedERC20Balance) - Get token balances across all chains
+- [**getUnifiedERC20Balance**](/sdk-reference/mee-client/account/methods/more/getUnifiedERC20Balance) - Get token balances across all chains
 - **getAddress** - Get your account address on a specific chain
 - **addressOn** - Get your account address on a specific chain (alternative syntax)
 - **deploymentOn** - Get full deployment information for a specific chain
@@ -66,14 +65,14 @@ These methods provide information about your account and balances:
 These methods provide information about bridging operations:
 
 - **queryBridge** - Query available bridge options for a particular token and chain pair
-- [**waitForTransactionReceipts**](/sdk-reference/mee-client/account/methods/waitForTransactionReceipts) - Wait for multiple transaction receipts across different chains
+- [**waitForTransactionReceipts**](/sdk-reference/mee-client/account/methods/more/waitForTransactionReceipts) - Wait for multiple transaction receipts across different chains
 
 ### Account Management Methods
 
 These methods handle account delegation and management:
 
-- [**isDelegated**](/sdk-reference/mee-client/account/methods/isDelegated) - Check if the eoa is delegated to a nexus account
-- [**unDelegate**](/sdk-reference/mee-client/account/methods/unDelegate) - Remove delegation permissions from the eoa
+- [**isDelegated**](/sdk-reference/mee-client/account/methods/more/isDelegated) - Check if the eoa is delegated to a nexus account
+- [**unDelegate**](/sdk-reference/mee-client/account/methods/more/unDelegate) - Remove delegation permissions from the eoa
 
 ## Basic Usage Examples
 

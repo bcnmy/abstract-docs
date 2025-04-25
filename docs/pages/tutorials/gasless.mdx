@@ -23,7 +23,7 @@ const account = privateKeyToAccount(`${privateKey}`);
 Login to the [Dashboard](https://dashboard.biconomy.io/) and setup a v2 paymaster. Let's configure a client for the Smart Account with a `paymasterUrl` to enable gasless transactions. A `bundlerUrl` is required to submit transactions to the Network, which will initialize the Smart Account.
 
 ```typescript
-import { createSmartAccountClient, createBicoPaymasterClient, toNexusAccount } from "@biconomy/abstractjs";
+import { createBicoBundlerClient, createBicoPaymasterClient, toNexusAccount } from "@biconomy/abstractjs";
 import { baseSepolia } from "viem/chains"; 
 import { http, parseEther } from "viem";
 import { privateKeyToAccount, generatePrivateKey } from "viem/accounts";
@@ -34,7 +34,7 @@ const account = privateKeyToAccount(`${privateKey}`);
 const bundlerUrl = "https://bundler.biconomy.io/api/v3/84532/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44";
 const paymasterUrl = "https://paymaster.biconomy.io/api/v2/84532/F7wyL1clz.75a64804-3e97-41fa-ba1e-33e98c2cc703"; // [!code focus:8]
 
-const nexusClient = createSmartAccountClient({
+const nexusClient = createBicoBundlerClient({
     account: await toNexusAccount({
         signer: account,
         chain: baseSepolia,
@@ -50,7 +50,7 @@ Next, define the transaction you want to send. Use the `sendTransaction` method 
 
 ```typescript
 
-import { createSmartAccountClient, createBicoPaymasterClient, toNexusAccount } from "@biconomy/abstractjs";
+import { createBicoBundlerClient, createBicoPaymasterClient, toNexusAccount } from "@biconomy/abstractjs";
 import { baseSepolia } from "viem/chains"; 
 import { http, parseEther } from "viem";
 import { privateKeyToAccount, generatePrivateKey } from "viem/accounts";
@@ -61,7 +61,7 @@ const account = privateKeyToAccount(`${privateKey}`);
 const bundlerUrl = "https://bundler.biconomy.io/api/v3/84532/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44";
 const paymasterUrl = "https://paymaster.biconomy.io/api/v2/84532/F7wyL1clz.75a64804-3e97-41fa-ba1e-33e98c2cc703";
 
-const nexusClient = createSmartAccountClient({
+const nexusClient = createBicoBundlerClient({
     account: await toNexusAccount({
         signer: account,
         chain: baseSepolia,
@@ -81,4 +81,4 @@ const receipt = await nexusClient.waitForUserOperationReceipt({ hash });
 
 By following these steps, you have successfully sent a gasless transaction using the SDK. For more advanced features and options, refer to the official documentation.
 
-[See sendTransaction Docs](/nexus-client/methods#sendtransaction)
+[See sendTransaction Docs](/sdk-reference/bundler-client)

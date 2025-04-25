@@ -1,4 +1,4 @@
-# sendUserOperation
+# sendUserOperation {#sendtransaction}
 
 Broadcasts a User Operation to the Bundler. This method allows you to execute one or more transactions through your Smart Account.
 
@@ -7,11 +7,11 @@ Broadcasts a User Operation to the Bundler. This method allows you to execute on
 :::code-group
 
 ```typescript [example.ts]
-import { nexusClient } from "./nexusClient"
+import { bicoBundlerClient } from "./bicoBundlerClient"
 import { parseEther } from 'viem'
 
 // Simple ETH transfer
-const hash = await nexusClient.sendUserOperation({
+const hash = await bicoBundlerClient.sendUserOperation({
   calls: [{
     to: '0x70997970c51812dc3a010c7d01b50e0d17dc79c8',
     value: parseEther('1')
@@ -19,7 +19,7 @@ const hash = await nexusClient.sendUserOperation({
 })
 
 // Multiple calls including contract interaction
-const hash2 = await nexusClient.sendUserOperation({
+const hash2 = await bicoBundlerClient.sendUserOperation({
   calls: [
     { 
       to: '0x70997970c51812dc3a010c7d01b50e0d17dc79c8', 
@@ -33,7 +33,7 @@ const hash2 = await nexusClient.sendUserOperation({
   ] 
 })
 ```
-```typescript [nexusClient.ts] filename="nexusClient.ts"
+```typescript [bicoBundlerClient.ts] filename="bicoBundlerClient.ts"
 import { privateKeyToAccount } from "viem/accounts";
 import { createBicoBundlerClient, toNexusAccount } from "@biconomy/abstractjs";
 import { baseSepolia } from "viem/chains"; 
@@ -43,7 +43,7 @@ const privateKey = "PRIVATE_KEY";
 const account = privateKeyToAccount(`0x${privateKey}`)
 const bundlerUrl = "https://bundler.biconomy.io/api/v3/84532/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44"; 
 
-export const nexusClient = createBicoBundlerClient({ 
+export const bicoBundlerClient = createBicoBundlerClient({ 
   account: await toNexusAccount({ 
     signer: account, 
     chain: baseSepolia,
@@ -83,14 +83,14 @@ The `paymaster` parameter supports multiple configurations:
 
 ```typescript
 // Using a Paymaster address
-const hash = await nexusClient.sendUserOperation({
+const hash = await bicoBundlerClient.sendUserOperation({
   calls: [...],
   paymaster: '0x942fD5017c0F60575930D8574Eaca13BEcD6e1bB',
   paymasterData: '0xdeadbeef'
 })
 
 // Using a Paymaster Client
-const hash = await nexusClient.sendUserOperation({
+const hash = await bicoBundlerClient.sendUserOperation({
   calls: [...],
   paymaster: paymasterClient,
   paymasterContext: {
@@ -110,4 +110,4 @@ The method will throw an error if:
 ## Related Methods
 
 - [waitForUserOperationReceipt](./waitForUserOperationReceipt.md) - Wait for operation confirmation
-- [prepareUserOperation](./prepareUserOperation.md) - Prepare operation without sending 
+- [prepareUserOperation](./more/prepareUserOperation.md) - Prepare operation without sending 

@@ -7,17 +7,17 @@ This method upgrades a Nexus smart account to a new implementation, allowing an 
 :::code-group
 
 ```typescript [example.ts]
-import { nexusClient } from "./nexusClient";
+import { bicoBundlerClient } from "./bicoBundlerClient";
 
 // Upgrade the smart account to the latest implementation
-const upgradeHash = await nexusClient.upgradeSmartAccount();
+const upgradeHash = await bicoBundlerClient.upgradeSmartAccount();
 
 // Wait for the upgrade transaction to be confirmed
-const receipt = await nexusClient.waitForUserOperationReceipt({ hash: upgradeHash });
+const receipt = await bicoBundlerClient.waitForUserOperationReceipt({ hash: upgradeHash });
 console.log("Upgrade successful:", receipt.success);
 ```
 
-```typescript [nexusClient.ts] filename="nexusClient.ts"
+```typescript [bicoBundlerClient.ts] filename="bicoBundlerClient.ts"
 import { privateKeyToAccount } from "viem/accounts";
 import { createBicoBundlerClient, toNexusAccount } from "@biconomy/abstractjs";
 import { baseSepolia } from "viem/chains"; 
@@ -27,7 +27,7 @@ const privateKey = "PRIVATE_KEY";
 const account = privateKeyToAccount(`0x${privateKey}`)
 const bundlerUrl = "https://bundler.biconomy.io/api/v3/84532/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44"; 
 
-export const nexusClient = createBicoBundlerClient({
+export const bicoBundlerClient = createBicoBundlerClient({
   account: await toNexusAccount({ 
     signer: account, 
     chain: baseSepolia,
@@ -88,7 +88,7 @@ You must specify the `oldVersion` parameter when initializing your account to en
 
 ```typescript [migration-example.ts]
 // Connect to an older version of the smart account
-const nexusClient = createBicoBundlerClient({
+const bicoBundlerClient = createBicoBundlerClient({
   account: await toNexusAccount({ 
     signer: account, 
     chain: baseSepolia,
@@ -99,7 +99,7 @@ const nexusClient = createBicoBundlerClient({
 });
 
 // Now upgrade to the latest version
-const upgradeHash = await nexusClient.upgradeSmartAccount();
+const upgradeHash = await bicoBundlerClient.upgradeSmartAccount();
 ```
 
 ## Migration Process
@@ -119,7 +119,7 @@ const upgradeHash = await nexusClient.upgradeSmartAccount();
 import { parseGwei } from "viem";
 
 // Upgrade with custom parameters
-const upgradeHash = await nexusClient.upgradeSmartAccount({
+const upgradeHash = await bicoBundlerClient.upgradeSmartAccount({
   implementationAddress: '0x1234567890123456789012345678901234567890',
   initData: '0x1234',
   maxFeePerGas: parseGwei('20'),
@@ -131,11 +131,11 @@ const upgradeHash = await nexusClient.upgradeSmartAccount({
 
 ```typescript
 // Check the account ID after upgrade
-const accountId = await nexusClient.accountId();
+const accountId = await bicoBundlerClient.accountId();
 console.log("New account ID:", accountId);
 
 // Test with a simple transaction
-const testTxHash = await nexusClient.sendUserOperation({
+const testTxHash = await bicoBundlerClient.sendUserOperation({
   calls: [{
     to: "0x0000000000000000000000000000000000000000",
     value: 0n,

@@ -18,7 +18,7 @@ const account = privateKeyToAccount(`${privateKey}`);
 Login to the [Dashboard](https://dashboard.biconomy.io/) and setup a v2 paymaster. Let's configure a client for the Smart Account with a `paymasterUrl` to enable it. A `bundlerUrl` is required to submit transactions to the Network, which will initialize the Smart Account.
 
 ```typescript
-import { createSmartAccountClient, createBicoPaymasterClient, toBiconomyTokenPaymasterContext, toNexusAccount } from "@biconomy/abstractjs";
+import { createBicoBundlerClient, createBicoPaymasterClient, toBiconomyTokenPaymasterContext, toNexusAccount } from "@biconomy/abstractjs";
 import { baseSepolia } from "viem/chains"; 
 import { http, parseEther } from "viem";
 import { privateKeyToAccount, generatePrivateKey } from "viem/accounts";
@@ -34,7 +34,7 @@ const paymasterContext = toBiconomyTokenPaymasterContext({
     feeTokenAddress: baseSepoliaUSDC
 })
 
-const nexusClient = createSmartAccountClient({
+const nexusClient = createBicoBundlerClient({
     account: await toNexusAccount({
         signer: account,
         chain: baseSepolia,
@@ -51,7 +51,7 @@ Next, define the transaction you want to send. Use the `sendTokenPaymasterUserOp
 
 ```typescript
 
-import { createSmartAccountClient, createBicoPaymasterClient, toBiconomyTokenPaymasterContext, toNexusAccount } from "@biconomy/abstractjs";
+import { createBicoBundlerClient, createBicoPaymasterClient, toBiconomyTokenPaymasterContext, toNexusAccount } from "@biconomy/abstractjs";
 import { baseSepolia } from "viem/chains"; 
 import { http, parseEther } from "viem";
 import { privateKeyToAccount, generatePrivateKey } from "viem/accounts";
@@ -68,7 +68,7 @@ const paymasterContext = toBiconomyTokenPaymasterContext({
     feeTokenAddress: baseSepoliaUSDC
 })
 
-const nexusClient = createSmartAccountClient({
+const nexusClient = createBicoBundlerClient({
     account: await toNexusAccount({
         signer: account,
         chain: baseSepolia,
@@ -97,4 +97,4 @@ For a complete list of supported ERC20 tokens that can be used for gas payment, 
 
 By following these steps, you have successfully sent a transaction and paid the gas with USDC token using the SDK. For more advanced features and options, refer to the official documentation.
 
-[See sendTransaction Docs](/nexus-client/methods#sendtransaction)
+[See sendTransaction Docs](/sdk-reference/bundler-client/methods/sendUserOperation)

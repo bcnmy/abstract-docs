@@ -6,9 +6,7 @@ The `executeQuote` method executes a quote by signing it and then executing the 
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `client` | `BaseMeeClient` | MEE client instance used to make the request |
-| `params` | `SignQuoteParams` | Parameters for signing the quote |
-| `params.quote` | `GetQuotePayload` | The quote payload to be executed |
+| `quote` | `GetQuotePayload` | The quote payload to be executed, obtained from `getQuote` |
 
 ## Returns
 
@@ -20,20 +18,38 @@ Promise resolving to an `ExecuteSignedQuotePayload` containing:
 
 ## Example
 
+Based on the test files, here's a typical usage pattern:
+
 ```typescript
+// Get a quote for executing all instructions
+// This will calculate the total cost in the specified payment token
 const quote = await meeClient.getQuote({
   instructions: [
-    mcNexus.build({ type: "default", data: { chainId: targetChain.id, calls: [{ to: "0x...", value: 0n }] } }),
+    mcNexus.build({
+      type: "default",
+      data: {
+        calls: [{ to: zeroAddress, value: 0n }],
+        chainId: targetChain.id
+      }
+    })
   ],
   feeToken: {
-    address: mcUSDC.addressOn(optimism.id),
-    chainId: optimism.id
+    address: mcUSDC.addressOn(paymentChain.id),
+    chainId: paymentChain.id
   }
 });
 
+// Execute the quote and get back a transaction hash
+// This sends the transaction to the network
 const { hash } = await meeClient.executeQuote({ quote });
 
+// Wait for the transaction receipt
 const receipt = await meeClient.waitForSupertransactionReceipt({ hash });
+
+// Check transaction status
+if (receipt.transactionStatus === "MINED_SUCCESS") {
+  console.log("Transaction successful");
+}
 ```
 
 ## Error Handling
@@ -60,3 +76,8 @@ type ExecuteSignedQuotePayload = {
   hash: Hex
 }
 ```
+
+## Related Methods
+
+- [`getQuote`](/sdk-reference/mee-client/methods/getQuote) - Get a quote for executing instructions
+- [`waitForSupertransactionReceipt`](/sdk-reference/mee-client/methods/waitForSupertransactionReceipt) - Wait for a transaction to complete

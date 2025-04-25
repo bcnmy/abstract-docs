@@ -8,10 +8,10 @@ This method helps debug User Operations by providing detailed information about 
 :::code-group
 
 ```typescript [example.ts]
-import { nexusClient } from "./nexusClient"
+import { bicoBundlerClient } from "./bicoBundlerClient"
 
 // Debug a user operation
-const debug = await nexusClient.debugUserOperation({
+const debug = await bicoBundlerClient.debugUserOperation({
   calls: [{
     to: '0x70997970c51812dc3a010c7d01b50e0d17dc79c8',
     value: parseEther('0.1'),
@@ -20,7 +20,7 @@ const debug = await nexusClient.debugUserOperation({
 })
 ```
 
-```typescript [nexusClient.ts] filename="nexusClient.ts"
+```typescript [bicoBundlerClient.ts] filename="bicoBundlerClient.ts"
 import { privateKeyToAccount } from "viem/accounts";
 import { createBicoBundlerClient, toNexusAccount } from "@biconomy/abstractjs";
 import { baseSepolia } from "viem/chains"; 
@@ -30,7 +30,7 @@ const privateKey = "PRIVATE_KEY";
 const account = privateKeyToAccount(`0x${privateKey}`)
 const bundlerUrl = "https://bundler.biconomy.io/api/v3/84532/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44"; 
 
-const nexusClient = createBicoBundlerClient({
+const bicoBundlerClient = createBicoBundlerClient({
   account: await toNexusAccount({ 
     signer: account, 
     chain: baseSepolia,
@@ -102,4 +102,4 @@ When enabled, you'll get access to Tenderly's simulation interface, which is par
 ## Related Methods
 
 - [sendUserOperation](./sendUserOperation.md) - For production use
-- [prepareUserOperation](./prepareUserOperation.md) - For preparing operations without sending 
+- [prepareUserOperation](./more/prepareUserOperation.md) - For preparing operations without sending 

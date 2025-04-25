@@ -1,248 +1,173 @@
-# Bundler client
+# Bundler Client
 
-The BicoBundlerClient is an interface for interacting with Nexus smart accounts on a single chain. It allows account creation, execution of transactions, and management of account modules (validation and execution). 
+The Bundler Client is a key component in the AbstractJS SDK that provides an interface to interact with ERC-4337 bundlers for sending and managing User Operations in account abstraction implementations.
+
+## Overview
+
+A Bundler Client enables smart contract wallets to execute transactions through the ERC-4337 protocol, allowing for features like gasless transactions, batched operations, and custom authorization logic. This client extends the standard bundler functionality with Biconomy-specific enhancements.
+
+## Import
+
+```ts
+import { createBicoBundlerClient, http } from '@biconomy/abstractjs'
+```
 
 ## Usage
 
-```typescript 
-import { privateKeyToAccount } from "viem/accounts";
-import { createBicoBundlerClient, toNexusAccount } from "@biconomy/abstractjs";
-import { baseSepolia } from "viem/chains"; 
-import { http } from "viem"; 
+Initialize a Bundler Client with your desired Chain and Transport options:
 
-const privateKey = "PRIVATE_KEY";
-const account = privateKeyToAccount(`0x${privateKey}`)
-const bundlerUrl = "https://bundler.biconomy.io/api/v3/84532/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44"; 
+```ts
+import { createBicoBundlerClient, http } from '@biconomy/abstractjs'
+import { mainnet } from 'viem/chains'
 
-export const nexusAccount = await toNexusAccount({ 
-  signer: account, 
-  chain: baseSepolia,
-  transport: http(),
-})
-
-export const nexusClient = createBicoBundlerClient({
-  account: nexusAccount,
-  transport: http(bundlerUrl),
+const bundlerClient = createBicoBundlerClient({ 
+  chain: mainnet,
+  apiKey: 'YOUR_API_KEY_HERE' // Optional
 })
 ```
 
-## Parameters
+## Configuration
 
-### activeModule (optional)
+The `createBicoBundlerClient` function accepts the following parameters:
 
-Type: `ToValidationModuleReturnType`
-
-Default: `k1ValidatorModule`
-
-Possible values: k1ValidatorModule, ownableValidatorModule 
-
-The active validation module that governs how transactions from this smart account are validated (e.g., signature schemes, permissions). For information on setting an active module, refer to the account section.
-
-
-### bundlerTransport
-
-Type: `transport`
-
-This parameter specifies the transport for the Bundler Client. You can use the provided testnet URL in the example above or contact us for the mainnet URL.
-
-### chain (optional)
-Type: `Chain`
-
-The blockchain network (chain) for the client. It defines the specific network (e.g., Sepolia, Ethereum) the smart account will interact with.
-
-### factoryAddress (optional)
-
-Type: `Address`
-
-Default: `0x887Ca6FaFD62737D0E79A2b8Da41f0B15A864778`
-
-This parameter specifies the address of the smart account factory contract, which is responsible for creating new smart accounts. By default, it uses the standard factory address, but you can also provide a custom factory address.
-
-```typescript 
-import { baseSepolia } from "viem/chains"; 
-import { http } from "viem";
-import { privateKeyToAccount } from "viem/accounts";
-import { createBicoBundlerClient, toNexusAccount } from "@biconomy/abstractjs"; // [!code focus] 
-
-const privateKey = "PRIVATE_KEY";
-const account = privateKeyToAccount(`0x${privateKey}`);
-const bundlerUrl = "https://bundler.biconomy.io/api/v3/84532/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44";
-
-export const nexusClient = createBicoBundlerClient({
-  account: await toNexusAccount({ 
-    signer: account, 
-    chain: baseSepolia,
-    transport: http(),
-    factoryAddress: "0x887Ca6FaFD62737D0E79A2b8Da41f0B15A864778" // [!code focus] 
-  }),
-  transport: http(bundlerUrl),
-})
-
+```ts
+type BicoBundlerClientConfig = {
+  /**
+   * Whether to use the test bundler. Conditionally used by the `getGasFeeValues` decorator.
+   */
+  mock?: boolean
+  
+  /**
+   * The chain to use for the bundler client
+   */
+  chain?: Chain
+  
+  /**
+   * Optional paymaster configuration
+   */
+  paymaster?: BundlerClientConfig["paymaster"]
+  
+  /**
+   * Optional paymaster context
+   */
+  paymasterContext?: unknown
+  
+  /**
+   * Optional user operation configuration
+   */
+  userOperation?: BundlerClientConfig["userOperation"]
+} & OneOf<
+  | { transport: Transport }
+  | { bundlerUrl: string }
+  | { apiKey?: string }
+>
 ```
 
-### signer 
+You must provide one of the following:
+- A custom `transport` instance
+- A `bundlerUrl` endpoint 
+- An `apiKey` (which will use Biconomy's bundler endpoint)
+- A `chain` (which will use Biconomy's default bundler endpoint)
 
-Type: `UnknownHolder`
+## Key Features
 
-The owner of the smart account, represented by an Account object, which holds the private key and serves as the controller for the smart account actions.
+The Bundler Client provides several actions for working with User Operations:
 
+### Standard Bundler Actions
 
-### index (optional)
+- **estimateUserOperationGas**: Estimates gas costs for a User Operation
+- **sendUserOperation**: Sends a User Operation to the bundler
+- **getUserOperationReceipt**: Gets the receipt of a User Operation
+- **supportedEntryPoints**: Gets the entry points supported by the bundler
+- **getUserOperationByHash**: Gets a User Operation by its hash
 
-Type: `bigint`
+### Biconomy-Specific Actions
 
-The index of the smart account being created. By default, the first smart account is created with an index of 0. If multiple smart accounts are needed, you can specify the index here.
+- **getGasFeeValues**: Gets recommended gas fee values (slow, standard, fast)
+- **getUserOperationStatus**: Gets the status of a User Operation
+- **waitForUserOperationReceipt**: Waits for a User Operation receipt
+- **waitForConfirmedUserOperationReceipt**: Waits for a confirmed User Operation receipt
 
+### ERC-7579 Actions
 
-```typescript 
-import { baseSepolia } from "viem/chains"; 
-import { http } from "viem";
-import { privateKeyToAccount } from "viem/accounts";
-import { createBicoBundlerClient, toNexusAccount } from "@biconomy/abstractjs"; // [!code focus] 
+The client also includes ERC-7579 support for modular smart accounts.
 
-const privateKey = "PRIVATE_KEY";
-const account = privateKeyToAccount(`0x${privateKey}`);
-const bundlerUrl = "https://bundler.biconomy.io/api/v3/84532/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44";
+### Smart Account Actions
 
-export const nexusClient = createBicoBundlerClient({
-  account: await toNexusAccount({ 
-    signer: account, 
-    chain: baseSepolia,
-    transport: http(),
-    index: 1n // [!code focus] 
-  }),
-  transport: http(bundlerUrl),
+Additional actions for working with smart accounts are available.
+
+## Example
+
+Here's an example of sending a User Operation and waiting for its receipt:
+
+```ts
+import { createBicoBundlerClient, http } from '@biconomy/abstractjs'
+import { mainnet } from 'viem/chains'
+import { toNexusAccount } from '@biconomy/abstractjs'
+
+// Create a Nexus Account
+const nexusAccount = await toNexusAccount({
+  signer: account, // Your signer account
+  chain: mainnet,
+  transport: http()
 })
 
-```
-
-
-### paymaster (optional)
-
-Type: `BicoPaymasterClient`
-
-The optional paymaster responsible for sponsoring transaction fees on behalf of the smart account owner, enabling gasless transactions.
-
-
-```typescript 
-import { baseSepolia } from "viem/chains"; 
-import { http } from "viem";
-import { privateKeyToAccount } from "viem/accounts";
-import { createBicoBundlerClient, createBicoPaymasterClient, toNexusAccount } from "@biconomy/abstractjs"; // [!code focus] 
-
-const privateKey = "PRIVATE_KEY";
-const account = privateKeyToAccount(`0x${privateKey}`);
-const bundlerUrl = "https://bundler.biconomy.io/api/v3/84532/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44";
-
-const paymasterUrl = "";  // [!code focus] 
-
-export const nexusClient = createBicoBundlerClient({
-  account: await toNexusAccount({ 
-    signer: account, 
-    chain: baseSepolia,
-    transport: http(),
-  }),
-  transport: http(bundlerUrl),
-  paymaster: createBicoPaymasterClient({paymasterUrl}) // [!code focus] 
+// Create a Bundler Client
+const bundlerClient = createBicoBundlerClient({
+  chain: mainnet,
+  account: nexusAccount
 })
 
-```
+// Get gas fees
+const gasFees = await bundlerClient.getGasFeeValues()
 
-
-### paymasterContext (optional)
-Type: `unknown`
-
-Default: 
-
-```typescript
-const biconomyPaymasterContext = {
-  mode: "SPONSORED",
-  expiryDuration: 300,
-  calculateGasLimits: true,
-  sponsorshipInfo: {
-    smartAccountInfo: {
-      name: "BICONOMY",
-      version: "2.0.0"
+// Send a user operation
+const hash = await bundlerClient.sendUserOperation({
+  ...gasFees.fast,
+  calls: [
+    { 
+      to: '0xYourAddress', 
+      value: 1n 
     }
-  }
-}
+  ],
+  account: nexusAccount
+})
+
+// Wait for the receipt
+const receipt = await bundlerClient.waitForUserOperationReceipt({ hash })
+console.log('Transaction successful:', receipt.success)
 ```
 
-Paymaster context is an object containing additional metadata required to pass to `getPaymasterData` and `getPaymasterStubData` calls.
+## Gas Buffer Configuration
 
-The Biconomy Paymaster context is automatically set as the default. If you're using other paymasters that require context, you can specify it using this field.
+You can add a buffer to the gas estimates to ensure your transactions don't fail due to gas estimation inaccuracies:
 
-### pollingInterval (optional)
-
-Type: `number`
-
-Default: `4_000` (4 seconds)
-
-This parameter specifies the frequency in milliseconds for polling enabled actions and events within the Nexus client. This includes tasks such as fetching the transaction receipt, which is essential for tracking the status of transactions. By adjusting this value, you can control how often the client checks for updates. 
-A reduced interval can be beneficial for chains that produce blocks more rapidly.
-
-
-### transport
-
-Type: `transport`
-
-This parameter defines the RPC URL to use. It is advisable to use a paid RPC URL to prevent errors.
-
-### userOperation (optional)
-
-This optional configuration enables the customization of a specific user operation within the Nexus client, encapsulating a transaction flow within the smart account system. It allows for the modification of function calls to accommodate unique use cases as required.
-
-For example, to modify the maxFeePerGas and maxPriorityFeePerGas, you can obtain these fees and apply a multiplier as shown in the example below.
-
-:::code-group
-
-```typescript  [example.ts]
-import { baseSepolia } from "viem/chains"; 
-import { http } from "viem";
-import { createBicoBundlerClient, toNexusAccount } from "@biconomy/abstractjs"; // [!code focus] 
-import { publicClient } from "./publicClient";
-import { safeMultiplier } from "./utils";
-
-const privateKey = "PRIVATE_KEY";
-const account = privateKeyToAccount(`0x${privateKey}`);
-const bundlerUrl = "https://bundler.biconomy.io/api/v3/84532/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44";
-
-export const nexusClient = createBicoBundlerClient({
-  account: await toNexusAccount({ 
-      signer: account,
-      chain: baseSepolia,
-      transport: http(),
-  }),
-  transport: http(bundlerUrl),
-  userOperation: { // [!code focus:9] 
-    estimateFeesPerGas: async (_) => { 
-      const feeData = await publicClient.estimateFeesPerGas()
-      return {
-        maxFeePerGas: safeMultiplier( feeData.maxFeePerGas, 1.25),
-        maxPriorityFeePerGas: safeMultiplier( feeData.maxPriorityFeePerGas, 1.25)
-      }
+```ts
+const userOperation = await bundlerClient.prepareUserOperation({
+  gasBuffer: {
+    factor: 1.2, // 20% buffer
+    fields: ["preVerificationGas", "verificationGasLimit"]
+  },
+  calls: [
+    {
+      to: account.address,
+      value: 1n
     }
-  } 
-});
-
+  ]
+})
 ```
 
-```typescript  [publicClient.ts] filename="publicClient.ts"
-import { http, createPublicClient } from "viem";
-import { baseSepolia } from "viem/chains"; 
-export const publicClient = createPublicClient({chain: baseSepolia, transport: http()}); 
+## Aliases
 
+For backward compatibility, the following aliases are provided:
+
+```ts
+import { 
+  createBicoBundlerClient, 
+  createNexusClient, 
+  createNexusSessionClient 
+} from '@biconomy/abstractjs'
+
+// All of these are equivalent to createBicoBundlerClient
 ```
 
-```typescript  [utils.ts] filename="utils.ts"
-export const safeMultiplier = (bI: bigint, multiplier: number): bigint =>
-  BigInt(Math.round(Number(bI) * multiplier))
-
-```
-
-:::
-
-## Response
-- `Promise<NexusClient>` : Nexus client
-
-The Nexus client provides extensive information about the nexus smart account.

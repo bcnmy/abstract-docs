@@ -1,216 +1,46 @@
-# Base ERC-7579 Methods
+# Methods
 
-The Bundler Client provides several methods for interacting with User Operations and the blockchain:
-
-## `installModule`
-Installs the module on the smart account.
-
-**Usage Example**
-
-```typescript
-const userOpReceipt: UserOpReceipt = await smartAccount.installModule({
-    moduleAddress: K1_VALIDATOR,
-    type: 'validator',
-    data: encodePacked(["address"], [await smartAccount.getAddress()])
-})
-```
-
-**Parameters**
-
-- moduleAddress (`Address`, required)
-- type ([ModuleType](https://github.com/bcnmy/biconomy-client-sdk/blob/b66b611aa35af13da879995078892827aabf30e4/src/modules/utils/Types.ts#L232), required)
-- data (`0x${string}` | undefined, optional)
-
-**Returns**
-
-- `Promise<UserOpReceipt>`: A promise of [UserOpReceipt](https://github.com/bcnmy/biconomy-client-sdk/blob/b3fe78f74ec366f50bbbb5ad8cf043e689df6bff/src/bundler/utils/Types.ts#L23) 
-
-## `uninstallModule`
-Uninstalls the module of the smart account.
-
-**Usage Example**
-
-```typescript
-await smartAccount.uninstallModule(moduleAddress, ModuleType.Validation);
-```
-
-**Parameters**
-
-- moduleAddress (`Address`, required)
-- type ([ModuleType](https://github.com/bcnmy/biconomy-client-sdk/blob/b66b611aa35af13da879995078892827aabf30e4/src/modules/utils/Types.ts#L232), required)
-- moduleSelector (`0x${string}` | undefined, optional) This will only be needed when uninstalling `Fallback` modules
-- data (`0x${string}` | undefined, optional)
-
-**Returns**
-
-- `Promise<UserOpReceipt>`: A promise of [UserOpReceipt](https://github.com/bcnmy/biconomy-client-sdk/blob/b3fe78f74ec366f50bbbb5ad8cf043e689df6bff/src/bundler/utils/Types.ts#L23) 
-
-## `isModuleInstalled`
-Checks if a module is installed on the smart account.
-
-**Usage Example**
-
-```typescript
-const isInstalled: boolean = await smartAccount.isModuleInstalled({
-    type,
-    moduleAddress
-});
-```
-
-**Parameters**
-
-- type ([ModuleType](https://github.com/bcnmy/biconomy-client-sdk/blob/b66b611aa35af13da879995078892827aabf30e4/src/modules/utils/Types.ts#L232), required)
-- moduleAddress (`Address`, required)
-- data (`0x${string}` | undefined, optional)
-
-**Returns**
-
-- `Promise<boolean>`: A promise of a boolean
-
-## `getPreviousModule`
-Gets the pointer to the previously installed module based on given `moduleAddress` and `type`
-
-**Usage Example**
-
-```typescript
-const previousModule = await smartAccount.getPreviousModule({
-    moduleAddress,
-    type
-});
-```
-
-**Parameters**
-
-- moduleAddress (`Address`, required)
-- type ([ModuleType](https://github.com/bcnmy/biconomy-client-sdk/blob/b66b611aa35af13da879995078892827aabf30e4/src/modules/utils/Types.ts#L232), required)
-
-**Returns**
-
-- `Promise<{moduleAddress: Address; type: ModuleType}>`: A promise of an object
-
-## `getInstalledValidators`
-Gets the installed validators 
-
-**Usage Example**
-
-```typescript
-const validators = await smartAccount.getInstalledValidators();
-```
-
-**Returns**
-
-- `Promise<Address[]>`: A promise of validator addresses
-
-## `getInstalledExecutors`
-Gets the installed executors 
-
-**Usage Example**
-
-```typescript
-const executors = await smartAccount.getInstalledExecutors();
-```
-
-**Returns**
-
-- `Promise<Address[]>`: A promise of executor addresses
-
-## `getInstalledModules`
-Gets all the installed modules
-
-**Usage Example**
-
-```typescript
-const modules = await smartAccount.getInstalledModules();
-```
-
-**Returns**
-
-- `Promise<Address[]>`: A promise of module addresses
-
-## `getActiveHook`
-Gets the active hook module
-
-**Usage Example**
-
-```typescript
-const hook = await smartAccount.getActiveHook();
-```
-
-**Returns**
-
-- `Promise<Address>`: A promise of a hook address
-
-## `getFallbackBySelector`
-Gets the fallback module by the selector
-
-**Usage Example**
-
-```typescript
-const fallback = await smartAccount.getFallbackBySelector();
-```
-
-**Parameters**
-
-- selector (`Hex`, optional) The fallback module selector, if not passed, the [GENERIC_FALLBACK_SELECTOR](https://github.com/bcnmy/biconomy-client-sdk/blob/b3fe78f74ec366f50bbbb5ad8cf043e689df6bff/src/account/utils/Constants.ts#L122) will be used
-
-**Returns**
-
-- `Promise<Address>`: A promise of a fallback module address
-
-## `supportsModule`
-Check if the smart account supports a module
-
-**Usage Example**
-
-```typescript
-const isSupported = await smartAccount.supportsModule(ModuleType.Hook);
-```
-
-**Parameters**
-
-- type ([ModuleType](https://github.com/bcnmy/biconomy-client-sdk/blob/b66b611aa35af13da879995078892827aabf30e4/src/modules/utils/Types.ts#L232), required)
-
-**Returns**
-
-- `Promise<boolean>`: A promise of a boolean
-
-## `sendTransactionWithExecutor`
-Sends a transaction using an active executor module.
-
-**Usage Example**
-
-```typescript
-const userOpReceipt: UserOpReceipt = await smartAccount.sendTransactionWithExecutor(
-    [transaction], 
-    ownedAccountAddress
-)
-```
-
-**Parameters**
-
-- manyOrOneTransactions ([Transaction](https://github.com/bcnmy/biconomy-client-sdk/blob/b3fe78f74ec366f50bbbb5ad8cf043e689df6bff/src/account/utils/Types.ts#L346) | `Transaction[]`, required)
-- ownedAccountAddress (`Address`, required) 
-
-**Returns**
-
-- `Promise<UserOpReceipt>`: A promise of [UserOpReceipt](https://github.com/bcnmy/biconomy-client-sdk/blob/b3fe78f74ec366f50bbbb5ad8cf043e689df6bff/src/bundler/utils/Types.ts#L23) 
+The Nexus client provides a comprehensive set of methods for interacting with smart accounts. The methods are categorized into different types based on their functionality.
 
 ## Transaction Methods
-- [sendTransaction](/sdk-reference/bundler-client/methods/sendTransaction) - Submit a User Operation to the pool
-- [sendUserOperation](/sdk-reference/bundler-client/methods/sendUserOperation) - Submit a customized User Operation
-- [sendTokenPaymasterUserOp](/sdk-reference/bundler-client/methods/sendTokenPaymasterUserOp) - Send a User Operation with token paymaster
+
+- [debugUserOperation](/sdk-reference/bundler-client/methods/debugUserOperation): Debug a user operation
+- [sendTokenPaymasterUserOp](/sdk-reference/bundler-client/methods/sendTokenPaymasterUserOp): Send a user operation using ERC-20 tokens for gas payment
+- [sendTransaction](/sdk-reference/bundler-client/methods/more/sendTransaction): Send a transaction from the smart account
+- [sendUserOperation](/sdk-reference/bundler-client/methods/sendUserOperation): Send a user operation to the bundler
+- [upgradeSmartAccount](/sdk-reference/bundler-client/methods/upgradeSmartAccount): Upgrade the smart account to a new implementation
 
 ## Preparation Methods
-- [prepareTokenPaymasterUserOp](/sdk-reference/bundler-client/methods/prepareTokenPaymasterUserOp) - Prepare a User Operation with token paymaster
-- [prepareUserOperation](/sdk-reference/bundler-client/methods/prepareUserOperation) - Prepare a User Operation without sending
+
+- [prepareTokenPaymasterUserOp](/sdk-reference/bundler-client/methods/prepareTokenPaymasterUserOp): Prepare a user operation using ERC-20 tokens for gas payment
+- [prepareUserOperation](/sdk-reference/bundler-client/methods/more/prepareUserOperation): Prepare a user operation
+- [prepareUserOperationWithoutSignature](/sdk-reference/bundler-client/methods/more/prepareUserOperationWithoutSignature): Prepare a user operation without adding a signature
+
+## Signing Methods
+
+- [signMessage](/sdk-reference/bundler-client/methods/more/signMessage): Sign a message with the smart account
+- [signTypedData](/sdk-reference/bundler-client/methods/more/signTypedData): Sign typed data with the smart account
 
 ## Status & Information Methods
-- [waitForUserOperationReceipt](/sdk-reference/bundler-client/methods/waitForUserOperationReceipt) - Wait for a User Operation to be included in a block
-- [estimateUserOperationGas](/sdk-reference/bundler-client/methods/estimateUserOperationGas) - Estimate gas values for a User Operation
-- [getUserOperation](/sdk-reference/bundler-client/methods/getUserOperation) - Get information about a User Operation
-- [debugUserOperation](/sdk-reference/bundler-client/methods/debugUserOperation) - Debug a User Operation with detailed information
-- [getUserOperationReceipt](/sdk-reference/bundler-client/methods/getUserOperationReceipt) - Get the User Operation Receipt given a User Operation hash
+
+- [getGasFeeValues](/sdk-reference/bundler-client/methods/more/getGasFeeValues): Get estimated gas fee values
+- [getUserOperationReceipt](/sdk-reference/bundler-client/methods/more/getUserOperationReceipt): Get the receipt of a user operation
+- [waitForUserOperationReceipt](/sdk-reference/bundler-client/methods/waitForUserOperationReceipt): Wait for a user operation receipt
 
 ## Network Methods
-- [getSupportedEntryPoints](/sdk-reference/bundler-client/methods/getSupportedEntryPoints) - Get supported EntryPoints
-- [getChainId](/sdk-reference/bundler-client/methods/getChainId) - Get the current chain ID
+
+- [getChainId](/sdk-reference/bundler-client/methods/more/getChainId): Get the chain ID
+
+## ERC-7579 Methods
+
+- [accountId](/sdk-reference/bundler-client/methods/more/accountId): Get the account ID
+- [getActiveHook](/sdk-reference/bundler-client/methods/more/getActiveHook): Get the active hook
+- [getFallbackBySelector](/sdk-reference/bundler-client/methods/more/getFallbackBySelector): Get the fallback by selector
+- [getInstalledExecutors](/sdk-reference/bundler-client/methods/more/getInstalledExecutors): Get installed executors
+- [getInstalledModules](/sdk-reference/bundler-client/methods/more/getInstalledModules): Get all installed modules
+- [getInstalledValidators](/sdk-reference/bundler-client/methods/more/getInstalledValidators): Get installed validators
+- [installModule](/sdk-reference/bundler-client/methods/more/installModule): Install a module
+- [isModuleInstalled](/sdk-reference/bundler-client/methods/more/isModuleInstalled): Check if a module is installed
+- [supportsExecutionMode](/sdk-reference/bundler-client/methods/more/supportsExecutionMode): Check if an execution mode is supported
+- [supportsModule](/sdk-reference/bundler-client/methods/more/supportsModule): Check if a module is supported
+- [uninstallModule](/sdk-reference/bundler-client/methods/more/uninstallModule): Uninstall a module

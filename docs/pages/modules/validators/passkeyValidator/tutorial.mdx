@@ -19,7 +19,7 @@ NEXT_PUBLIC_PAYMASTER_URL=your_paymaster_url
 ## Step 1: Create Nexus Client
 
 ```typescript "
-import { createSmartAccountClient, createBicoPaymasterClient, toNexusAccount } from '@biconomy/abstractjs'
+import { createBicoBundlerClient, createBicoPaymasterClient, toNexusAccount } from '@biconomy/abstractjs'
 import { baseSepolia } from 'wagmi/chains'
 import { http, useAccount, useWalletClient } from 'wagmi'
 
@@ -28,7 +28,7 @@ const { data: walletClient } = useWalletClient({ account: account.address })
 
 async function initNexusClient() {
   if(walletClient) {
-    const nexusClient = createSmartAccountClient({ 
+    const nexusClient = createBicoBundlerClient({ 
       account: await toNexusAccount({ 
         signer: account, 
         chain: baseSepolia,
@@ -119,7 +119,7 @@ async function installPasskeyValidator(nexusClient: NexusClient, passkeyValidato
 ## Step 5: Using Passkey for Transactions
 
 ```typescript 
-import { createSmartAccountClient, createBicoPaymasterClient, type Module, type NexusClient, moduleActivator } from '@biconomy/abstractjs'
+import { createBicoBundlerClient, createBicoPaymasterClient, type Module, type NexusClient, moduleActivator } from '@biconomy/abstractjs'
 import { baseSepolia } from 'wagmi/chains'
 import { http, useAccount, useWalletClient } from 'wagmi'
 import type { Address } from 'viem'
@@ -149,7 +149,7 @@ async function sendTransactionWithPasskey(nexusClient: NexusClient, passkeyValid
 ## Step 6: Uninstall Passkey Validator (Optional)
 
 ```typescript 
-import { type NexusClient, type Module, createSmartAccountClient, moduleActivator } from '@biconomy/abstractjs'
+import { type NexusClient, type Module, createBicoBundlerClient, moduleActivator } from '@biconomy/abstractjs'
 
 async function uninstallPasskeyValidator(nexusClient: NexusClient, passkeyValidator: Module) {
   nexusClient.extend(moduleActivator(passkeyValidator));

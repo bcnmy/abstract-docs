@@ -9,11 +9,11 @@ This method is used to submit a User Operation object to the User Operation pool
 :::code-group
 
 ```typescript  [example.ts]
-import { nexusClient } from "./nexusClient"
+import { bicoBundlerClient } from "./bicoBundlerClient"
 import { contractABI } from "./abi"
 import { parseEther } from "viem"; 
 
-const hash = await nexusClient.sendUserOperation({ // [!code focus:13]
+const hash = await bicoBundlerClient.sendUserOperation({ // [!code focus:13]
   calls: [ 
     { 
       to: '0xf5715961C550FC497832063a98eA34673ad7C816', 
@@ -28,7 +28,7 @@ const hash = await nexusClient.sendUserOperation({ // [!code focus:13]
 }); 
 ```
 
-```typescript  [nexusClient.ts] filename="nexusClient.ts"
+```typescript  [bicoBundlerClient.ts] filename="bicoBundlerClient.ts"
 import { privateKeyToAccount } from "viem/accounts";
 import { createBicoBundlerClient, toNexusAccount } from "@biconomy/abstractjs";
 import { baseSepolia } from "viem/chains"; 
@@ -38,7 +38,7 @@ const privateKey = "PRIVATE_KEY";
 const account = privateKeyToAccount(`0x${privateKey}`)
 const bundlerUrl = "https://bundler.biconomy.io/api/v3/84532/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44"; 
 
-export const nexusClient = createBicoBundlerClient({
+export const bicoBundlerClient = createBicoBundlerClient({
   account: await toNexusAccount({ 
     signer: account, 
     chain: baseSepolia,
@@ -81,14 +81,14 @@ Waits for the User Operation to be included on a Block (one confirmation), and t
 :::code-group
 
 ```typescript  [example.ts]
-import { nexusClient } from "./nexusClient"
+import { bicoBundlerClient } from "./bicoBundlerClient"
 
-const receipt = await nexusClient.waitForUserOperationReceipt({  // [!code focus:3]
+const receipt = await bicoBundlerClient.waitForUserOperationReceipt({  // [!code focus:3]
   hash: '0x315a882b82eb33250b919da6ebb2dd890df39ca0840e4026cbbad595b9a07e86'
 })
 ```
 
-```typescript  [nexusClient.ts] filename="nexusClient.ts"
+```typescript  [bicoBundlerClient.ts] filename="bicoBundlerClient.ts"
 import { privateKeyToAccount } from "viem/accounts";
 import { createBicoBundlerClient, toNexusAccount } from "@biconomy/abstractjs";
 import { baseSepolia } from "viem/chains"; 
@@ -98,7 +98,7 @@ const privateKey = "PRIVATE_KEY";
 const account = privateKeyToAccount(`0x${privateKey}`)
 const bundlerUrl = "https://bundler.biconomy.io/api/v3/84532/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44"; 
 
-export const nexusClient = createBicoBundlerClient({
+export const bicoBundlerClient = createBicoBundlerClient({
   account: await toNexusAccount({ 
     signer: account, 
     chain: baseSepolia,
@@ -129,9 +129,9 @@ Estimates the gas values for a User Operation to be executed successfully.
 :::code-group
 
 ```typescript  [example.ts]
-import { nexusClient } from "./nexusClient"
+import { bicoBundlerClient } from "./bicoBundlerClient"
 
-const gas = await nexusClient.estimateUserOperationGas({ // [!code focus:12]
+const gas = await bicoBundlerClient.estimateUserOperationGas({ // [!code focus:12]
   calls: [ 
     { 
       to: '0xf5715961C550FC497832063a98eA34673ad7C816', 
@@ -146,7 +146,7 @@ const gas = await nexusClient.estimateUserOperationGas({ // [!code focus:12]
 }); 
 ```
 
-```typescript  [nexusClient.ts] filename="nexusClient.ts"
+```typescript  [bicoBundlerClient.ts] filename="bicoBundlerClient.ts"
 import { privateKeyToAccount } from "viem/accounts";
 import { createBicoBundlerClient } from "@biconomy/abstractjs";
 import { baseSepolia } from "viem/chains"; 
@@ -156,7 +156,7 @@ const privateKey = "PRIVATE_KEY";
 const account = privateKeyToAccount(`0x${privateKey}`)
 const bundlerUrl = "https://bundler.biconomy.io/api/v3/84532/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44"; 
 
-export const nexusClient = createBicoBundlerClient({ 
+export const bicoBundlerClient = createBicoBundlerClient({ 
     signer: account, 
     chain: baseSepolia,
     transport: http(), 
@@ -196,14 +196,14 @@ Retrieves information about a User Operation given a hash.
 :::code-group
 
 ```typescript  [example.ts]
-import { nexusClient } from "./nexusClient"
+import { bicoBundlerClient } from "./bicoBundlerClient"
 
-const receipt = await nexusClient.getUserOperation({ // [!code focus:3]
+const receipt = await bicoBundlerClient.getUserOperation({ // [!code focus:3]
   hash: '0x315a882b82eb33250b919da6ebb2dd890df39ca0840e4026cbbad595b9a07e86'
 })
 ```
 
-```typescript  [nexusClient.ts] filename="nexusClient.ts"
+```typescript  [bicoBundlerClient.ts] filename="bicoBundlerClient.ts"
 import { privateKeyToAccount } from "viem/accounts";
 import { createBicoBundlerClient } from "@biconomy/abstractjs";
 import { baseSepolia } from "viem/chains"; 
@@ -213,7 +213,7 @@ const privateKey = "PRIVATE_KEY";
 const account = privateKeyToAccount(`0x${privateKey}`)
 const bundlerUrl = "https://bundler.biconomy.io/api/v3/84532/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44"; 
 
-export const nexusClient = createBicoBundlerClient({ 
+export const bicoBundlerClient = createBicoBundlerClient({ 
     signer: account, 
     chain: baseSepolia,
     transport: http(), 
@@ -255,14 +255,14 @@ Returns the User Operation Receipt given a User Operation hash.
 :::code-group
 
 ```typescript  [example.ts]
-import { nexusClient } from "./nexusClient"
+import { bicoBundlerClient } from "./bicoBundlerClient"
 
-const receipt = await nexusClient.getUserOperationReceipt({  // [!code focus:3]
+const receipt = await bicoBundlerClient.getUserOperationReceipt({  // [!code focus:3]
   hash: '0x315a882b82eb33250b919da6ebb2dd890df39ca0840e4026cbbad595b9a07e86'
 })
 ```
 
-```typescript  [nexusClient.ts] filename="nexusClient.ts"
+```typescript  [bicoBundlerClient.ts] filename="bicoBundlerClient.ts"
 import { privateKeyToAccount } from "viem/accounts";
 import { createBicoBundlerClient, toNexusAccount } from "@biconomy/abstractjs";
 import { baseSepolia } from "viem/chains"; 
@@ -272,7 +272,7 @@ const privateKey = "PRIVATE_KEY";
 const account = privateKeyToAccount(`0x${privateKey}`)
 const bundlerUrl = "https://bundler.biconomy.io/api/v3/84532/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44"; 
 
-export const nexusClient = createBicoBundlerClient({ 
+export const bicoBundlerClient = createBicoBundlerClient({ 
   account: await toNexusAccount({ 
     signer: account, 
     chain: baseSepolia,
@@ -299,12 +299,12 @@ Returns the EntryPoints that the nexus client supports.
 :::code-group
 
 ```typescript  [example.ts]
-import { nexusClient } from "./nexusClient"
+import { bicoBundlerClient } from "./bicoBundlerClient"
 
-const entrypointAddresses = await nexusClient.getSupportedEntryPoints() // [!code focus:1]
+const entrypointAddresses = await bicoBundlerClient.getSupportedEntryPoints() // [!code focus:1]
 ```
 
-```typescript  [nexusClient.ts] filename="nexusClient.ts"
+```typescript  [bicoBundlerClient.ts] filename="bicoBundlerClient.ts"
 import { privateKeyToAccount } from "viem/accounts";
 import { createBicoBundlerClient, toNexusAccount } from "@biconomy/abstractjs";
 import { baseSepolia } from "viem/chains"; 
@@ -314,7 +314,7 @@ const privateKey = "PRIVATE_KEY";
 const account = privateKeyToAccount(`0x${privateKey}`)
 const bundlerUrl = "https://bundler.biconomy.io/api/v3/84532/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44"; 
 
-export const nexusClient = createBicoBundlerClient({
+export const bicoBundlerClient = createBicoBundlerClient({
   account: await toNexusAccount({ 
     signer: account, 
     chain: baseSepolia,
@@ -340,12 +340,12 @@ Returns the chain ID associated with the nexus client
 :::code-group
 
 ```typescript  [example.ts]
-import { nexusClient } from "./nexusClient"
+import { bicoBundlerClient } from "./bicoBundlerClient"
 
-const chainId = await nexusClient.getChainId() // [!code focus:1]
+const chainId = await bicoBundlerClient.getChainId() // [!code focus:1]
 ```
 
-```typescript  [nexusClient.ts] filename="nexusClient.ts"
+```typescript  [bicoBundlerClient.ts] filename="bicoBundlerClient.ts"
 import { privateKeyToAccount } from "viem/accounts";
 import { createBicoBundlerClient } from "@biconomy/abstractjs";
 import { baseSepolia } from "viem/chains"; 
@@ -355,7 +355,7 @@ const privateKey = "PRIVATE_KEY";
 const account = privateKeyToAccount(`0x${privateKey}`)
 const bundlerUrl = "https://bundler.biconomy.io/api/v3/84532/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44"; 
 
-export const nexusClient = createBicoBundlerClient({
+export const bicoBundlerClient = createBicoBundlerClient({
   account: await toNexusAccount({ 
     signer: account, 
     chain: baseSepolia,
