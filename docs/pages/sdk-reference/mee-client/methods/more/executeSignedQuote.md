@@ -210,7 +210,7 @@ try {
 - [`getQuote`](/sdk-reference/mee-client/methods/getQuote) - Get a quote for executing instructions
 - [`signQuote`](/sdk-reference/mee-client/methods/more/signQuote) - Sign a quote before execution 
 - [`execute`](/sdk-reference/mee-client/methods/more/execute) - Convenience method that combines all three steps
-- [`waitForSupertransactionReceipt`](/sdk-reference/mee-client/methods/waitForSuperTransactionReceipt.md) - Wait for a transaction receipt
+- [`waitForSupertransactionReceipt`](/sdk-reference/mee-client/methods/waitForSupertransactionReceipt) - Wait for a transaction receipt
 
 ## When to Use
 
