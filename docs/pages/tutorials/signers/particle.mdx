@@ -37,32 +37,50 @@ const smartAccountOwner = new ParticleProvider(particle.auth)
 
 ```
 
-### Create the Biconomy client
+### Create the MeeClient
 
-Next, use the Particle Network account to initialize the Biconomy Nexus Client:
+Next, use the Particle Network account to initialize the Biconomy MeeClient for multichain transactions:
 
 ```typescript
 import { ParticleNetwork } from "@particle-network/auth"
 import { ParticleProvider } from "@particle-network/provider"
-import { createBicoBundlerClient, NexusClient, toNexusAccount } from "@biconomy/abstractjs"; 
-import { baseSepolia } from "viem/chains";
+import { createMeeClient, toMultichainNexusAccount } from "@biconomy/abstractjs"; 
+import { baseSepolia, optimism, base, polygon, arbitrum } from "viem/chains";
 import { http } from "viem";
 
 const main = async () => {
-    const bundlerUrl = `https://bundler.biconomy.io/api/v3/84532/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44`
+    // Create a multichain MEE client
+    const meeClient = await createMeeClient({
+      account: await toMultichainNexusAccount({
+        chains: [optimism, base, polygon, arbitrum],
+        transports: [http(), http(), http(), http()],
+        signer: smartAccountOwner
+      }),
+      apiKey: "YOUR_MEE_API_KEY" // Optional for production use
+    });
 
-    const nexusClient: NexusClient = createBicoBundlerClient({
-        chain: baseSepolia,
-        account: await toNexusAccount({
-            signer: smartAccountOwner,
-            chain: baseSepolia,
-            transport: http("https://sepolia.base.org"),
-        }),
-        transport: http(bundlerUrl),
-    })
+    // You can now execute cross-chain transactions with MEE
+    // For example:
+    const quote = await meeClient.getQuote({
+      instructions: [
+        {
+          calls: [{ to: "0xContract", value: 0n, data: "0xCalldata" }],
+          chainId: optimism.id
+        },
+        {
+          calls: [{ to: "0xContract", value: 0n, data: "0xCalldata" }],
+          chainId: base.id
+        }
+      ],
+      feeToken: {
+        address: "0xTokenAddress", // Replace with your fee token address
+        chainId: optimism.id
+      }
+    });
 
+    const { hash } = await meeClient.executeQuote({ quote });
+    console.log(`Transaction hash: ${hash}`);
 }
 
 main();
-
 ```

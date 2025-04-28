@@ -1,4 +1,4 @@
-# How to use Web3Auth with Nexus
+# How to use Web3Auth with Biconomy
 
 [Web3Auth](https://web3auth.io/) is a pluggable auth infrastructure that aggregates OAuth providers, different wallets, and existing key management solutions. It provides a seamless authentication experience while maintaining high security standards.
 
@@ -32,10 +32,10 @@ bun add @web3auth/modal @web3auth/base @biconomy/abstractjs viem @rhinestone/mod
 // @errors: 2322
 import { Web3Auth } from "@web3auth/modal";
 import { CHAIN_NAMESPACES } from "@web3auth/base";
-import { createWalletClient, custom, http, type WalletClient } from "viem";
-import { baseSepolia } from "viem/chains";
+import { http, type WalletClient } from "viem";
+import { baseSepolia, optimism, base, polygon, arbitrum } from "viem/chains";
 import { EthereumPrivateKeyProvider } from "@web3auth/ethereum-provider";
-import { createBicoBundlerClient, type EthereumProvider, toNexusAccount } from "@biconomy/abstractjs";
+import { createMeeClient, type EthereumProvider, toMultichainNexusAccount } from "@biconomy/abstractjs";
 
 // Chain configuration for Base Sepolia
 const chainConfig = {
@@ -76,23 +76,45 @@ if (!web3authProvider) {
   throw new Error("No provider found");
 }
 
-const bundlerUrl = `https://bundler.biconomy.io/api/v3/84532/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44`;
-
-const nexusClient = createBicoBundlerClient({
-  account: await toNexusAccount({
-    signer: web3authProvider,
-    chain: baseSepolia,
-    transport: http(),
+// Create a multichain MEE client
+const meeClient = await createMeeClient({
+  account: await toMultichainNexusAccount({
+    chains: [optimism, base, polygon, arbitrum],
+    transports: [http(), http(), http(), http()],
+    signer: web3authProvider
   }),
-  chain: baseSepolia,
-  transport: http(bundlerUrl),
+  apiKey: "YOUR_MEE_API_KEY" // Optional for production use
 });
 
-const uoHash = await nexusClient.sendUserOperation({
-  calls: [{  
-    to: "0x...",
-    value: 1n
-  }]
+// Get a quote for cross-chain operations
+const quote = await meeClient.getQuote({
+  instructions: [
+    // Send transaction on Optimism
+    {
+      calls: [{ 
+        to: "0x0000000000000000000000000000000000000000", 
+        value: 1n,
+        data: "0x"
+      }],
+      chainId: optimism.id
+    },
+    // Send transaction on Base
+    {
+      calls: [{ 
+        to: "0x0000000000000000000000000000000000000000", 
+        value: 1n,
+        data: "0x"
+      }],
+      chainId: base.id
+    }
+  ],
+  feeToken: {
+    address: "0xTokenAddress", // Replace with your fee token address
+    chainId: optimism.id
+  }
 });
 
+// Execute the cross-chain transaction
+const { hash } = await meeClient.executeQuote({ quote });
+console.log(`Transaction hash: ${hash}`);
 ```

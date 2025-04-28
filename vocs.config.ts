@@ -1185,7 +1185,7 @@ export default defineConfig({
 					link: "/migrations/v2ToNexus",
 				},
 				{
-					text: "Nexus to Nexus Upgrade",
+					text: "Nexus to Nexus Migration",
 					link: "/migrations/nexusToNexus",
 				},
 			],

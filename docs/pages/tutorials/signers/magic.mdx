@@ -1,7 +1,7 @@
 ## How to use Magic signer with Biconomy smart accounts
 
 [Magic](https://magic.link/) makes it easy to authenticate users and integrate them into your Web3 dApps quickly.
-By integrating Magic with the Biconomy SDK, you can pair Magic’s seamless social login experience with smart wallets powered by Nexus accounts. This enables features like gas sponsorship, transaction batching, and more, ensuring a frictionless experience for your users.
+By integrating Magic with the Biconomy SDK, you can pair Magic's seamless social login experience with smart wallets powered by Nexus accounts. This enables features like gas sponsorship, transaction batching, and more, ensuring a frictionless experience for your users.
 
 ## Integration
 
@@ -33,32 +33,31 @@ const smartAccountOwner = await magic.wallet.getProvider()
 
 ```
 
-### Create the Biconomy client
+### Create the MeeClient
 
-Next, use the Magic account to initialize the Biconomy Nexus Client:
+Next, use the Magic account to initialize the Biconomy MeeClient for multichain transactions:
 
 ```typescript
 import { OAuthExtension } from "@magic-ext/oauth"
 import { Magic as MagicBase } from "magic-sdk"
-import { createBicoBundlerClient, NexusClient, toNexusAccount } from "@biconomy/abstractjs"; 
-import { baseSepolia } from "viem/chains";
+import { createMeeClient, toMultichainNexusAccount } from "@biconomy/abstractjs"; 
+import { baseSepolia, optimism, base, polygon, arbitrum } from "viem/chains";
 import { http } from "viem";
 
 const main = async () => {
-    const bundlerUrl = `https://bundler.biconomy.io/api/v3/84532/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44`
+    // Create a multichain MEE client
+    const meeClient = await createMeeClient({
+      account: await toMultichainNexusAccount({
+        chains: [optimism, base, polygon, arbitrum],
+        transports: [http(), http(), http(), http()],
+        signer: smartAccountOwner
+      }),
+      apiKey: "YOUR_MEE_API_KEY" // Optional for production use
+    });
 
-    const nexusClient: NexusClient = createBicoBundlerClient({
-        chain: baseSepolia,
-        account: await toNexusAccount({
-            signer: smartAccountOwner,
-            chain: baseSepolia,
-            transport: http("https://sepolia.base.org"),
-        }),
-        transport: http(bundlerUrl),
-    })
-
+    // You can now use meeClient to execute cross-chain transactions
+    console.log("MEE Client ready for cross-chain operations");
 }
 
 main();
-
 ```
