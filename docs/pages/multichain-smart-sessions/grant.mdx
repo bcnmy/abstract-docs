@@ -8,7 +8,7 @@ Grant specific permissions to validators across multiple chains using Smart Sess
 import { 
   toSmartSessionsModule,
   toNexusAccount,
-  createSmartAccountClient,
+  createBicoBundlerClient,
   getSudoPolicy
 } from '@biconomy/abstractjs';
 
@@ -23,7 +23,7 @@ const nexusAccount = await toNexusAccount({
 });
 
 // Create client with your Nexus account
-const nexusClient = createSmartAccountClient({
+const nexusClient = createBicoBundlerClient({
   chain,
   transport: http(rpcUrl),
   account: nexusAccount,

@@ -19,7 +19,7 @@ const account = privateKeyToAccount(`${privateKey}`);
 Login to the [Dashboard](https://dashboard.biconomy.io/) and setup a v2 paymaster. Let's configure a client for the Smart Account with a `paymasterUrl` to enable it. A `bundlerUrl` is required to submit transactions to the Network, which will initialize the Smart Account.
 
 ```typescript 
-import { createSmartAccountClient, createBicoPaymasterClient, toBiconomyTokenPaymasterContext, toNexusAccount } from "@biconomy/abstractjs";
+import { createBicoBundlerClient, createBicoPaymasterClient, toBiconomyTokenPaymasterContext, toNexusAccount } from "@biconomy/abstractjs";
 import { baseSepolia } from "viem/chains"; 
 import { http, parseEther } from "viem";
 import { privateKeyToAccount, generatePrivateKey } from "viem/accounts";
@@ -39,7 +39,7 @@ const paymaster = createBicoPaymasterClient({
     transport: http(paymasterUrl)
 })
 
-const nexusClient = createSmartAccountClient({
+const nexusClient = createBicoBundlerClient({
     account: await toNexusAccount({
         signer: account,
         chain: baseSepolia,
@@ -57,7 +57,7 @@ We will use the `maxGasFee` and `decimal` from the quote to calculate the fee am
 
 ```typescript 
 
-import { createSmartAccountClient, createBicoPaymasterClient, toBiconomyTokenPaymasterContext, toNexusAccount } from "@biconomy/abstractjs";
+import { createBicoBundlerClient, createBicoPaymasterClient, toBiconomyTokenPaymasterContext, toNexusAccount } from "@biconomy/abstractjs";
 import { baseSepolia } from "viem/chains"; 
 import { http, parseEther, parseUnits } from "viem";
 import { privateKeyToAccount, generatePrivateKey } from "viem/accounts";
@@ -78,7 +78,7 @@ const paymasterContext = toBiconomyTokenPaymasterContext({
     feeTokenAddress: baseSepoliaUSDC
 })
 
-const nexusClient = createSmartAccountClient({
+const nexusClient = createBicoBundlerClient({
     account: await toNexusAccount({
         signer: account,
         chain: baseSepolia,
@@ -107,7 +107,7 @@ const usdcFeeAmount = parseUnits(
 
 ### Sending a transaction and paying the gas with USDC
 ```typescript 
-import { createSmartAccountClient, createBicoPaymasterClient, toBiconomyTokenPaymasterContext, toNexusAccount } from "@biconomy/abstractjs";
+import { createBicoBundlerClient, createBicoPaymasterClient, toBiconomyTokenPaymasterContext, toNexusAccount } from "@biconomy/abstractjs";
 import { baseSepolia } from "viem/chains"; 
 import { http, parseEther, parseUnits } from "viem";
 import { privateKeyToAccount, generatePrivateKey } from "viem/accounts";
@@ -128,7 +128,7 @@ const paymasterContext = toBiconomyTokenPaymasterContext({
     feeTokenAddress: baseSepoliaUSDC
 })
 
-const nexusClient = createSmartAccountClient({
+const nexusClient = createBicoBundlerClient({
     account: await toNexusAccount({
         signer: account,
         chain: baseSepolia,
@@ -174,4 +174,4 @@ For a complete list of supported ERC20 tokens that can be used for gas payment, 
 
 By following these steps, you have successfully calculated the USDC fee amount and enforced a custom approval amount for a transaction using the SDK. For more advanced features and options, refer to the official documentation.
 
-[See sendTransaction Docs](/nexus-client/methods#sendtransaction)
+[See sendTransaction Docs](/sdk-reference/bundler-client/methods/sendUserOperation)

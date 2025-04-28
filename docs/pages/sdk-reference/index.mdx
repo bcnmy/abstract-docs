@@ -1,0 +1,41 @@
+# SDK Reference
+
+## Bundler Client vs MEE Client
+
+| Feature | MEE Client | 4337 Bundler Client |
+|---------|-----------|---------------------|
+| Cross-chain execution | ✅ | ❌ |
+| Cross-chain gas payment | ✅ | ❌ |
+| Transaction orchestration | ✅ | ❌ |
+| Runtime composability | ✅ | ❌ |
+| Intent-based execution | ✅ | ❌ |
+| Support for EOAs | ✅ | ❌ |
+| Single-chain gas abstraction | ✅ | ✅ |
+| Batched transactions (same chain) | ✅ | ✅ |
+
+### When to Use MEE Client
+
+Choose the MEE Client when:
+- Your application spans multiple blockchains
+- You need cross-chain orchestration with a single signature
+- You want to pay gas fees using tokens from any chain
+- You need runtime composability between chains
+- You're building complex DeFi workflows that operate across networks
+
+Unlike the traditional ERC-4337 Bundler Client which is limited to single-chain operations, the MEE Client is designed for cross-chain applications. The MEE Client is more complex and depends on the MEE infrastructure for cross-chain coordination.
+
+Choose MEE Client when building applications that:
+- Span multiple blockchains
+- Require complex transaction sequences
+- Need to support both EOA and Smart Account users
+
+### When to Use Bundler Client
+
+Choose the Bundler Client when:
+- Your application operates on a single blockchain
+- You need standard ERC-4337 account abstraction features
+- Performance on a single chain is prioritized
+- You need direct control over transaction bundling
+
+The Bundler Client is limited to operations within a single chain - it cannot execute cross-chain transactions or pay for gas using tokens from different chains.
+

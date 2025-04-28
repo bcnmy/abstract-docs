@@ -18,10 +18,10 @@ You will need to do some initial setup and get API keys from capsule, for additi
 
 ```ts
 import { http } from "viem";
-import { baseSepolia } from "viem/chains";
+import { baseSepolia, optimism, base, polygon } from "viem/chains";
 import Capsule, { Environment } from "@usecapsule/web-sdk";
 import { createCapsuleViemClient } from "@usecapsule/viem-v2-integration";
-import { createSmartAccountClient, NexusClient } from "@biconomy/abstractjs";
+import { createMeeClient, toMultichainNexusAccount } from "@biconomy/abstractjs";
 
 // Param options here will be specific to your project.  See the Capsule docs for more info.
 const capsule = new Capsule(Environment.BETA, "");
@@ -33,15 +33,15 @@ const smartAccountOwner = createCapsuleViemClient(capsule, {
 })
 ```
 
-### Create the SmartAccountClient
+### Create the MeeClient
 
-Create the smart account client using the Capsule signer client. 
+Create the multichain MEE client using the Capsule signer client. 
 
 ```ts
 import { http } from "viem";
-import { baseSepolia } from "viem/chains";
+import { baseSepolia, optimism, base, polygon, arbitrum } from "viem/chains";
 import Capsule, { Environment } from "@usecapsule/web-sdk";
-import { createSmartAccountClient, NexusClient, toNexusAccount } from "@biconomy/abstractjs";
+import { createMeeClient, toMultichainNexusAccount } from "@biconomy/abstractjs";
 import { createCapsuleViemClient } from "@usecapsule/viem-v2-integration"
 
 const capsule = new Capsule(Environment.BETA, "YOUR_API_KEY");
@@ -51,18 +51,16 @@ const smartAccountOwner = createCapsuleViemClient(capsule, {
     chain: baseSepolia,
     transport: http("https://sepolia.base.org"),
 })
-const bundlerUrl = `https://bundler.biconomy.io/api/v3/84532/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44`
 
-const nexusClient: NexusClient = createSmartAccountClient({
-    chain: baseSepolia,
-    account: await toNexusAccount({
-        signer: smartAccountOwner,
-        chain: baseSepolia,
-        transport: http("https://sepolia.base.org"),
-    }),
-    transport: http(bundlerUrl),
+// Create a multichain smart account
+const meeClient = await createMeeClient({
+  account: await toMultichainNexusAccount({
+    chains: [optimism, base, polygon, arbitrum],
+    transports: [http(), http(), http(), http()],
+    signer: smartAccountOwner
+  }),
+  apiKey: "YOUR_MEE_API_KEY" // Optional for production use
 })
-
 ```
 
 ::::

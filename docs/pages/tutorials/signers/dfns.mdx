@@ -53,9 +53,9 @@ const smartAccountOwner = createWalletClient({
 })
 ```
 
-### Create the SmartAccountClient
+### Create the MeeClient
 
-Create the smart account client using the Capsule signer client. 
+Create the multichain MEE client using the DFNS signer client. 
 
 ```ts
 import { DfnsWallet } from "@dfns/lib-viem"
@@ -63,20 +63,21 @@ import { DfnsApiClient } from "@dfns/sdk"
 import { AsymmetricKeySigner } from "@dfns/sdk-keysigner"
 import { AccountSource, createWalletClient, http } from "viem"
 import { toAccount } from "viem/accounts"
-import { createSmartAccountClient, NexusClient, toNexusAccount } from "@biconomy/abstractjs";
+import { baseSepolia, optimism, base, polygon, arbitrum } from "viem/chains"
+import { createMeeClient, toMultichainNexusAccount } from "@biconomy/abstractjs";
 
-const bundlerUrl = `https://bundler.biconomy.io/api/v3/84532/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44`
+// Create a multichain MEE client
+const meeClient = await createMeeClient({
+  account: await toMultichainNexusAccount({
+    chains: [optimism, base, polygon, arbitrum],
+    transports: [http(), http(), http(), http()],
+    signer: smartAccountOwner
+  }),
+  apiKey: "YOUR_MEE_API_KEY" // Optional for production use
+});
 
-const nexusClient: NexusClient = createSmartAccountClient({
-    chain: baseSepolia,
-    account: await toNexusAccount({
-        signer: smartAccountOwner,
-        chain: baseSepolia,
-        transport: http("https://sepolia.base.org"),
-    }),
-    transport: http(bundlerUrl),
-})
-
+// Now you can execute cross-chain transactions
+console.log("MEE Client ready for cross-chain operations with address:", meeClient.account.address);
 ```
 
 ::::

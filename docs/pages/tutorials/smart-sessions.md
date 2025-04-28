@@ -56,7 +56,7 @@ const account = privateKeyToAccount(`0x${privateKey}`);
 A Smart Account needs access to the Network to query for information about its state (e.g., nonce, address, etc.). Let's configure a client for the Smart Account. A `bundlerUrl` is required to submit User Operations to the Network, which will initialize the Smart Account.
 
 ```typescript
-import { createSmartAccountClient, toNexusAccount } from "@biconomy/abstractjs";
+import { createBicoBundlerClient, toNexusAccount } from "@biconomy/abstractjs";
 import { baseSepolia } from "viem/chains"; 
 import { http } from "viem"; 
 import { privateKeyToAccount } from "viem/accounts";
@@ -66,7 +66,7 @@ const account = privateKeyToAccount(`0x${privateKey}`);
 
 const bundlerUrl = "https://bundler.biconomy.io/api/v3/84532/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44"; 
 
-const nexusClient = createSmartAccountClient({ 
+const nexusClient = createBicoBundlerClient({ 
     account: await toNexusAccount({
         signer: account, 
         chain: baseSepolia, 
@@ -184,7 +184,7 @@ We need a new Nexus client that is associated with the session. This client will
 
 ```typescript
 
-const smartSessionNexusClient = createSmartAccountClient({
+const smartSessionNexusClient = createBicoBundlerClient({
     chain: baseSepolia,
     account: await toNexusAccount({
         accountAddress: sessionData.granter,
@@ -243,7 +243,7 @@ console.log(`Transaction hash: ${userOpHash}`);
 
 ```typescript 
 import {
-    createSmartAccountClient, toSmartSessionsValidator, smartSessionCreateActions,
+    createBicoBundlerClient, toSmartSessionsValidator, smartSessionCreateActions,
     smartSessionUseActions, CreateSessionDataParams, SessionData,
 } from "@biconomy/abstractjs";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
@@ -269,7 +269,7 @@ export const createAccountAndSendTransaction = async () => {
     const sessionPublicKey = sessionOwner.address;
 
     // 2. Set up Nexus client
-    const nexusClient = createSmartAccountClient({
+    const nexusClient = createBicoBundlerClient({
         account: await toNexusAccount({
             signer: userAccount,
             chain: baseSepolia,
@@ -332,7 +332,7 @@ export const createAccountAndSendTransaction = async () => {
     }
 
     // 2. Create a Nexus Client for Using the Session
-    const smartSessionNexusClient = createSmartAccountClient({
+    const smartSessionNexusClient = createBicoBundlerClient({
         account: await toNexusAccount({
             signer: sessionOwner,
             chain: baseSepolia,

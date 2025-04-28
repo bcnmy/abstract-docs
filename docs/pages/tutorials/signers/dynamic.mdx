@@ -36,19 +36,17 @@ export const App = () => {
 };
 ```
 
-### Create the SmartAccountClient
+### Create the MeeClient
 
-Create the smart account client using the Dynamic signer. 
+Create the multichain MEE client using the Dynamic signer. 
 Note: Inside any component which is wrapped by DynamicContextProvider, you can access any of [the provided hooks](https://docs.dynamic.xyz/react-sdk/hooks/hooks-introduction). While you can access the full context via usedynamiccontext, we are most interested in the users currently connected wallets which we can easily access via useuserwallets.
 
 ```ts
-import { createWalletClient, http } from "viem";
-import { baseSepolia } from "viem/chains";
-import { createSmartAccountClient, NexusClient, toNexusAccount } from "@biconomy/abstractjs";
+import { http } from "viem";
+import { baseSepolia, optimism, base, polygon, arbitrum } from "viem/chains";
+import { createMeeClient, toMultichainNexusAccount } from "@biconomy/abstractjs";
 import { useUserWallets } from "@dynamic-labs/sdk-react-core";
 import { useWalletClient } from "wagmi";
-
-const bundlerUrl = `https://bundler.biconomy.io/api/v3/84532/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44`
 
 const {
   data: walletClient
@@ -59,15 +57,18 @@ const smartAccountOwner = createWalletClient({
     transport: http("https://sepolia.base.org"),
 })
 
-const nexusClient: NexusClient = createSmartAccountClient({
-    chain: baseSepolia,
-    account: await toNexusAccount({
-        signer: smartAccountOwner,
-        chain: baseSepolia,
-        transport: http("https://sepolia.base.org"),
-    }),
-    transport: http(bundlerUrl),
-})
+// Create a multichain MEE client
+const meeClient = await createMeeClient({
+  account: await toMultichainNexusAccount({
+    chains: [optimism, base, polygon, arbitrum],
+    transports: [http(), http(), http(), http()],
+    signer: smartAccountOwner
+  }),
+  apiKey: "YOUR_MEE_API_KEY" // Optional for production use
+});
+
+// Now you can execute cross-chain transactions
+console.log("MEE Client ready for cross-chain operations with address:", meeClient.account.address);
 ```
 
 ::::

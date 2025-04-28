@@ -45,7 +45,7 @@ A `bundlerUrl` is required to submit User Operations to the Network, which will 
 
 ```typescript 
 import { privateKeyToAccount } from "viem/accounts";
-import { createSmartAccountClient, toNexusAccount } from "@biconomy/abstractjs"; // [!code focus]
+import { createBicoBundlerClient, toNexusAccount } from "@biconomy/abstractjs"; // [!code focus]
 import { baseSepolia } from "viem/chains"; // [!code focus]
 import { http, parseEther } from "viem"; // [!code focus]
 
@@ -53,7 +53,7 @@ const privateKey = "PRIVATE_KEY";
 const account = privateKeyToAccount(`0x${privateKey}`)
 const bundlerUrl = "https://bundler.biconomy.io/api/v3/84532/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44"; // [!code focus]
 
-const nexusClient = createSmartAccountClient({ // [!code focus]
+const nexusClient = createBicoBundlerClient({ // [!code focus]
   account: await toNexusAccount({ // [!code focus]
     signer: account, // [!code focus]
     chain: baseSepolia, // [!code focus]
@@ -64,7 +64,7 @@ const nexusClient = createSmartAccountClient({ // [!code focus]
 const smartAccountAddress = await nexusClient.account.address; // [!code focus]
 ```
 
-[See createSmartAccountClient Docs](/nexus-client)
+[See createBicoBundlerClient Docs](/sdk-reference/bundler-client)
 
 ### Send User Operation
 
@@ -76,7 +76,7 @@ Ensure your smart account has sufficient funds to execute the transaction below.
 
 ```typescript 
 import { privateKeyToAccount } from "viem/accounts";
-import { createSmartAccountClient, toNexusAccount } from "@biconomy/abstractjs";
+import { createBicoBundlerClient, toNexusAccount } from "@biconomy/abstractjs";
 import { baseSepolia } from "viem/chains"; 
 import { http, parseEther } from "viem"; 
 
@@ -84,7 +84,7 @@ const privateKey = "PRIVATE_KEY";
 const account = privateKeyToAccount(`0x${privateKey}`)
 const bundlerUrl = "https://bundler.biconomy.io/api/v3/84532/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44";
 
-const nexusClient = createSmartAccountClient({ 
+const nexusClient = createBicoBundlerClient({ 
   account: await toNexusAccount({ 
     signer: account, 
     chain: baseSepolia,
@@ -111,7 +111,7 @@ You can now view the transaction on the Base Sepolia explorer. By submitting thi
 - Executed a simple transaction using smart accounts.
 
 
-[See sendTransaction Docs](/nexus-client/methods#sendtransaction)
+[See sendTransaction Docs](/sdk-reference/bundler-client)
 
 ### Optional: Sponsor transaction
 

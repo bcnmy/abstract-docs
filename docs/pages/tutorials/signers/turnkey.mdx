@@ -13,7 +13,7 @@ Integrating Biconomy with Turnkey is simple once your project is set up. Turnkey
 ::::steps
 
 ### Create the `TurnkeyClient` and a `Turnkey viem account`
-After following the Turnkey documentation, you will have access to a TurnkeyClient. An example is shown below that you can pass as an owner to createSmartAccountClient:
+After following the Turnkey documentation, you will have access to a TurnkeyClient. An example is shown below that you can pass as an owner to createBicoBundlerClient:
 
 ```typescript 
 import { createWalletClient, http } from "viem";
@@ -43,20 +43,19 @@ main();
 
 ```
 
-### Create the Biconomy client
+### Create the MeeClient
 
-Next, use the Turnkey viem account to initialize the Biconomy Nexus Client:
+Next, use the Turnkey viem account to initialize the Biconomy MeeClient for multichain transactions:
 
 ```typescript 
 import { createWalletClient, http } from "viem";
-import { baseSepolia } from "viem/chains";
+import { baseSepolia, optimism, base, polygon, arbitrum } from "viem/chains";
 import { ApiKeyStamper } from "@turnkey/sdk-server";
 import { TurnkeyClient } from "@turnkey/http";
 import { createAccount } from "@turnkey/viem";
-import { createSmartAccountClient, NexusClient } from "@biconomy/abstractjs";  // [!code focus] 
+import { createMeeClient, toMultichainNexusAccount } from "@biconomy/abstractjs";  // [!code focus] 
 
 const main = async () => {
-    const bundlerUrl = `https://bundler.biconomy.io/api/v3/84532/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44`
     const apiPublicKey = '';
     const apiPrivateKey = '';
     const stamper = new ApiKeyStamper({ apiPublicKey, apiPrivateKey });
@@ -71,18 +70,19 @@ const main = async () => {
         signWith: signWith, 
     })
 
-    const nexusClient: NexusClient = createSmartAccountClient({
-        chain: baseSepolia,
-        account: await toNexusAccount({
-            signer: turnkeyAccount,
-            chain: baseSepolia,
-            transport: http("https://sepolia.base.org"),
-        }),
-        transport: http(bundlerUrl),
-    })
+    // Create a multichain MEE client
+    const meeClient = await createMeeClient({
+      account: await toMultichainNexusAccount({
+        chains: [optimism, base, polygon, arbitrum],
+        transports: [http(), http(), http(), http()],
+        signer: turnkeyAccount
+      }),
+      apiKey: "YOUR_MEE_API_KEY" // Optional for production use
+    });
 
+    // Now you can execute cross-chain transactions
+    console.log("MEE Client ready for cross-chain operations");
 }
 
 main();
-
 ```
