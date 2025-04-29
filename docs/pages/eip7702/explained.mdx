@@ -1,0 +1,49 @@
+# EIP-7702: A Technical Overview
+
+## What Is EIP-7702?
+
+EIP-7702 is an Ethereum Improvement Proposal that introduces a new transaction type allowing Externally Owned Accounts (EOAs) to delegate their execution to smart contracts. This protocol-level enhancement effectively gives traditional EOAs programmable capabilities without requiring users to migrate to entirely new wallet addresses.
+
+## The Problem It Solves
+
+The Ethereum ecosystem has long faced a fundamental divide in account types. Traditional user wallets (EOAs) offer simplicity but lack programmability, while smart contract accounts provide powerful features but require users to adopt entirely new addresses. Users have been forced to choose between keeping their established on-chain identity or gaining access to advanced functionality. Many users understandably resist migrating due to the fragmentation of their digital identity and the complexity involved.
+
+EIP-7702 bridges this gap by enabling EOAs to behave like smart accounts while maintaining their original addresses and established on-chain history.
+
+## How EIP-7702 Works
+
+At its core, EIP-7702 introduces a new transaction type that contains an "authorizations" field. When an EOA owner signs a special authorization message, the Ethereum protocol records this delegation at the network level. Future transactions to this EOA will then execute the delegated smart contract's code, while still maintaining the EOA as the `msg.sender` in these transactions.
+
+This approach differs fundamentally from proxy contracts because the delegation happens at the protocol level. There's no need to deploy separate contracts for each user, making the process significantly more gas-efficient and seamless from a user perspective.
+
+## Core Capabilities
+
+EIP-7702 transforms traditional EOAs by enabling three key enhancements:
+
+First, it enables transaction batching, allowing users to combine multiple operations into single atomic transactions. For instance, token approval and swap operations that previously required separate signatures can be executed in one go.
+
+Second, it opens the door to alternative gas payment mechanisms. Users could have transactions sponsored by applications, pay fees using ERC-20 tokens instead of ETH, or benefit from optimized transaction bundling services.
+
+Third, it introduces sophisticated permission management. Users can create specialized access keys with limited authority for specific applications, implement spending limits, or restrict certain functionality while preserving core account security.
+
+## Technical Limitations
+
+Despite its innovations, EIP-7702 has inherent constraints. The EOA's private key retains ultimate control and can override any delegation through a new signed transaction. This means that unlike true smart accounts, an EIP-7702 enhanced EOA cannot implement immutable security measures like true multi-signature requirements or irreversible time-locks.
+
+Additionally, delegations can be overwritten, making them less permanent than deployed smart accounts. The chain-specific nature of authorizations also presents challenges for multichain applications, as synchronizing delegation across networks remains complex.
+
+## Protocol-Level Integration
+
+What sets EIP-7702 apart from application-level solutions is its integration at the Ethereum protocol layer. This approach eliminates the need for per-user contract deployments, resulting in significant gas savings—approximately 12,500 gas per authorization compared to full smart account deployments that can cost over 500,000 gas.
+
+This native integration with Ethereum's transaction processing system ensures broad compatibility while maintaining security guarantees.
+
+## Future Impact
+
+EIP-7702 represents a foundational building block for the next evolution of Ethereum accounts. It enables dramatically lower-cost smart account deployment—up to 80% cheaper than current methods. When combined with complementary standards like ERC-7710, ERC-7715, and ERC-5792, it creates a powerful framework for more intuitive blockchain interactions.
+
+As the ecosystem matures, these technologies could ultimately enable intent-based transaction systems where users express what they want to accomplish rather than specifying exact transaction parameters.
+
+## Timeline
+
+The Ethereum community expects EIP-7702 implementation with the Pectra merge, projected for around April 2025.

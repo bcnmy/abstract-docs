@@ -1,77 +1,72 @@
-# Understanding the Smart EOA Stack
+# Smart EOAs
 
-Let's dive into how Biconomy transforms regular EOA wallets into powerful smart account-like instruments. At its heart, the Smart EOA Stack solves a crucial problem in web3: how to give EOA users advanced features without requiring them to change their wallets or migrate to new accounts.
+Previously, the only way to leverage smart account capabilities (batching, multichain orchestration, gasless experiences, 
+sessions, ...) was to desposit funds from an EOA to a smart account (SCA).
 
-## The Two Paths to Smart EOAs
+This created a friction point for users and fragmented their liquidity into multiple addresses. For this reason, the growth
+of the Smart Account solutions has never reached the levels of EOA accounts.
 
-Biconomy has developed two distinct approaches to enhance EOA capabilities, each serving different needs while maintaining security and user experience.
+## Combining the Best of Both Worlds
 
-## The Fusion Module: Instant Smart Account Features
+The Biconomy Smart EOA solution enables developers to build apps which offer the best of EOA wallets and the best of 
+Smart Account wallets. 
 
-Think of the Fusion Module as a bridge between the simplicity of EOAs and the power of smart accounts. When your users initiate a transaction through Fusion, 
-the MEE stack does work behind the scenes to make sure multiple instructions can be executed with a single signature.
+### 1. Smart Account benefits:
+- Multichain Orchestration support (single signature, multiple transactions across multiple chains)
+- Transaction batching support
+- Sponosring gas for user transactions
+- Paying for gas with ERC-20 tokens (even across chains)
 
-Instead of requiring users to upgrade their wallets or move to new accounts, Fusion employs an innovative "Companion Smart Account" architecture. When users sign a transaction, they're actually signing two things: the standard transaction data and a cryptographically secured set of additional instructions.
+### 2. EOA benefits
+- Preserving user transaction history
+- User assets all on one address (no fragmentation)
+- Account portability (users can export their account to different wallets)
 
-This dual-signature approach is what makes Fusion special - it enables features like:
-- Executing multiple transactions with a single signature
-- Moving assets across chains seamlessly
-- Triggering complex intent-based operations
-- Batching multiple operations together
+With Biconomy Smart EOAs - you *don't* have to choose.
 
-Most importantly, all of this happens without users ever needing to know about the underlying complexity. To them, it's just another transaction signature.
+### There are two core ways to use Smart EOAs:
 
-## EIP7702: The Future of EOA Evolution
+1. **Companion Accounts** <br/>
+Works with external wallets (MetaMask, Trust, Rabby, ...) and doesn't require EIP-7702 (but is fully compatible with EIP-7702) <br/> <br/>
+2. **Direct Delegation** <br/> 
+Works with embedded wallets (Privy, Dynamic, Web3Auth, Magic, ...). Requires both the wallet and the chain to support EIP-7702.
 
-While Fusion provides immediate smart account features, EIP7702 represents the future of EOA enhancement. This upcoming Ethereum standard enables wallets to natively upgrade EOAs to smart accounts, providing a foundation for permanent account enhancement.
+## Companion Accounts
 
-Think of EIP7702 as a transformation protocol. When a wallet implements EIP7702, they can offer their users:
-- Native gas abstraction capabilities
-- Built-in transaction sponsorship
-- Seamless batch execution
-- Automation through session keys
-- Cross-chain balance unification
-- Gas payment flexibility across chains
+The Biconomy approach to Smart EOAs for External Wallets (MetaMask, Rabby, Trust, ...) uses the *Companion Account* model! The Companion Account
+is a passthrough smart account deployed and owned by the application through which all user
+transactions are processed. The core difference of the Companion Account flow from traditional 
+account flows is that Companion Accounts *never* hold funds.
 
-The beauty of EIP7702 lies in its elegance - no new contracts need to be deployed. Instead, it uses a singleton smart account implementation, making the upgrade both gas-efficient and secure.
+The standard Companion Account flow is:
 
-## Working Together: The Power of Both Solutions
+1) Deposit required tokens into the Companion Account
+2) Process all the necessary transactions
+3) Return all resulting tokens/positions/assets back into the EOA
 
-What makes Biconomy's approach unique is that these solutions aren't mutually exclusive. Developers can implement both:
-- Use Fusion for immediate smart account features
-- Prepare for EIP7702 adoption as wallets implement it
+:::info[Single Signature Experience]
+This entire flow is executed with a *single* user signature. The user *never* explicitly deposits
+to the Companion account. In fact, the user doesn't even need to be aware of the existance of the
+companion account.
+:::
 
-This dual-implementation strategy ensures applications can serve both current needs and future possibilities. Users with traditional EOAs get advanced features through Fusion, while those with EIP7702-enabled wallets get native smart account capabilities.
+:::tip[Example]
+The user wishes to swap WETH to USDC, bridge the USDC to Arbitrum and supply it to AAVE on 
+Arbitrum.
 
-## The Development Experience
+1. WETH is deposited to the Companion Account
+2. The swap instruction is executed on the Companion Account
+3. The bridge function call is made on the Companion Account
+4. The `supply` function call is made to AAVE on Arbitrum on the Companion Account
+5. aUSDC tokens are transferred to the EOA
+<br/>
+All of this is a *single signature* for the user, directly from their EOA - without ever
+explicitly depositing to the Companion Account. 
+:::
 
-Biconomy has abstracted all this complexity into AbstractJS, making implementation straightforward for developers. Whether you're using Fusion or EIP7702, the SDK provides a clean, consistent interface for accessing these features.
+## Direct Delegation
 
-For instance, implementing Fusion features is as simple as creating an MEE client and executing a quote:
+In order to trigger the Smart EOA flow, the user must - in a single signature - sign *both*
+the "transfer funds to SCA" transaction _and_ the "execute required instructions" transaction.
 
-```typescript
 
-const { hash } = await meeClient.executeFusionQuote({
-  fusionQuote: await meeClient.getFusionQuote({
-    trigger: {
-      chainId: optimism.id,
-      tokenAddress: mcUSDC.addressOn(optimism.id),
-      amount: amountToSupply
-    },
-    instructions: [
-      mcNexus.build({ ... }),
-      mcNexus.build({ ... }),
-    ],
-    feeToken: {
-      address: mcUSDC.addressOn(optimism.id),
-      chainId: optimism.id
-    }
-  })
-});
-```
-
-## Looking Forward
-
-The Smart EOA Stack represents a crucial evolution in blockchain interaction. By providing both immediate solutions through Fusion and future-proof implementations through EIP7702, Biconomy ensures that applications can offer advanced features to all users, regardless of their wallet type or technical understanding.
-
-This approach embodies a core principle: enhancing blockchain capabilities shouldn't require users to change their existing setups or learn new concepts. Whether through the immediacy of Fusion or the native integration of EIP7702, the Smart EOA Stack makes advanced blockchain features accessible to everyone.

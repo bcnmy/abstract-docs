@@ -30,11 +30,24 @@ const instruction = await oNexus.buildComposable({
 ```
 
 Alternatively, if you only need to execute static `callData`, you can use the 
-`.build` helper.
+`.build` helper or the `.buildComposable` helper with the type `rawCallData`
 
 ```ts
 const instruction = await oNexus.build({
   type: 'default',
+  data: {
+    calls: [{
+      to: '0xTarget',
+      data: encodeFunctionData(...) // Here you can use any callData encoder
+    }],
+    chainId: optimism.id
+  }
+})
+```
+
+```ts
+const instruction = await oNexus.buildComposable({
+  type: 'rawCallData',
   data: {
     calls: [{
       to: '0xTarget',

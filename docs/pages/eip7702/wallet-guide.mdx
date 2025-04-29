@@ -1,4 +1,8 @@
-# EIP-7702 Overview
+# Using Biconomy Nexus (EIP-7702) with Embedded Wallets
+
+If you are using an embedded wallet provider (e.g. Privy, Dynamic, Web3Auth, Magic, ...) 
+you're able to *delegate* your EOA to a Biconomy Smart Account (this is not possible with 
+external wallets such as MetaMask, Rabby, ...).
 
 ## Why EIP-7702
 EIP-7702 is an upcoming upgrade to Ethereum and EVM blockchains which enables
@@ -7,29 +11,25 @@ wallets to convert the user EOA wallets into Smart Accounts
 With EIP-7702, wallets can drastically improve the UX for their users by offering smart
 account features, such as:
 
----
 
-**Gas Abstraction** <br/>
-The ability to pay for gas with ERC20 tokens
+* **Gas Abstraction** <br/>
+The ability to pay for gas with ERC20 tokens <br/> <br/>
 
----
 
-**Gas Sponsorship** <br/>
+* **Gas Sponsorship** <br/>
 Wallets can sponsor user gas onchain and offer their users a different way of paying for their
-transactions (e.g. prepaid, postpaid, ...)
+transactions (e.g. prepaid, postpaid, ...) <br/> <br/>
 
----
 
-**Batch Execution** <br/>
-The ability to batch execute transactions with a single signature
+* **Batch Execution** <br/>
+The ability to batch execute transactions with a single signature <br/> <br/>
 
----
 
-**Enable Automation** <br/>
+* **Enable Automation** <br/>
 Wallets can install (or enable apps to install) Session Keys on accounts, which provide a
 safe way to automate wallet actions. Session keys provide guardrails, meaning that the Session Key
 signer can only execute the exact transactions approved by the wallet/user. This can include enabling
-dollar cost averaging, TWAP selling, yield rebalancing, ...
+dollar cost averaging, TWAP selling, yield rebalancing, ... <br/> <br/>
 
 
 ## The Most Comprehensive EIP-7702 Solutions Suite
@@ -38,26 +38,20 @@ At Biconomy, we have built the most comprehensive EIP-7702 solution on the marke
 wallets to add all of the above mentioned features, as well as many advanced - Biconomy 
 stack specific features:
 
-**Unified User Balances** <br/>
+* **Unified User Balances** <br/>
 Wallets can present apps with a _Unified Multichain Balance_. The app can then "pull" the 
 funds they need to the chain of their choosing. Wallets can work with solvers and bridges
-to provide this liquidity.
+to provide this liquidity. <br/> <br/>
 
---- 
-
-**Cross-Chain Gas Abstraction** <br/>
+* **Cross-Chain Gas Abstraction** <br/>
 Wallets can enable users to pay for gas with native or ERC20 tokens across chains. E.g. a
-user can pay for a transaction on Base with USDC or ETH on Arbitrum.
+user can pay for a transaction on Base with USDC or ETH on Arbitrum. <br/> <br/>
 
---- 
 
-**Native Scheduling and Automation** <br/>
+* **Native Scheduling and Automation** <br/>
 The Biconomy MEE Nodes can commit to execute a transaction at some point in the future or to
 execute a series of transactions in some time period. For Biconomy integrators, this is available
-without installing a separate module.
-
---- 
-
+without installing a separate module. <br/> <br/>
 
 :::info
 If you're a wallet team looking for an EIP-7702 strategy - [Contact Us](https://calendly.com/balaghi)
@@ -73,93 +67,64 @@ Install `AbstractJS` TypeScript SDK and viem
 npm install @biconomy/abstractjs viem @rhinestone/module-sdk@0.2.7
 ```
 
-#### Sign a wallet authorization
-In order add Smart Account capabilities to an EOA account, you must sign an authorization specifying which
-Smart Account address will be "installed" on the EOA address. In order to save on gas costs, you will be setting
-the authorization to a singleton contract - which means that no new contracts will need to be deployed.  
+#### Override the Smart Account Address
 
+In order to create an EIP-7702 enabled wallet, you need to implement just one small change to the initialization 
+process. When initializing your Nexus account instance, you need to _override_ the `accountAddress` paramter to the 
+address of your embbeded wallet EOA.
 
 ```ts
-// This is the address of the EOA to which 
-// address we'll be "installing" the smart account to.
-const eoa = privateKeyToAccount('0xPrivateKey')
+// Function which initializes your embedded wallets. For this, check the tutorials
+// from the embedded wallet providers themselves. This function should result in a
+// signer object.
+const embeddedWalletEOA = initializeEmbeddedWallet()
 
-// Create an instance of a viem wallet client and extend it with the 
-// required EIP-7702 actions.
-const walletClient = createWalletClient({
-  chain: odysseyTestnet,
-  account: eoa,
-  transport: http(),
-}).extend(EIP-7702Actions())
+// The multichain Nexus account 
+const mcNexus = await toMultichainNexusAccount({
 
-const authorization = await walletClient.signAuthorization({
-  // Address of the Nexus Proxy Singleton
-  contractAddress: nexusProxyAddress 
-})
+  // Make sure that the chains here are actually EIP-7702 enabled
+  chains: [sepolia],
+  transports: [http(), http(), http()],
+  signer: embeddedWalletEOA,
+
+  // Overriding the account address parameter here! You *must* set
+  // this paramter to the EOA address in order to enable EIP-7702
+  accountAddress: embeddedWalletEOA.address
+}) 
 ```
 
-#### Choose your execution environment
+:::info
+To check which chains have EIP-7702 enabled, check our information on 
+[Supported Networks](/supportedNetworks)
+:::
 
-With `AbstractJS` and the Biconomy stack, developers can choose whether to 
-push transactions through our battle-tested [ERC4337 Bundler/Paymaster stack](/explained/bundlers-paymasters) *or*
-through our innovative multi-chain [MEE Stack](/explained/mee)
+#### Execute with MEE
+
+After you have delegated your EOA to a Nexus Account with the EIP-7702 delegation, you're able to use
+the full feature-set of Multichain Orchestration, Smart Sessions and Gas Abstraction APIs. The only difference
+from the regular execution flow is that you have to set the `delegate` field to `true`!
+
+:::info
+Delegations are set just-in-time, which means that they're sent with the first useful transaction! The Biconomy
+stack signs delegations with `chainId` paramter set to `0` - which means they can get replayed on all chains.
+:::
+
+```ts
+const eip7702TxResult = await meeClient.execute({
+  feeToken: toFeeToken({
+    chainId: optimism.id,
+    mcToken: mcUSDC
+  }),
+  instructions: [ ], // Supertransaction instructions
+
+  // This enables the EIP-7702 Flow
+  delegate: true
+})
+```
 ::::
 
-{/* ## Execute through the ERC4337 Bundler/Paymaster Stack
-
-
-
-## Execute through the MEE Stack
-
-::::steps
-#### Follow tutorial
-
-Follow all the instructions for authorizing Nexus as your Smart Account at
-the beginning of this tutorial.
-
-#### Initialize the Modular Execution Environment
-
-```ts
-const meeClient = await createMeeClient({
-  nodeUrl: 'https://mee-node.biconomy.io'
-})
-```
-
-#### Set up the Smart Account
-Initialize the Smart Account you will be using for delegation. In this case, we'll
-be using Biconomy Nexus.
-
-```ts
-const account = await toMultichainNexusAccount({
-  chains: [odysseyTestnet],
-  transports: [http()],
-  signer: eoa,
-  // Override the address of the account to the EOA address
-  accountAddress: eoa.address
-})
-```
-
-#### Execute a Supertransaction
-
-```ts
-const quote = await getQuote(meeClient, {
-  instructions: [
-    {
-      calls: [
-        { to: zeroAddress, value: 0n }
-      ],
-      chainId: optimism.id
-    }
-  ],
-  feeToken: mcUSDC.on(optimism.id)
-})
-
-const hash = await executeQuote(meeSerivice, quote)
-```
-
-::::
-
- */}
+From this guide you can see that adding EIP-7702 to your flows is as easy as overriding 
+two properties in the standard MEE execution flow.
 
 
 
