@@ -476,6 +476,7 @@ export default defineConfig({
 				{ text: 'Developer Guides', items: [
 					{ text: 'Smart EOAs for External Wallets', link: '/mee/fusion'},
 					{ text: 'EIP-7702 for Embedded Wallets', link: '/eip7702/wallet-guide'},
+					{ text: 'MetaMask Delegator Framework', link: '/smarteoa/delegator' }
 				]}
 					]
 		},
