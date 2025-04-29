@@ -47,19 +47,41 @@ import {
   PaymasterMode
 } from "@biconomy/account";
 
+// Define configuration variables
+const config = {
+  // Chain and network information
+  chain: base,
+  
+  // EOA credentials
+  eoaPrivateKey: "YOUR_PRIVATE_KEY", // Replace with your private key
+  eoaAddress: "YOUR_EOA_ADDRESS", // Replace with your EOA address
+  
+  // Biconomy infrastructure URLs
+  v2BundlerUrl: "YOUR_V2_BUNDLER_URL", // Replace with your V2 bundler URL
+  nexusBundlerUrl: "YOUR_NEXUS_BUNDLER_URL", // Replace with your Nexus bundler URL
+  
+  // API keys
+  paymasterApiKey: "YOUR_PAYMASTER_API_KEY", // Replace with your Paymaster API key
+  
+  // Nexus contract addresses
+  nexusImplementationAddress: "0x000000008761E87F023f65c49DC9cb1C7EdFEaaf",
+  nexusBootstrapAddress: "0x000000F5b753Fdd20C5CA2D7c1210b3Ab1EA5903",
+  emptyHookAddress: "0x0000000000000000000000000000000000000001"
+};
+
 // Connect to your EOA
-const eoaAccount = privateKeyToAccount("0x" + process.env.USER_EOA_PRIVATE_KEY);
+const eoaAccount = privateKeyToAccount("0x" + config.eoaPrivateKey);
 const client = createWalletClient({
   account: eoaAccount,
-  chain: base,
+  chain: config.chain,
   transport: http(),
 });
 
 // Connect to your V2 smart account
 const V2Account = await createV2Client({
   signer: client,
-  biconomyPaymasterApiKey: process.env.BICONOMY_PAYMASTER_API_KEY,
-  bundlerUrl: process.env.BICONOMY_INFRA_V2_BUNDLER_URL,
+  biconomyPaymasterApiKey: config.paymasterApiKey,
+  bundlerUrl: config.v2BundlerUrl,
 });
 
 // Get V2 account address
@@ -120,7 +142,7 @@ async function migrateToNexus(V2Account) {
       }
     ],
     functionName: "updateImplementation",
-    args: [process.env.BICONOMY_NEXUS_IMPLEMENTATION_ADDRESS],
+    args: [config.nexusImplementationAddress],
   });
   
   const updateImplementationTransaction = {
@@ -130,36 +152,63 @@ async function migrateToNexus(V2Account) {
   
   // Step 2: Initialize Nexus Account
   console.log("Preparing initialize Nexus account...");
-  const ownerAddress = process.env.USER_EOA_ADDRESS;
+  const ownerAddress = config.eoaAddress;
   
   // Prepare initialization data for the validator
   const initData = encodeFunctionData({
     abi: [
       {
-        name: "initNexusWithSingleValidator",
+        name: "initNexusWithDefaultValidatorAndOtherModulesNoRegistry",
         type: "function",
         stateMutability: "nonpayable",
         inputs: [
-          { type: "address", name: "validatorModule" },
-          { type: "address", name: "owner" },
-          { type: "address", name: "registry" },
-          { type: "address[]", name: "attesters" },
-          { type: "uint256", name: "threshold" }
+          { type: "bytes", name: "defaultValidatorData" },
+          { type: "tuple[]", name: "validators", components: [
+            { type: "address", name: "module" },
+            { type: "bytes", name: "data" }
+          ]},
+          { type: "tuple[]", name: "executors", components: [
+            { type: "address", name: "module" },
+            { type: "bytes", name: "data" }
+          ]},
+          { type: "tuple", name: "hook", components: [
+            { type: "address", name: "module" },
+            { type: "bytes", name: "data" }
+          ]},
+          { type: "tuple[]", name: "fallbacks", components: [
+            { type: "address", name: "module" },
+            { type: "bytes", name: "data" }
+          ]},
+          { type: "tuple[]", name: "prevalidationHooks", components: [
+            { type: "address", name: "module" },
+            { type: "bytes", name: "data" },
+            { type: "uint256", name: "hookType" }
+          ]}
         ],
         outputs: []
       }
     ],
-    functionName: "initNexusWithSingleValidator",
+    functionName: "initNexusWithDefaultValidatorAndOtherModulesNoRegistry",
     args: [
-      process.env.BICONOMY_NEXUS_K1_VALIDATOR_MODULE_ADDRESS,
-      ownerAddress,
-      process.env.BICONOMY_REGISTRY_ADDRESS,
-      [
-        process.env.RHINESTONE_ATTESTER_ADDRESS,
-        process.env.BICONOMY_ATTESTER_ADDRESS,
-      ],
-      1,
-    ],
+      encodeFunctionData({
+        abi: [
+          {
+            name: "initialize",
+            type: "function",
+            stateMutability: "nonpayable",
+            inputs: [{ type: "address", name: "owner" }],
+            outputs: []
+          }
+        ],
+        functionName: "initialize",
+        args: [ownerAddress]
+      }),
+      [], // validators
+      [], // executors
+      { module: config.emptyHookAddress, data: "0x" }, // hook
+      [], // fallbacks
+      [] // prevalidationHooks
+    ]
   });
   
   // Encode bootstrap data
@@ -168,7 +217,7 @@ async function migrateToNexus(V2Account) {
       { name: "bootstrap", type: "address" },
       { name: "initData", type: "bytes" },
     ],
-    [process.env.BICONOMY_NEXUS_BOOTSTRAP_ADDRESS, initData]
+    [config.nexusBootstrapAddress, initData]
   );
   
   // Create initializeAccount calldata
@@ -218,17 +267,17 @@ import { parseEther } from "viem";
 
 async function testMigratedAccount(accountAddress) {
   // Connect to the migrated account using Nexus SDK
-  const eoaAccount = privateKeyToAccount("0x" + process.env.USER_EOA_PRIVATE_KEY);
+  const eoaAccount = privateKeyToAccount("0x" + config.eoaPrivateKey);
   
   const nexusAccount = createBicoBundlerClient({
     account: await toNexusAccount({
       signer: eoaAccount,
-      chain: base,
+      chain: config.chain,
       transport: http(),
       // IMPORTANT: Use the same address as your V2 account
       accountAddress: accountAddress,
     }),
-    transport: http(process.env.BICONOMY_INFRA_NEXUS_BUNDLER_URL),
+    transport: http(config.nexusBundlerUrl),
   });
   
   console.log("Testing migrated account...");
@@ -236,7 +285,7 @@ async function testMigratedAccount(accountAddress) {
   // Send a test transaction
   const testHash = await nexusAccount.sendUserOperation({
     calls: [{
-      to: process.env.USER_EOA_ADDRESS,
+      to: config.eoaAddress,
       value: parseEther("0.000001"),
     }],
   });
@@ -286,25 +335,44 @@ import {
 } from "@biconomy/account";
 import { createBicoBundlerClient, toNexusAccount } from "@biconomy/abstractjs";
 
-// Load environment variables (using dotenv or similar)
-// Ensure all the required environment variables are set
+// Define configuration variables
+const config = {
+  // Chain and network information
+  chain: base,
+  
+  // EOA credentials
+  eoaPrivateKey: "YOUR_PRIVATE_KEY", // Replace with your private key
+  eoaAddress: "YOUR_EOA_ADDRESS", // Replace with your EOA address
+  
+  // Biconomy infrastructure URLs
+  v2BundlerUrl: "YOUR_V2_BUNDLER_URL", // Replace with your V2 bundler URL
+  nexusBundlerUrl: "YOUR_NEXUS_BUNDLER_URL", // Replace with your Nexus bundler URL
+  
+  // API keys
+  paymasterApiKey: "YOUR_PAYMASTER_API_KEY", // Replace with your Paymaster API key
+  
+  // Nexus contract addresses
+  nexusImplementationAddress: "0x000000008761E87F023f65c49DC9cb1C7EdFEaaf",
+  nexusBootstrapAddress: "0x000000F5b753Fdd20C5CA2D7c1210b3Ab1EA5903",
+  emptyHookAddress: "0x0000000000000000000000000000000000000001"
+};
 
 async function main() {
   try {
     // Step 1: Get V2 Account
     console.log("\nStep 1: Getting V2 account address...");
     
-    const eoaAccount = privateKeyToAccount("0x" + process.env.USER_EOA_PRIVATE_KEY);
+    const eoaAccount = privateKeyToAccount("0x" + config.eoaPrivateKey);
     const client = createWalletClient({
       account: eoaAccount,
-      chain: base,
+      chain: config.chain,
       transport: http(),
     });
     
     const V2Account = await createV2Client({
       signer: client,
-      biconomyPaymasterApiKey: process.env.BICONOMY_PAYMASTER_API_KEY,
-      bundlerUrl: process.env.BICONOMY_INFRA_V2_BUNDLER_URL,
+      biconomyPaymasterApiKey: config.paymasterApiKey,
+      bundlerUrl: config.v2BundlerUrl,
     });
     
     const V2AccountAddress = await V2Account.getAccountAddress();
@@ -345,7 +413,7 @@ async function main() {
         }
       ],
       functionName: "updateImplementation",
-      args: [process.env.BICONOMY_NEXUS_IMPLEMENTATION_ADDRESS],
+      args: [config.nexusImplementationAddress],
     });
     
     const updateImplementationTransaction = {
@@ -354,36 +422,63 @@ async function main() {
     };
     
     // Initialize Nexus Account
-    const ownerAddress = process.env.USER_EOA_ADDRESS;
+    const ownerAddress = config.eoaAddress;
     
     // Prepare initialization data for the validator
     const initData = encodeFunctionData({
       abi: [
         {
-          name: "initNexusWithSingleValidator",
+          name: "initNexusWithDefaultValidatorAndOtherModulesNoRegistry",
           type: "function",
           stateMutability: "nonpayable",
           inputs: [
-            { type: "address", name: "validatorModule" },
-            { type: "address", name: "owner" },
-            { type: "address", name: "registry" },
-            { type: "address[]", name: "attesters" },
-            { type: "uint256", name: "threshold" }
+            { type: "bytes", name: "defaultValidatorData" },
+            { type: "tuple[]", name: "validators", components: [
+              { type: "address", name: "module" },
+              { type: "bytes", name: "data" }
+            ]},
+            { type: "tuple[]", name: "executors", components: [
+              { type: "address", name: "module" },
+              { type: "bytes", name: "data" }
+            ]},
+            { type: "tuple", name: "hook", components: [
+              { type: "address", name: "module" },
+              { type: "bytes", name: "data" }
+            ]},
+            { type: "tuple[]", name: "fallbacks", components: [
+              { type: "address", name: "module" },
+              { type: "bytes", name: "data" }
+            ]},
+            { type: "tuple[]", name: "prevalidationHooks", components: [
+              { type: "address", name: "module" },
+              { type: "bytes", name: "data" },
+              { type: "uint256", name: "hookType" }
+            ]}
           ],
           outputs: []
         }
       ],
-      functionName: "initNexusWithSingleValidator",
+      functionName: "initNexusWithDefaultValidatorAndOtherModulesNoRegistry",
       args: [
-        process.env.BICONOMY_NEXUS_K1_VALIDATOR_MODULE_ADDRESS,
-        ownerAddress,
-        process.env.BICONOMY_REGISTRY_ADDRESS,
-        [
-          process.env.RHINESTONE_ATTESTER_ADDRESS,
-          process.env.BICONOMY_ATTESTER_ADDRESS,
-        ],
-        1,
-      ],
+        encodeFunctionData({
+          abi: [
+            {
+              name: "initialize",
+              type: "function",
+              stateMutability: "nonpayable",
+              inputs: [{ type: "address", name: "owner" }],
+              outputs: []
+            }
+          ],
+          functionName: "initialize",
+          args: [ownerAddress]
+        }),
+        [], // validators
+        [], // executors
+        { module: config.emptyHookAddress, data: "0x" }, // hook
+        [], // fallbacks
+        [] // prevalidationHooks
+      ]
     });
     
     // Encode bootstrap data
@@ -392,7 +487,7 @@ async function main() {
         { name: "bootstrap", type: "address" },
         { name: "initData", type: "bytes" },
       ],
-      [process.env.BICONOMY_NEXUS_BOOTSTRAP_ADDRESS, initData]
+      [config.nexusBootstrapAddress, initData]
     );
     
     // Create initializeAccount calldata
@@ -434,18 +529,18 @@ async function main() {
     const nexusAccount = createBicoBundlerClient({
       account: await toNexusAccount({
         signer: eoaAccount,
-        chain: base,
+        chain: config.chain,
         transport: http(),
         // IMPORTANT: Use the same address as the V2 account
         accountAddress: V2AccountAddress,
       }),
-      transport: http(process.env.BICONOMY_INFRA_NEXUS_BUNDLER_URL),
+      transport: http(config.nexusBundlerUrl),
     });
     
     // Send a test transaction
     const testHash = await nexusAccount.sendUserOperation({
       calls: [{
-        to: process.env.USER_EOA_ADDRESS,
+        to: config.eoaAddress,
         value: parseEther("0.000001"),
       }],
     });
@@ -463,27 +558,31 @@ async function main() {
 main().catch(console.error);
 ```
 
-## Required Environment Variables
+## Required Configuration
 
-For the migration script to work, you'll need to set up the following environment variables:
+For the migration script to work, you'll need to set up the following configuration variables:
 
-```
-# USER
-USER_EOA_PRIVATE_KEY=your_private_key
-USER_EOA_ADDRESS=your_eoa_address
-
-# BICONOMY
-BICONOMY_INFRA_V2_BUNDLER_URL=https://bundler.biconomy.io/api/v2/8453/...
-BICONOMY_INFRA_NEXUS_BUNDLER_URL=https://bundler.biconomy.io/api/v3/8453/...
-BICONOMY_PAYMASTER_API_KEY=your_paymaster_api_key
-BICONOMY_NEXUS_IMPLEMENTATION_ADDRESS=0x000000008761E87F023f65c49DC9cb1C7EdFEaaf
-BICONOMY_NEXUS_K1_VALIDATOR_MODULE_ADDRESS=0x0000002D6DB27c52E3C11c1Cf24072004AC75cBa
-BICONOMY_NEXUS_BOOTSTRAP_ADDRESS=0x000000F5b753Fdd20C5CA2D7c1210b3Ab1EA5903
-BICONOMY_REGISTRY_ADDRESS=0x000000000069E2a187AEFFb852bF3cCdC95151B2
-BICONOMY_ATTESTER_ADDRESS=0xF9ff902Cdde729b47A4cDB55EF16DF3683a04EAB
-
-# RHINESTONE
-RHINESTONE_ATTESTER_ADDRESS=0x000000333034E9f539ce08819E12c1b8Cb29084d
+```javascript
+const config = {
+  // Chain and network information
+  chain: base, // or your preferred chain
+  
+  // EOA credentials
+  eoaPrivateKey: "YOUR_PRIVATE_KEY", // Replace with your private key
+  eoaAddress: "YOUR_EOA_ADDRESS", // Replace with your EOA address
+  
+  // Biconomy infrastructure URLs
+  v2BundlerUrl: "YOUR_V2_BUNDLER_URL", // Replace with your V2 bundler URL
+  nexusBundlerUrl: "YOUR_NEXUS_BUNDLER_URL", // Replace with your Nexus bundler URL
+  
+  // API keys
+  paymasterApiKey: "YOUR_PAYMASTER_API_KEY", // Replace with your Paymaster API key
+  
+  // Nexus contract addresses - These are standard addresses that shouldn't need to change
+  nexusImplementationAddress: "0x000000004F43C49e93C970E84001853a70923B03",
+  nexusBootstrapAddress: "0x00000000D3254452a909E4eeD47455Af7E27C289",
+  emptyHookAddress: "0x0000000000000000000000000000000000000000"
+};
 ```
 
 ## Troubleshooting
