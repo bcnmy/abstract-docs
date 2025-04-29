@@ -1,8 +1,8 @@
-# Using Biconomy Nexus (EIP-7702) with Embedded Wallets
+# For dApps using Embedded Wallets
 
 If you are using an embedded wallet provider (e.g. Privy, Dynamic, Web3Auth, Magic, ...) 
 you're able to *delegate* your EOA to a Biconomy Smart Account (this is not possible with 
-external wallets such as MetaMask, Rabby, ...).
+external wallets such as MetaMask, Rabby, etc... - for those, use [Companion Account](/smarteoa/companion-explained) based execution)
 
 ## Why EIP-7702
 EIP-7702 is an upcoming upgrade to Ethereum and EVM blockchains which enables
@@ -111,10 +111,10 @@ stack signs delegations with `chainId` paramter set to `0` - which means they ca
 
 ```ts
 const eip7702TxResult = await meeClient.execute({
-  feeToken: toFeeToken({
-    chainId: optimism.id,
-    mcToken: mcUSDC
-  }),
+  feeToken: {
+    chainId: sepolia.id, // Pay for gas on Sepolia
+    address: zeroAddress // Native token (ETH)
+  },
   instructions: [ ], // Supertransaction instructions
 
   // This enables the EIP-7702 Flow

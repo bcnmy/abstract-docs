@@ -1,45 +1,36 @@
-# Use EOAs Like Smart Accounts
+# For dApps Using External Wallets
 
-Biconomy has developed a unique solution on the market enabling developers
-to **batch execute transactions**, execute **cross-chain transactions** and **trigger intents**
-for users with EOAs **without upgrading them to smart wallets**
-
-This feature is available for regular users with EOA wallets (such as MetaMask) - without any
-protocol upgrades and without moving users to Smart Accounts. Instant onboarding, zero compromises.
-
-If you want to know how the Fusion Module works under the hood, [read the technical explanation](#advanced-how-does-the-fusion-module-work)
-
-:::tip[Read about our Research]
-If you want to learn how the Fusion Module works under the hood, read the [explanation](#advanced-how-does-the-fusion-module-work)
-
----
-
-To get an in-depth overview of the Fusion architecture, read our post on [Ethereum Research](https://ethresear.ch/t/fusion-module-7702-alternative-with-no-protocol-changes/20949)
-
-:::
-
-:::info[Fusion and EIP7702]
-Fusion Module is **100%** compatible with EIP7702 accounts. In fact, we recommend using the Fusion Module
-as the ideal solution for apps interacting with both regular and EIP7702 enabled EOAs!
-
----
-
-Since *only wallets* will be able to upgrade users to EIP7702 accounts, the developers will be limited by the 
-features provided by the wallets. These will primarily include gasless execution and batch transactions. Additionally - Most
-apps will have a blend of users with and without EIP7702 enabled wallets. 
-
-The `executeFusionTransaction` function in the `AbstractJS` SDK will be able to intelligently switch between using
-EIP7702 execution and regular EOA execution. This means that apps using the Fusion module will get:
-
-- Same codebase for both EIP7702 enabled and regular EOA users!
-- Additional features offered by Smart Accounts (cross-chain gas sharing, smart sessions, resource locks, ...)
-:::
+If you're building an application which expects users to connect with 
+external/extension wallets such as MetaMask, Rabby, Trust or through
+WalletConnect - this is the approach to take to enable a lot of the 
+Smart EOA functionality.
 
 ## Single Signature Approve + Execute for EOAs
 One of the biggest pain points of using EOAs is the requirement to sign two separate transactions `approve` and `execute`, 
 when interacting with a smart contract. Here, we will demonstrate how to supply to AAVE - a transaction which would
 usually require two signatures - with just one signature from the user:
 
+:::info[EIP-7702 Support]
+As of writing this documentation, there are no wallets which support
+accesing their smart accounts. There are multiple standards being developed
+to enable this and Biconomy has working support for the MetaMask Delegator
+framework and we're working on support for using ERC-7715.
+
+[Contact Us](https://t.me/pitonivan) if you need to use one of the wallet
+frameworks and/or ERC-7715.
+
+The following tutorial applies to _all_ EOA wallets, even ones without 
+EIP-7702 support.
+:::
+
+### Fusion Execution
+
+Fusion Execution is the Biconomy name for a backwards compatible method
+of enabling smart account features on EOA wallets. It's 100% compatible
+with future EIP-7702 upgrades, but also works with legacy wallets and on
+chains which haven't merged EIP-7702.
+
+## Using Fusion Execution
 ::::steps
 #### Define an Amount to be Used by the Fusion Transaction
 

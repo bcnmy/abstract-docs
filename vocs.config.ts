@@ -474,8 +474,8 @@ export default defineConfig({
 					{ text: 'Companion Accounts Explained', link: '/smarteoa/companion-explained'},	
 				]},
 				{ text: 'Developer Guides', items: [
-					{ text: 'Smart EOAs for External Wallets', link: '/mee/fusion'},
-					{ text: 'EIP-7702 for Embedded Wallets', link: '/eip7702/wallet-guide'},
+					{ text: 'dApps using External Wallets', link: '/mee/fusion'},
+					{ text: 'dApps using Embedded Wallets', link: '/eip7702/wallet-guide'},
 					{ text: 'MetaMask Delegator Framework', link: '/smarteoa/delegator' }
 				]}
 					]
