@@ -119,7 +119,7 @@ To track the execution of the additional instructions - you can use the [Biconom
 
 ![Fusion Flow](https://i.imgur.com/dVUmznn.png)
 Fusion transactions work by employing a Companion Smart Account. This account is invisible to the user
-and is used by the Biconomy MEE Node] to execute an arbitrary number of transactions, intents and
+and is used by the Biconomy MEE Node to execute an arbitrary number of transactions, intents and
 cross-chain operations. 
 
 It achieves this by employing the _Fusion Packing Scheme_ which puts the hash of additional instructions 
@@ -129,7 +129,7 @@ contract and the EVM transaction is executed normally.
 This first operation in a Fusion transaction is usually a simple `transfer` function which transfers the necessary
 amount of an `ERC20` token to the Companion Account. When the user signs this transaction they are also signing the
 hash which was appended after the regular `callData`. AbstractJS then sends all of the 
-instructions which need to be executed on the Companion account to the The Biconomy [MEE Node](/explained/mee). 
+instructions which need to be executed on the Companion account to the The Biconomy MEE Node. 
 
 After the `ERC20` token arrives to the Companion account, The MEE Node then calls the `execute` function
 on the Companion smart account to execute additional instructions. The Companion account will not allow any 
