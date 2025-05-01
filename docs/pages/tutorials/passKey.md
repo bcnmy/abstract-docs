@@ -35,7 +35,7 @@ NEXT_PUBLIC_PAYMASTER_URL=your_paymaster_url
 #### Create Nexus Client
 
 ```typescript "
-import { createSmartAccountClient, createBicoPaymasterClient, toNexusAccount } from "@biconomy/abstractjs";
+import { createBicoBundlerClient, createBicoPaymasterClient, toNexusAccount } from "@biconomy/abstractjs";
 import { baseSepolia } from "wagmi/chains";
 import { http, useAccount, useWalletClient } from "wagmi";
 
@@ -44,7 +44,7 @@ const { data: walletClient } = useWalletClient({ account: account.address });
 
 async function initNexusClient() {
   if (walletClient) {
-    const nexusClient = createSmartAccountClient({
+    const nexusClient = createBicoBundlerClient({
       account: await toNexusAccount({
         signer: walletClient,
         chain: baseSepolia, // or your preferred chain
@@ -150,7 +150,7 @@ async function installPasskeyValidator(
 
 ```typescript
 import {
-  createSmartAccountClient,
+  createBicoBundlerClient,
   createBicoPaymasterClient,
   type Module,
   type NexusClient,
@@ -192,7 +192,7 @@ async function sendTransactionWithPasskey(
 import {
   type NexusClient,
   type Module,
-  createSmartAccountClient,
+  createBicoBundlerClient,
   moduleActivator,
 } from "@biconomy/abstractjs";
 

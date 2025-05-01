@@ -37,7 +37,7 @@ declare module "@biconomy/sdk-canary" {
 }
 
 import { OneOf, Address, Hex, http } from "viem"
-import { ActionPolicyInfo, CreateSessionDataParams, toSmartSessionsValidator, smartSessionCreateActions, createSmartAccountClient, toNexusAccount } from "@biconomy/sdk-canary"
+import { ActionPolicyInfo, CreateSessionDataParams, toSmartSessionsValidator, smartSessionCreateActions, createBicoBundlerClient, toNexusAccount } from "@biconomy/sdk-canary"
 import { privateKeyToAccount } from "viem/accounts";
 import { baseSepolia } from "viem/chains"; 
 
@@ -45,7 +45,7 @@ const privateKey = "PRIVATE_KEY";
 const account = privateKeyToAccount(`0x${privateKey}`)
 const bundlerUrl = "https://bundler.biconomy.io/api/v3/84532/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44"; 
 
-export const nexusClient = createSmartAccountClient({
+export const nexusClient = createBicoBundlerClient({
   account: await toNexusAccount({ 
     signer: account, 
     chain: baseSepolia,

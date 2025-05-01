@@ -9,7 +9,7 @@ First, import the necessary dependencies and set up 2 Nexus accounts
 ```typescript
 import { createWalletClient, http, encodePacked } from "viem";
 import { baseSepolia } from "viem/chains";
-import { createSmartAccountClient, createOwnableExecutorModule } from "@biconomy/account";
+import { createBicoBundlerClient, createOwnableExecutorModule } from "@biconomy/account";
 
 const bobWalletClient = createWalletClient({
   bobAccount,
@@ -22,11 +22,11 @@ const aliceWalletClient = createWalletClient({
   transport: http()
 });
 
-const bobSmartAccount = createSmartAccountClient({
+const bobSmartAccount = createBicoBundlerClient({
   signer: bobWalletClient,
   bundlerUrl: "https://bundler.biconomy.io/api/v2/...", // Your bundler URL
 });
-const aliceSmartAccount = createSmartAccountClient({
+const aliceSmartAccount = createBicoBundlerClient({
   signer: aliceWalletClient,
   bundlerUrl: "https://bundler.biconomy.io/api/v2/...", // Your bundler URL
 });

@@ -7,7 +7,7 @@ After permissions have been granted, validators can redeem them to execute trans
 ```typescript
 import { 
   toNexusAccount,
-  createSmartAccountClient,
+  createBicoBundlerClient,
   smartSessionActions
 } from '@biconomy/abstractjs';
 import { http } from 'viem';
@@ -24,7 +24,7 @@ const emulatedAccount = await toNexusAccount({
 });
 
 // Create a client for the emulated account
-const emulatedClient = createSmartAccountClient({
+const emulatedClient = createBicoBundlerClient({
   account: emulatedAccount,
   transport: http(bundlerUrl),
   mock: true // Set to false in production
