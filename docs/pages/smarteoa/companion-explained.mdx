@@ -1,0 +1,85 @@
+# Companion Accounts
+
+Companion accounts are fully featured smart accounts which are invisible to the user. They act as passthrough accounts through a following sequence:
+
+1. The user assets are transferred from their EOA to the Companion Account
+2. The companion account processes all the operations set by the application developer. This can include multiple function calls across one or more chains or installing session keys.
+3. The resulting funds are returned back to the EOA account, making the Companion Account completely invisible to the user.
+
+### Single Signature
+
+What differentiates the Companion Account flow from usual Smart Account flows is the fact that all of this is achieved with a single user signature. By doing it this way, the experience is truly seamless for the user - making it feel as if their EOA got additional powers.
+
+## Using Companion Accounts with EIP-7702
+
+Companion accounts interplay amazingly with EIP-7702 standards being implemented by 
+external wallet providers (e.g. MetaMask). 
+
+At Biconomy we currently have a _live demo_ which leverages the MetaMask Delegator 
+framework with Companion Accounts to enable multi-chain orchestration, smart sessions, 
+gasless transactions and more - for any app!
+
+[Reach Out](https://t.me/pitonivan) to our team to set up a MetaMask Delegator enabled 
+flow for your app!
+
+## With Fusion Execution (For Non-7702 Users, Maximum Backwards Compatibility)
+
+At Biconomy, we've managed to make the Smart EOA flow fully backwards compatible with all EOA accounts - including those where the wallets or chains aren't compatible with EIP-7702! We call this functionality - Fusion Execution.
+
+Fusion Execution is achieved by packing the hash of additional instructions as extra data within the transaction to transfer assets from the EOA to the Smart Account.
+
+### Fusion Execution Modes
+
+Fusion execution is an extensible standard, for now it supports two main execution modes:
+
+#### 1. Trigger Transaction
+
+The trigger transaction mode works by packing the hash of the extra instructions to be executed behind the useful callData of a transaction which is transferring assets to the Smart Account. To get an idea, this is pseudocode for the packing algorithm:
+
+```javascript
+const amount = parseUnits('100', 6)
+
+const rootData = encodeFunctionData({
+  abi: erc20Abi,
+  args: [
+    '0x_COMPANION_ACC_ADDRESS', // Address of companion
+    amount // Amount to use in fusion execution
+  ]
+});
+
+// Extra instructions are encoded in the Supertransaction
+// data structure and commited onchain by the Biconomy MEE Node.
+const extraInstructions: Supertransaction = {
+
+  // Example of extra instructions.
+  // Last instruction is always to take the 
+  // resulting assets and return them to EOA
+  instructions: [bridgeToBase, supplyToAAVE, returnToEOA]
+}
+
+// Encoding the Fusion Transaction
+const fusionTransaction = {
+  to: '0xUSDC_ADDRESS',
+
+  // The hash of the extra instructions is appended
+  // to the data
+  data: rootData.concat(extraInstructions.hash),
+  value: 0n
+}
+
+// Execute trigger transaction onchain
+wallet.sendTransaction(fusionTransaction)
+
+// Send extra instructions for execution to the MEE Node.
+// The MEE node cannot execute anything which was not part of the
+// hash that was appended to the original transaction. This is validated
+// by a validator on the smart account.
+meeClient.execute(extraInstructions)
+```
+
+#### 2. Trigger ERC20Permit
+
+When using the Trigger Transaction method, the user would still have to pay for gas for the trigger transaction (though all the extra instructions can be sponsored or gas abstracted). In order to enable Fusion Execution to be gasless we can use the ERC20Permit method!
+
+This works in much the same way as the trigger transaction method with the difference that the extra information is not packed after the callData but actually packed into the DateTime field of the ERC20Permit function call.
+
