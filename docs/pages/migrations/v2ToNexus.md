@@ -42,7 +42,7 @@ import { createWalletClient, http } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { base } from "viem/chains";
 import { 
-  createBicoBundlerClient as createV2Client,
+  createSmartAccountClient as createV2Client,
   BiconomySmartAccountV2,
   PaymasterMode
 } from "@biconomy/account";
@@ -280,7 +280,7 @@ import { createWalletClient, http, encodeFunctionData, encodeAbiParameters, pars
 import { privateKeyToAccount } from "viem/accounts";
 import { base } from "viem/chains";
 import { 
-  createBicoBundlerClient as createV2Client,
+  createSmartAccountClient as createV2Client,
   BiconomySmartAccountV2,
   PaymasterMode
 } from "@biconomy/account";
