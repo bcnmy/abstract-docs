@@ -429,7 +429,7 @@ export default defineConfig({
 			link: '/api-key'
 		},
 		{
-			text: 'QuickStart',
+			text: 'QuickStart Guides',
 			items: [
 				{
 					text: 'Multichain Orchestration',
@@ -438,7 +438,24 @@ export default defineConfig({
 				{
 					text: 'Pay for Gas With ERC-20 Tokens',
 					link: '/multichain-gas-abstraction/for-sca'
-				}
+				},
+				{
+					text: 'EIP-7702',
+					items: [
+						{
+							text: 'Send Gasless Batch Transaction from Embedded Wallet EOA',
+							link: '/smarteoa/demos/privy-7702-gasless'
+						},
+						{
+							text: 'Gasless Cross-Chain Batch Execute With Privy & EIP-7702',
+							link: '/'
+						},
+						{
+							text: 'Batch Execute from EOA with ERC-5792 or Fusion'
+						}
+					]
+				},
+				
 			]
 		},
 		{
