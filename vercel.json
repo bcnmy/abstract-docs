@@ -1,6 +1,10 @@
 {
-  "trailingSlash": true,
   "redirects": [
+    {
+      "source": "/vercel/path0/docs/pages/:path*",
+      "destination": "/:path*",
+      "permanent": true
+    },
     { 
       "source": "/((?!.*\\.).*[^\\/]$)",
       "destination": "/$1/", 

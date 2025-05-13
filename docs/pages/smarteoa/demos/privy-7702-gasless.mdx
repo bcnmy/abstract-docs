@@ -142,10 +142,10 @@ const { hash } = await meeClient.execute({
   authorization: autorization,
   
   // Pay for gas with USDC on Optimism
-  feeToken: toFeeToken({
-    address: mcUSDC.addressOn(optimism.id),
+  feeToken: {
+    address: mcUSDC.addressOn(optimism.id) // USDC on Optimism Address
     chainId: optimism.id
-  })
+  }
   
   // Transaction instructions
   instructions: [{
@@ -183,32 +183,29 @@ const crossChainInstructions = [
   // Operation on Optimism
   {
     chainId: optimism.id,
-    name: 'ethTransfer',
-    params: {
-      to: '0xOptimismRecipient',
+    calls: [{ // Dummy calls
+      to: zeroAddress,
       value: 0n
-    }
+    }]
   },
   // Operation on Base
   {
     chainId: base.id,
-    name: 'ethTransfer',
-    params: {
-      to: '0xBaseRecipient',
+    calls: [{ // Dummy calls
+      to: zeroAddress,
       value: 0n
-    }
+    }]
   }
 ];
 
 // Execute gasless cross-chain transaction
-const { hash: crossChainHash } = await meeClient.execute({
+const { hash } = await meeClient.execute({
   authorization: txAuthorization,
-  feeToken: null, // Gasless
-  instructions: crossChainInstructions,
   delegate: true
+  instructions: crossChainInstructions,
 });
 
-console.log("Cross-chain transaction submitted:", crossChainHash);
+console.log("Cross-chain transaction submitted:", hash);
 ```
 
 ## 11. Using runtime parameter injection
@@ -243,13 +240,12 @@ const runtimeInstruction = await nexusAccount.buildComposable({
 
 You've now learned how to use Biconomy's AbstractJS with Privy to enable EIP-7702 gasless transactions. This implementation provides:
 
-- Email-based login with automatic wallet creation
+- Email-based, phone or Passkey login with automatic wallet creation
 - EIP-7702 delegation to create Smart Accounts at the same address
-- Fully gasless (sponsored) transactions
 - Cross-chain operations with a single signature
 - Runtime parameter injection for dynamic transaction values
 
 The key parts of the integration are:
 1. Using `signAuthorization` to authorize EIP-7702 delegation
 2. Setting `accountAddress` to the EOA address in `toMultichainNexusAccount`
-3. Setting `delegate: true` and `feeToken: null` in the `execute` call
+3. Setting `delegate: true` and `authorization` in the `execute` call
