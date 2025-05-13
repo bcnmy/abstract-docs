@@ -24,6 +24,8 @@
 | Gnosis Chiado Testnet       | ✅        | v1.2.0, v1.0.2   | ⏳                       |
 | Avalanche Mainnet           | ✅        | v1.2.0, v1.0.2   | ⏳                       |
 | Avalanche Fuji Testnet      | ✅        | v1.2.0, v1.0.2   | ⏳                       |
+| Apechain                    | ✅        | v1.2.0           | ⏳                       |
+| Apechain Curtis Testnet     | ✅        | v1.2.0           | ⏳                       |  
 
 For contracts addresses and audit reports, see [here](https://docs.biconomy.io/contractsAndAudits).
 
