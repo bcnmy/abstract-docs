@@ -1,6 +1,15 @@
-# EIP-7702 Gasless Transactions with Turnkey and Biconomy
+# EIP-7702 Gas Abstracted Transactions with Turnkey and Biconomy
 
-In this guide, we demonstrate using Biconomy's AbstractJS together with Turnkey to enable your users to send gasless (sponsored) transactions using EIP-7702.
+In this guide, we demonstrate using Biconomy's AbstractJS together with Turnkey to enable your users to send gasless transactions using EIP-7702.
+The guide demonstrates how to allow users to pay for their gas with USDC.
+
+One of the core features of the Biconomy stack is the ability to accept thousands of ERC-20 tokens across dozens of 
+chains to pay for gas. However, the true value lies in the ability to combine these gas abstracted experiences with
+our powerful Multichain Orchestration stack!
+
+This tutorial will serve as the guide to getting you started on working with the Biconomy stack and Turnkey. After 
+following this tutorial, you can follow our Multichain Orchestration Guides to learn how to execute complex single-chain
+and multi-chain actions with a single user signature - while abstracting away all gas.
 
 ## 1. Install dependencies
 
@@ -139,10 +148,10 @@ console.log("MEE client created successfully");
 
 ## 8. Send a gasless transaction
 
-Now you can use the MEE client to send a gasless transaction:
+Now you can use the MEE client to send a gas abstracted transaction:
 
 ```javascript
-// Execute gasless transaction
+// Execute gas abstracted transaction
 const { hash } = await meeClient.execute({
   // Include authorization
   authorization: authorization,
@@ -166,7 +175,7 @@ const { hash } = await meeClient.execute({
 
 });
 
-console.log("Gasless transaction submitted:", hash);
+console.log("gas abstracted transaction submitted:", hash);
 ```
 
 ## 9. Wait for transaction receipt
@@ -179,7 +188,7 @@ const receipt = await meeClient.waitForSupertransactionReceipt({ hash });
 console.log("Transaction successful:", receipt.transactionHash);
 ```
 
-## 10. Send a cross-chain gasless transaction
+## 10. Send a cross-chain gas abstracted transaction
 
 One powerful feature of Biconomy is executing transactions across multiple chains:
 
@@ -204,7 +213,7 @@ const crossChainInstructions = [
   }
 ];
 
-// Execute gasless cross-chain transaction
+// Execute gas abstracted cross-chain transaction
 const { hash } = await meeClient.execute({
   authorization: authorization,
   delegate: true,
@@ -329,7 +338,7 @@ const main = async () => {
     account: nexusAccount
   });
 
-  // Execute gasless transaction
+  // Execute gas abstracted transaction
   const { hash } = await meeClient.execute({
     authorization: authorization,
     delegate: true,
@@ -355,7 +364,7 @@ main().catch(console.error);
 
 ## Conclusion
 
-You've now learned how to use Biconomy's AbstractJS with Turnkey to enable EIP-7702 gasless transactions. This implementation provides:
+You've now learned how to use Biconomy's AbstractJS with Turnkey to enable EIP-7702 gas abstracted transactions. This implementation provides:
 
 - Secure key management with Turnkey
 - EIP-7702 delegation to create Smart Accounts at the same address
@@ -366,6 +375,6 @@ The key parts of the integration are:
 1. Using Turnkey for secure signing of the EIP-7702 authorization
 2. Setting `accountAddress` to the Turnkey account address in `toMultichainNexusAccount`
 3. Setting `delegate: true` and `authorization` in the `execute` call
-4. Using Biconomy's MEE client for gasless and cross-chain transactions
+4. Using Biconomy's MEE client for gas abstracted and cross-chain transactions
 
-This approach provides enterprise-grade security while maintaining the user experience benefits of gasless transactions across multiple chains.
+This approach provides enterprise-grade security while maintaining the user experience benefits of gas abstracted transactions across multiple chains.

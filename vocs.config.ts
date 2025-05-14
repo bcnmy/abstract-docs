@@ -469,15 +469,15 @@ export default defineConfig({
 						
 					]
 				},
-				{
-					text: 'EIP-7702 for External Wallets',
-					collapsed: true,
-					items: [
-						{
-							text: 'Batch Execute from EOA with ERC-5792'
-						}
-					]
-				}
+				// {
+				// 	text: 'EIP-7702 for External Wallets',
+				// 	collapsed: true,
+				// 	items: [
+				// 		{
+				// 			text: 'Batch Execute from EOA with ERC-5792'
+				// 		}
+				// 	]
+				// }
 				
 			]
 		},
