@@ -384,6 +384,13 @@ export default defineConfig({
 	},
 	theme: {
 		accentColor: "#ec5d31",
+		variables: {
+			sidebar: {
+				width: '350px',
+				horizontalPadding: '40px',
+				verticalPadding: '20px'
+			},
+		}
 	},
 	socials: [
 		{
@@ -428,8 +435,9 @@ export default defineConfig({
 			text: 'Get API Key',
 			link: '/api-key'
 		},
+
 		{
-			text: 'QuickStart',
+			text: 'QuickStart Guides',
 			items: [
 				{
 					text: 'Multichain Orchestration',
@@ -438,53 +446,44 @@ export default defineConfig({
 				{
 					text: 'Pay for Gas With ERC-20 Tokens',
 					link: '/multichain-gas-abstraction/for-sca'
-				}
+				},
+				{
+					text: 'EIP-7702 for Embedded Wallets',
+					collapsed: true,
+					
+					items: [
+						
+							{
+								text: 'Gasless Batch Execute w/ Privy',
+								link: '/smarteoa/demos/privy-7702-gasless'
+							},
+							{
+								text: 'Gasless Batch Execute w/ Turnkey',
+								link: '/smarteoa/demos/turnkey-7702-gasless'
+							},
+							{
+								text: 'In-Depth Tutorial w/ Privy',
+								link: '/smarteoa/demos/privy-7702-demo'
+							},
+						
+						
+					]
+				},
+				// {
+				// 	text: 'EIP-7702 for External Wallets',
+				// 	collapsed: true,
+				// 	items: [
+				// 		{
+				// 			text: 'Batch Execute from EOA with ERC-5792'
+				// 		}
+				// 	]
+				// }
+				
 			]
 		},
 		{
-			text: "Integrated Signers",
-			collapsed: true,
-			items: [
-				{ text: "Privy", link: "/tutorials/signers/privy" },
-				{ text: "Web3Auth", link: "/tutorials/signers/web3auth" },
-				{ text: "Magic", link: "/tutorials/signers/magic" },
-				{ text: "Particle", link: "/tutorials/signers/particle" },
-				{ text: "Passport", link: "/tutorials/signers/passport" },
-				{ text: "Turnkey", link: "/tutorials/signers/turnkey" },
-				{ text: "Dynamic", link: "/tutorials/signers/dynamic" },
-				{ text: "Capsule", link: "/tutorials/signers/capsule" },
-				{ text: "DFNS", link: "/tutorials/signers/dfns" },
-			],
-		},
-		{
-			text: "Smart Accounts",
-			collapsed: true,
-			items: [
-				{ text: "Smart Accounts Overview", link: "/account-providers/overview" },
-				{ text: "Nexus Smart Account", link: "/overview", collapsed: true },				
-				{ text: "EIP-7702: Smart EOAs Overview", link: '/eip7702/wallet-guide' },
-				{ text: 'Companion Accounts Overview', link: '/mee/fusion' }
-			],
-		},
-		{
-			text: 'Smart EOAs (EIP-7702 & Fusion)',
-			collapsed: true,
-			items: [
-				{ text: "Overview", link: '/smarteoa' },
-				{ text: 'Explained', items: [
-					{ text: "EIP-7702 Explained", link: '/eip7702/explained' },
-					{ text: 'Companion Accounts Explained', link: '/smarteoa/companion-explained'},	
-				]},
-				{ text: 'Developer Guides', items: [
-					{ text: 'dApps using External Wallets', link: '/mee/fusion'},
-					{ text: 'dApps using Embedded Wallets', link: '/eip7702/wallet-guide'},
-					{ text: 'MetaMask Delegator Framework', link: '/smarteoa/delegator' }
-				]}
-					]
-		},
-		{
 			text: 'Multichain Orchestration APIs',
-			collapsed: false,
+			collapsed: true,
 			items: [
 				{
 					text: 'Overview',
@@ -549,8 +548,49 @@ export default defineConfig({
 			]
 		},
 		{
+			text: 'Smart EOAs (EIP-7702 & Fusion)',
+			collapsed: true,
+			items: [
+				{ text: "Overview", link: '/smarteoa' },
+				{ text: 'Explained', items: [
+					{ text: "EIP-7702 Explained", link: '/eip7702/explained' },
+					{ text: 'Companion Accounts Explained', link: '/smarteoa/companion-explained'},	
+				]},
+				{ text: 'Developer Guides', items: [
+					{ text: 'dApps using External Wallets', link: '/mee/fusion'},
+					{ text: 'dApps using Embedded Wallets', link: '/eip7702/wallet-guide'},
+					{ text: 'MetaMask Delegator Framework', link: '/smarteoa/delegator' }
+				]}
+					]
+		},
+		{
+			text: "Signer Guides",
+			collapsed: true,
+			items: [
+				{ text: "Privy", link: "/tutorials/signers/privy" },
+				{ text: "Web3Auth", link: "/tutorials/signers/web3auth" },
+				{ text: "Magic", link: "/tutorials/signers/magic" },
+				{ text: "Particle", link: "/tutorials/signers/particle" },
+				{ text: "Passport", link: "/tutorials/signers/passport" },
+				{ text: "Turnkey", link: "/tutorials/signers/turnkey" },
+				{ text: "Dynamic", link: "/tutorials/signers/dynamic" },
+				{ text: "Capsule", link: "/tutorials/signers/capsule" },
+				{ text: "DFNS", link: "/tutorials/signers/dfns" },
+			],
+		},
+		{
+			text: "Smart Accounts",
+			collapsed: true,
+			items: [
+				{ text: "Smart Accounts Overview", link: "/account-providers/overview" },
+				{ text: "Nexus Smart Account", link: "/overview", collapsed: true },				
+				{ text: "EIP-7702: Smart EOAs Overview", link: '/eip7702/wallet-guide' },
+				{ text: 'Companion Accounts Overview', link: '/mee/fusion' }
+			],
+		},
+		{
 			text: 'Gas Abstraction APIs',
-			collapsed: false,
+			collapsed: true,
 			items: [
 				{
 					text: 'Overview',
@@ -577,7 +617,7 @@ export default defineConfig({
 		},
 		{
 			text: 'Smart Sessions APIs',
-			collapsed: false,
+			collapsed: true,
 			items: [
 				{
 					text: 'Overview',

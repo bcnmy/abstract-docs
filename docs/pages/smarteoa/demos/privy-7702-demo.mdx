@@ -1,0 +1,605 @@
+# Building Cross-Chain Orchestration with Biconomy, Privy & EIP-7702
+
+## Introduction: The Power of Privy + EIP-7702 + Biconomy
+
+This guide demonstrates how to combine three powerful technologies to create next-generation web3 applications:
+
+1. **Privy's Email Authentication**: Allows users to sign in with just their email
+2. **EIP-7702**: Transforms standard EOA wallets into powerful Smart Accounts
+3. **Biconomy's Multi-Chain Orchestration**: Enables complex cross-chain operations with runtime composability
+
+### Why This Combination is Revolutionary
+
+When you connect Privy's embedded wallets with Biconomy's EIP-7702 implementation, you get the best of both worlds:
+
+- **Web2-Like Login Experience**: Users sign in with email, no seed phrases or browser extensions
+- **Smart Account Superpowers**: The EOA wallet created by Privy gains all the capabilities of a Smart Account
+- **Complex Cross-Chain Operations**: Execute sophisticated multi-step workflows across different blockchains
+
+### What You Can Build With This Stack
+
+This combination enables entirely new user experiences previously impossible in web3:
+
+- **One-Click DeFi Strategies**: Bridge assets, swap, and provide liquidity all in one transaction
+- **Multi-Chain NFT Experiences**: Purchase NFTs across different marketplaces with a single click
+- **Cross-Chain DAO Governance**: Vote on proposals across multiple chains with one signature
+- **Gasless Onboarding**: Create accounts and execute transactions without users needing gas tokens
+- **Auto-Compounding Yield Strategies**: Move assets between chains to optimize yields automatically
+
+## What You'll Build
+
+In this guide, we'll create a React application that:
+
+1. Signs in users with email using Privy
+2. Creates an embedded wallet automatically
+3. Transforms this wallet into a Biconomy Smart Account using EIP-7702
+4. Executes a complex operation: bridge tokens from Optimism to Base, then swap them to another token
+5. Handles all this with a single signature and pays with any token
+
+## Project Setup
+
+First, create a new React project and install dependencies:
+
+```bash
+npm create vite@latest cross-chain-orchestration -- --template react
+cd cross-chain-orchestration
+npm install @privy-io/react-auth @biconomy/abstractjs viem @rhinestone/module-sdk@0.2.7
+npm install
+```
+
+Create a `.env` file in the project root:
+
+```
+VITE_PRIVY_APP_ID=your-privy-app-id
+```
+
+::::steps
+#### Step 1: Import Dependencies
+
+Start by importing everything we'll need:
+
+```jsx
+// src/App.jsx
+import { useState, useEffect } from 'react';
+import { PrivyProvider, usePrivy } from '@privy-io/react-auth';
+import { 
+  toMultichainNexusAccount, 
+  mcUSDC,
+  mcUSDT,
+  runtimeERC20BalanceOf,
+  greaterThanOrEqualTo,
+  createMeeClient
+} from '@biconomy/abstractjs';
+import { 
+  http, 
+  parseUnits,
+  parseAbi,
+  erc20Abi,
+  encodeFunctionData
+} from 'viem';
+import { optimism, base } from 'viem/chains';
+import './App.css';
+```
+
+#### Step 2: Create the Privy Provider Component
+
+```jsx
+// Main App component with Privy Provider
+function App() {
+  return (
+    <PrivyProvider
+      appId={import.meta.env.VITE_PRIVY_APP_ID}
+      config={{
+        loginMethods: ['email'],
+        embeddedWallets: { 
+          createOnLogin: true,   // Create wallet automatically
+          noPromptOnSignature: true  // Smoother signing experience
+        }
+      }}
+    >
+      <AppContent />
+    </PrivyProvider>
+  );
+}
+
+export default App;
+```
+
+#### Step 3: Initialize State and Access Privy Authentication
+
+```jsx
+function AppContent() {
+  // Privy authentication hooks
+  const { ready, authenticated, user, login, logout } = usePrivy();
+  
+  // Application state
+  const [nexusAccount, setNexusAccount] = useState(null);
+  const [meeClient, setMeeClient] = useState(null);
+  const [status, setStatus] = useState('');
+  const [txHash, setTxHash] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  
+  // Rest of the component...
+}
+```
+
+#### Step 4: Implement EIP-7702 with Privy and Biconomy
+
+This is the most critical part of the integration - where we transform the Privy EOA wallet into a Biconomy Smart Account using EIP-7702:
+
+```jsx
+// Initialize Biconomy with EIP-7702 delegation
+useEffect(() => {
+  async function initBiconomy() {
+    if (!authenticated || !user?.wallet) return;
+    
+    try {
+      setLoading(true);
+      setStatus('Initializing Biconomy account with EIP-7702...');
+      
+      // Step 1: Get the Privy embedded wallet provider and address
+      const walletProvider = await user.wallet.getEthereumProvider();
+      const walletAddress = await walletProvider.getAddress();
+      console.log('Privy EOA address:', walletAddress);
+      
+      // Step 2: Create the multichain Nexus account with EIP-7702 delegation
+      const oNexus = await toMultichainNexusAccount({
+        // Chains to support
+        chains: [optimism, base],
+        
+        // HTTP providers for each chain
+        transports: [http(), http()],
+        
+        // The Privy embedded wallet will sign transactions
+        signer: walletProvider,
+        
+        // CRITICAL FOR EIP-7702: Override account address with the Privy EOA address
+        // This is what enables installing the Smart Account at the EOA address
+        accountAddress: walletAddress
+      });
+      
+      console.log('EIP-7702 Smart Account installed at Privy wallet address:', walletAddress);
+      console.log("Same address on Optimism:", oNexus.addressOn(optimism.id));
+      console.log("Same address on Base:", oNexus.addressOn(base.id));
+      
+      // Step 3: Create the MEE client for orchestration
+      const mClient = await createMeeClient({
+        account: oNexus
+      });
+      
+      // Store the initialized accounts
+      setNexusAccount(oNexus);
+      setMeeClient(mClient);
+      
+      setStatus('EIP-7702 Smart Account ready!');
+    } catch (err) {
+      console.error('Failed to initialize Biconomy with EIP-7702:', err);
+      setError(`EIP-7702 initialization error: ${err.message}`);
+    } finally {
+      setLoading(false);
+    }
+  }
+  
+  initBiconomy();
+}, [authenticated, user]);
+```
+
+### Understanding EIP-7702 Integration
+
+The magic happens through two critical elements:
+
+1. **Address Override**: By setting `accountAddress: walletAddress` in the `toMultichainNexusAccount` call, we're telling Biconomy to install the Smart Account at the exact same address as the Privy wallet EOA. This means:
+   - The Smart Account and EOA share the same address across all chains
+   - Assets sent to this address can be controlled by both the EOA and Smart Account
+   - No separate account creation or funding needed
+
+2. **Delegation Flag**: Later when executing transactions, setting `delegate: true` activates the EIP-7702 flow where:
+   - The EOA wallet delegates transaction execution to the Smart Account
+   - The Smart Account gains all advanced features (batching, account abstraction, etc.)
+   - This delegation happens "just-in-time" with the first transaction
+
+With this setup, users get a seamless experience - they sign in with email, get a wallet automatically, and instantly have access to powerful Smart Account features without any extra steps or gas fees.
+
+#### Step 5: Build the Bridge Instruction
+
+Now we'll create a function to build a bridging instruction:
+
+```jsx
+// Build instruction to bridge USDC from Optimism to Base
+async function buildBridgeInstruction() {
+  if (!nexusAccount) throw new Error('Biconomy account not initialized');
+  
+  console.log('Building bridge instruction...');
+  
+  // Define token and amount
+  const usdcOnOptimism = mcUSDC.addressOn(optimism.id);
+  const amountToBridge = parseUnits('5', 6); // 5 USDC
+  
+  // Step 1: Approve USDC spend to Across bridge
+  const acrossBridgeAddress = '0xa420b2d1c0841415A695b81E5B867BCD07Dff8C9'; // Across on Optimism
+  
+  const approveInstruction = await nexusAccount.buildComposable({
+    type: 'default',
+    data: {
+      abi: erc20Abi,
+      functionName: 'approve',
+      chainId: optimism.id,
+      to: usdcOnOptimism,
+      args: [
+        acrossBridgeAddress,
+        amountToBridge
+      ]
+    }
+  });
+  
+  // Step 2: Build the bridge deposit instruction 
+  // (simplified for demo - in production use the actual Across ABI)
+  const acrossAbi = parseAbi([
+    'function deposit(address token, uint256 amount, uint16 destinationChainId, address recipient, uint256 relayerFeePct) external'
+  ]);
+  
+  const bridgeDepositInstruction = await nexusAccount.buildComposable({
+    type: 'default',
+    data: {
+      abi: acrossAbi,
+      functionName: 'deposit',
+      chainId: optimism.id,
+      to: acrossBridgeAddress,
+      args: [
+        usdcOnOptimism,
+        amountToBridge,
+        8453, // Base chain ID
+        nexusAccount.addressOn(base.id), // Recipient on Base
+        parseUnits('0.1', 5) // 0.1% relayer fee
+      ]
+    }
+  });
+  
+  return [approveInstruction, bridgeDepositInstruction];
+}
+```
+
+#### Step 6: Build the Swap Instruction with Runtime Parameter Injection
+
+Next, we'll build an instruction to swap tokens on Base using the exact amount received from the bridge:
+
+```jsx
+// Build instruction to swap USDC to USDT on Base
+async function buildSwapInstruction() {
+  if (!nexusAccount) throw new Error('Biconomy account not initialized');
+  
+  console.log('Building swap instruction...');
+  
+  // Define tokens
+  const usdcOnBase = mcUSDC.addressOn(base.id);
+  const usdtOnBase = mcUSDT.addressOn(base.id);
+  
+  // Define minimum acceptable amount (90% of expected 5 USDC)
+  const expectedAmount = parseUnits('5', 6);
+  const minAcceptableAmount = (expectedAmount * 90n) / 100n;
+  
+  // Define constraints for runtime injection
+  const executionConstraints = [
+    greaterThanOrEqualTo(minAcceptableAmount)
+  ];
+  
+  // Step 1: Create approval for Uniswap with runtime balance
+  const uniswapRouter = '0x2626664c2603336E57B271c5C0b26F421741e481'; // Base router
+  
+  const approveInstruction = await nexusAccount.buildComposable({
+    type: 'default',
+    data: {
+      abi: erc20Abi,
+      functionName: 'approve',
+      chainId: base.id,
+      to: usdcOnBase,
+      args: [
+        uniswapRouter,
+        // Use runtime balance - the exact amount that arrived from the bridge
+        runtimeERC20BalanceOf({
+          targetAddress: nexusAccount.addressOn(base.id),
+          tokenAddress: usdcOnBase,
+          constraints: executionConstraints
+        })
+      ]
+    }
+  });
+  
+  // Step 2: Create swap instruction with runtime balance
+  const uniswapAbi = parseAbi([
+    'function exactInputSingle((address tokenIn, address tokenOut, uint24 fee, address recipient, uint256 amountIn, uint256 amountOutMinimum, uint160 sqrtPriceLimitX96)) external returns (uint256 amountOut)'
+  ]);
+  
+  const swapInstruction = await nexusAccount.buildComposable({
+    type: 'default',
+    data: {
+      abi: uniswapAbi,
+      functionName: 'exactInputSingle',
+      chainId: base.id,
+      to: uniswapRouter,
+      args: [[
+        usdcOnBase, // tokenIn
+        usdtOnBase, // tokenOut
+        500, // 0.05% fee tier
+        nexusAccount.addressOn(base.id), // recipient
+        // Use runtime balance - the exact amount that arrived from the bridge
+        runtimeERC20BalanceOf({
+          targetAddress: nexusAccount.addressOn(base.id),
+          tokenAddress: usdcOnBase,
+          constraints: executionConstraints
+        }),
+        0n, // amountOutMinimum (set proper slippage in production)
+        0n // sqrtPriceLimitX96 (no price limit)
+      ]]
+    }
+  });
+  
+  return [approveInstruction, swapInstruction];
+}
+```
+
+#### Step 7: Execute the Orchestration with EIP-7702
+
+Now we'll create a function that executes the entire orchestration using EIP-7702:
+
+```jsx
+// Execute the bridge and swap orchestration
+async function executeCrossChainOrchestration() {
+  if (!nexusAccount || !meeClient) {
+    setError('Biconomy account not initialized');
+    return;
+  }
+  
+  try {
+    setLoading(true);
+    setStatus('Preparing cross-chain orchestration...');
+    setError('');
+    
+    // Build all instructions
+    const bridgeInstructions = await buildBridgeInstruction();
+    const swapInstructions = await buildSwapInstruction();
+    
+    // Combine instructions
+    const allInstructions = [
+      ...bridgeInstructions, // Bridge from Optimism to Base
+      ...swapInstructions    // Swap on Base using bridged tokens
+    ];
+    
+    setStatus('Executing cross-chain orchestration...');
+    
+    // Execute the orchestration with MEE client
+    const { hash } = await meeClient.execute({
+      // Pay for all gas with USDC on Optimism
+      feeToken: {
+        chainId: optimism.id,
+        address: mcUSDC.addressOn(optimism.id)
+      },
+      
+      // All instructions to execute in sequence
+      instructions: allInstructions,
+      
+      // CRITICAL FOR EIP-7702: Enable delegation
+      // This activates the just-in-time delegation from the EOA to the Smart Account
+      // The first transaction will install the Smart Account at the EOA address
+      delegate: true
+    });
+    
+    setTxHash(hash);
+    setStatus('Orchestration submitted! Waiting for completion...');
+    
+    // Wait for the orchestration to complete
+    const receipt = await meeClient.waitForSupertransactionReceipt({ hash });
+    console.log('Orchestration receipt:', receipt);
+    setStatus('Orchestration completed successfully!');
+    
+  } catch (err) {
+    console.error('Orchestration failed:', err);
+    setError(`Orchestration error: ${err.message}`);
+    setStatus('Orchestration failed');
+  } finally {
+    setLoading(false);
+  }
+}
+```
+::::
+
+### The Magic of EIP-7702 in the Execution
+
+It's important to understand what's happening with EIP-7702 during execution:
+
+1. Setting `delegate: true` tells Biconomy to use the EIP-7702 flow
+2. During the first transaction, the Smart Account will be installed at the Privy EOA address
+3. The EOA then delegates transaction execution authority to the Smart Account
+4. All future transactions can use Smart Account features while keeping the same address
+5. Users sign just once for the entire orchestration, leveraging the delegation
+
+This is what enables complex operations like bridging and swapping to happen with a single signature from the user's Privy wallet.
+
+## Step 8: Create the UI
+
+Finally, let's implement the UI:
+
+```jsx
+// Render application UI
+if (!ready) return <div className="loading">Loading Privy...</div>;
+
+return (
+  <div className="app-container">
+    <h1>Cross-Chain Orchestration with EIP-7702</h1>
+    
+    {!authenticated ? (
+      // Login UI
+      <div className="login-section">
+        <p>Sign in with email to execute cross-chain orchestrations</p>
+        <button onClick={login}>Sign In with Email</button>
+      </div>
+    ) : (
+      // Authenticated UI
+      <div className="dashboard">
+        <div className="user-info">
+          <p>Logged in as: {user.email?.address || 'User'}</p>
+          <p>Wallet Address: {user.wallet?.address || 'Loading...'}</p>
+          <p>EIP-7702 Status: {nexusAccount ? 'Smart Account Active' : 'Initializing...'}</p>
+          <button onClick={logout} className="logout-btn">Logout</button>
+        </div>
+        
+        <div className="transaction-panel">
+          <h2>Cross-Chain Bridge + Swap Orchestration</h2>
+          <p>Using EIP-7702 to transform your Privy wallet into a powerful Smart Account</p>
+          
+          <div className="orchestration-flow">
+            <div className="chain-box">
+              <h3>Optimism</h3>
+              <p>1. Approve USDC</p>
+              <p>2. Bridge to Base</p>
+            </div>
+            
+            <div className="arrow">→</div>
+            
+            <div className="chain-box">
+              <h3>Base</h3>
+              <p>3. Wait for funds</p>
+              <p>4. Approve exact amount</p>
+              <p>5. Swap to USDT</p>
+            </div>
+          </div>
+          
+          <button 
+            onClick={executeCrossChainOrchestration} 
+            disabled={loading || !nexusAccount}
+            className="tx-button"
+          >
+            {loading ? 'Processing...' : 'Execute with EIP-7702'}
+          </button>
+          
+          {status && <p className="status">{status}</p>}
+          {error && <p className="error">{error}</p>}
+          
+          {txHash && (
+            <div className="tx-result">
+              <p>Orchestration Hash: <span className="hash">{txHash}</span></p>
+              <a 
+                href={`https://optimistic.etherscan.io/tx/${txHash}`} 
+                target="_blank" 
+                rel="noopener noreferrer"
+              >
+                View on Explorer
+              </a>
+            </div>
+          )}
+        </div>
+      </div>
+    )}
+  </div>
+);
+```
+
+## Step 9: Update the Entry Point and Add Styling
+
+Make sure `src/main.jsx` is updated:
+
+```jsx
+// src/main.jsx
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from './App.jsx'
+import './index.css'
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+)
+```
+
+For styling, use our CSS:
+> [View the CSS here](https://gist.github.com/example/cross-chain-app-styles.css)
+
+## What Makes This Combination So Powerful
+
+The integration of Privy + EIP-7702 + Biconomy creates a unique set of capabilities:
+
+### 1. Same Address Across All Chains
+
+With EIP-7702, the Smart Account is installed at the exact same address as the Privy EOA:
+- Users have the same address on all chains
+- No need for separate Smart Account addresses
+- Assets already sent to the EOA address are accessible to the Smart Account
+
+### 2. Seamless Upgrade Path
+
+Any existing Privy application can be upgraded to include Smart Account features:
+- Existing users keep the same addresses
+- No migration or asset transfers needed
+- Backward compatible with existing contracts and integrations
+
+### 3. Best of Both Worlds
+
+Combines the simplicity of Privy with the power of Biconomy:
+- Privy's simple email login for user onboarding
+- Biconomy's Smart Account features for advanced operations
+- No compromise on either user experience or functionality
+
+### 4. Endless Possibilities
+
+This combination enables entirely new application types:
+- **Cross-Chain Portfolio Managers**: Automatically move assets between chains based on yield opportunities
+- **Multi-Chain Gaming**: Buy NFTs, execute game actions, and claim rewards across different chains
+- **DAO Governance Aggregators**: Vote on multiple DAOs across different chains with one transaction
+- **DeFi Super-Apps**: Execute complex strategies spanning bridges, DEXs, lending protocols, etc.
+
+## Additional EIP-7702 Use Cases
+
+Now that you understand the fundamentals, here are more complex patterns you can build:
+
+### Complex DeFi Strategies
+
+```jsx
+const defiStrategyInstructions = [
+  // Stake tokens on Optimism
+  stakeInstruction,
+  // Bridge rewards to Base
+  bridgeInstruction,
+  // Swap on Base using runtime values from the bridge
+  swapInstruction,
+  // Supply to lending protocol on Base
+  supplyInstruction
+];
+```
+
+### Multi-Chain NFT Purchases
+
+```jsx
+const nftPurchaseInstructions = [
+  // Buy NFT on Optimism
+  buyNftOnOptimismInstruction,
+  // Buy NFT on Base in the same transaction
+  buyNftOnBaseInstruction
+];
+```
+
+### Cross-Chain Yield Optimization
+
+```jsx
+const yieldOptimizationInstructions = [
+  // Withdraw from Optimism lending protocol
+  withdrawInstruction,
+  // Bridge to chain with better rates
+  bridgeInstruction,
+  // Supply to new protocol using runtime values
+  supplyWithRuntimeAmountInstruction
+];
+```
+
+## Conclusion
+
+By combining Privy's email authentication, EIP-7702's delegation, and Biconomy's multi-chain orchestration, you've built a powerful application that breaks down the barriers between chains. Users get a seamless experience with email login and can execute complex cross-chain operations with a single click.
+
+This approach represents the future of web3 applications - where blockchain complexity is abstracted away, and users can focus on what they want to achieve rather than how to navigate the underlying technology.
+
+## Resources
+
+- [Privy Documentation](https://docs.privy.io/)
+- [Biconomy Documentation](https://docs.biconomy.io/)
+- [EIP-7702 Specification](https://eips.ethereum.org/EIPS/eip-7702)
