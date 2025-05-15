@@ -435,7 +435,19 @@ export default defineConfig({
 			text: 'Get API Key',
 			link: '/api-key'
 		},
-
+		{
+			text: 'Modular Execution Environment (MEE)',
+			items: [
+				{
+					text: 'What is MEE',
+					link: '/mee/what-is-mee'
+				},
+				{
+					text: 'MEE vs. ERC-4337',
+					link: '/mee/mee-vs-4337'
+				}
+			]
+		},	
 		{
 			text: 'QuickStart Guides',
 			items: [
@@ -450,34 +462,34 @@ export default defineConfig({
 				{
 					text: 'EIP-7702 for Embedded Wallets',
 					collapsed: true,
-					
 					items: [
-						
 							{
-								text: 'Gasless Batch Execute w/ Privy',
+								text: 'Gas Abstracted Batch Execute w/ Privy',
 								link: '/smarteoa/demos/privy-7702-gasless'
 							},
 							{
-								text: 'Gasless Batch Execute w/ Turnkey',
+								text: 'Gas Abstracted Batch Execute w/ Turnkey',
 								link: '/smarteoa/demos/turnkey-7702-gasless'
 							},
 							{
 								text: 'In-Depth Tutorial w/ Privy',
 								link: '/smarteoa/demos/privy-7702-demo'
 							},
-						
-						
 					]
 				},
-				// {
-				// 	text: 'EIP-7702 for External Wallets',
-				// 	collapsed: true,
-				// 	items: [
-				// 		{
-				// 			text: 'Batch Execute from EOA with ERC-5792'
-				// 		}
-				// 	]
-				// }
+				{
+					text: 'EIP-7702 for External Wallets',
+					collapsed: true,
+					items: [
+						{
+							text: 'Batch Execute from EOA with ERC-5792',
+							link: '/smarteoa/demos/batch-execute-5792-fusion'
+						},
+						{
+							text: 'Batch Execute from EOA with Fusion'
+						}
+					]
+				}
 				
 			]
 		},

@@ -53,15 +53,16 @@ Create a `.env` file in the project root:
 VITE_PRIVY_APP_ID=your-privy-app-id
 ```
 
-::::steps
-#### Step 1: Import Dependencies
+## Implementation
+
+### Step 1: Import Dependencies
 
 Start by importing everything we'll need:
 
 ```jsx
 // src/App.jsx
 import { useState, useEffect } from 'react';
-import { PrivyProvider, usePrivy } from '@privy-io/react-auth';
+import { PrivyProvider, usePrivy, useSignAuthorization } from '@privy-io/react-auth';
 import { 
   toMultichainNexusAccount, 
   mcUSDC,
@@ -81,7 +82,7 @@ import { optimism, base } from 'viem/chains';
 import './App.css';
 ```
 
-#### Step 2: Create the Privy Provider Component
+### Step 2: Create the Privy Provider Component
 
 ```jsx
 // Main App component with Privy Provider
@@ -93,7 +94,7 @@ function App() {
         loginMethods: ['email'],
         embeddedWallets: { 
           createOnLogin: true,   // Create wallet automatically
-          noPromptOnSignature: true  // Smoother signing experience
+          showWalletUIs: false
         }
       }}
     >
@@ -105,7 +106,7 @@ function App() {
 export default App;
 ```
 
-#### Step 3: Initialize State and Access Privy Authentication
+### Step 3: Initialize State and Access Privy Authentication
 
 ```jsx
 function AppContent() {
@@ -124,18 +125,29 @@ function AppContent() {
 }
 ```
 
-#### Step 4: Implement EIP-7702 with Privy and Biconomy
+### Step 4: Implement EIP-7702 with Privy and Biconomy
 
-This is the most critical part of the integration - where we transform the Privy EOA wallet into a Biconomy Smart Account using EIP-7702:
+Let's create a reusable hook for the Biconomy integration:
 
 ```jsx
-// Initialize Biconomy with EIP-7702 delegation
-useEffect(() => {
-  async function initBiconomy() {
-    if (!authenticated || !user?.wallet) return;
+export function useBiconomyAccount() {
+  const { user, authenticated } = usePrivy();
+  const { signAuthorization } = useSignAuthorization();
+  const [status, setStatus] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [nexusAccount, setNexusAccount] = useState(null);
+  const [meeClient, setMeeClient] = useState(null);
+  const [authorization, setAuthorization] = useState(null);
+
+  const initBiconomy = useCallback(async () => {
+    if (!authenticated || !user?.wallet) {
+      return;
+    }
     
     try {
       setLoading(true);
+      setError(null);
       setStatus('Initializing Biconomy account with EIP-7702...');
       
       // Step 1: Get the Privy embedded wallet provider and address
@@ -143,7 +155,16 @@ useEffect(() => {
       const walletAddress = await walletProvider.getAddress();
       console.log('Privy EOA address:', walletAddress);
       
-      // Step 2: Create the multichain Nexus account with EIP-7702 delegation
+      // Step 2: Sign authorization for EIP-7702
+      const nexusImplementationAddress = '0x000000004F43C49e93C970E84001853a70923B03';
+      const txAuthorization = await signAuthorization({
+        contractAddress: nexusImplementationAddress,
+        chainId: 0 // Valid for all chains
+      });
+      console.log("Authorization signed:", txAuthorization);
+      setAuthorization(txAuthorization);
+      
+      // Step 3: Create the multichain Nexus account with EIP-7702 delegation
       const oNexus = await toMultichainNexusAccount({
         // Chains to support
         chains: [optimism, base],
@@ -163,7 +184,7 @@ useEffect(() => {
       console.log("Same address on Optimism:", oNexus.addressOn(optimism.id));
       console.log("Same address on Base:", oNexus.addressOn(base.id));
       
-      // Step 3: Create the MEE client for orchestration
+      // Step 4: Create the MEE client for orchestration
       const mClient = await createMeeClient({
         account: oNexus
       });
@@ -179,29 +200,60 @@ useEffect(() => {
     } finally {
       setLoading(false);
     }
-  }
-  
+  }, [authenticated, user, signAuthorization]);
+
+  return {
+    initBiconomy,
+    status,
+    loading,
+    error,
+    nexusAccount,
+    meeClient,
+    authorization,
+    isInitialized: !!nexusAccount && !!meeClient
+  };
+}
+
+// Then, in your component:
+const { 
+  initBiconomy, 
+  status, 
+  loading, 
+  error, 
+  nexusAccount, 
+  meeClient, 
+  authorization,
+  isInitialized 
+} = useBiconomyAccount();
+
+// Call the initialization function
+useEffect(() => {
   initBiconomy();
-}, [authenticated, user]);
+}, [initBiconomy]);
 ```
 
 ### Understanding EIP-7702 Integration
 
-The magic happens through two critical elements:
+The magic happens through three critical elements:
 
 1. **Address Override**: By setting `accountAddress: walletAddress` in the `toMultichainNexusAccount` call, we're telling Biconomy to install the Smart Account at the exact same address as the Privy wallet EOA. This means:
    - The Smart Account and EOA share the same address across all chains
    - Assets sent to this address can be controlled by both the EOA and Smart Account
    - No separate account creation or funding needed
 
-2. **Delegation Flag**: Later when executing transactions, setting `delegate: true` activates the EIP-7702 flow where:
+2. **Authorization Signing**: Using Privy's `useSignAuthorization` hook to sign an authorization that permits the Smart Account to execute transactions on behalf of the EOA:
+   - The authorization sets the permissions for what the Smart Account can do
+   - Setting `chainId: 0` makes it valid for all chains
+   - This needs to be included with each transaction execution
+
+3. **Delegation Flag**: When executing transactions, setting `delegate: true` and including the `authorization` activates the EIP-7702 flow where:
    - The EOA wallet delegates transaction execution to the Smart Account
    - The Smart Account gains all advanced features (batching, account abstraction, etc.)
    - This delegation happens "just-in-time" with the first transaction
 
 With this setup, users get a seamless experience - they sign in with email, get a wallet automatically, and instantly have access to powerful Smart Account features without any extra steps or gas fees.
 
-#### Step 5: Build the Bridge Instruction
+### Step 5: Build the Bridge Instruction
 
 Now we'll create a function to build a bridging instruction:
 
@@ -260,7 +312,7 @@ async function buildBridgeInstruction() {
 }
 ```
 
-#### Step 6: Build the Swap Instruction with Runtime Parameter Injection
+### Step 6: Build the Swap Instruction with Runtime Parameter Injection
 
 Next, we'll build an instruction to swap tokens on Base using the exact amount received from the bridge:
 
@@ -339,15 +391,15 @@ async function buildSwapInstruction() {
 }
 ```
 
-#### Step 7: Execute the Orchestration with EIP-7702
+### Step 7: Execute the Orchestration with EIP-7702
 
 Now we'll create a function that executes the entire orchestration using EIP-7702:
 
 ```jsx
 // Execute the bridge and swap orchestration
 async function executeCrossChainOrchestration() {
-  if (!nexusAccount || !meeClient) {
-    setError('Biconomy account not initialized');
+  if (!nexusAccount || !meeClient || !authorization) {
+    setError('Biconomy account not initialized or authorization missing');
     return;
   }
   
@@ -370,6 +422,9 @@ async function executeCrossChainOrchestration() {
     
     // Execute the orchestration with MEE client
     const { hash } = await meeClient.execute({
+      // Include the signed authorization
+      authorization: authorization,
+      
       // Pay for all gas with USDC on Optimism
       feeToken: {
         chainId: optimism.id,
@@ -402,17 +457,17 @@ async function executeCrossChainOrchestration() {
   }
 }
 ```
-::::
 
 ### The Magic of EIP-7702 in the Execution
 
 It's important to understand what's happening with EIP-7702 during execution:
 
 1. Setting `delegate: true` tells Biconomy to use the EIP-7702 flow
-2. During the first transaction, the Smart Account will be installed at the Privy EOA address
-3. The EOA then delegates transaction execution authority to the Smart Account
-4. All future transactions can use Smart Account features while keeping the same address
-5. Users sign just once for the entire orchestration, leveraging the delegation
+2. The `authorization` is included to permit the delegation
+3. During the first transaction, the Smart Account will be installed at the Privy EOA address
+4. The EOA then delegates transaction execution authority to the Smart Account
+5. All future transactions can use Smart Account features while keeping the same address
+6. Users sign just once for the entire orchestration, leveraging the delegation
 
 This is what enables complex operations like bridging and swapping to happen with a single signature from the user's Privy wallet.
 
@@ -494,27 +549,6 @@ return (
   </div>
 );
 ```
-
-## Step 9: Update the Entry Point and Add Styling
-
-Make sure `src/main.jsx` is updated:
-
-```jsx
-// src/main.jsx
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App.jsx'
-import './index.css'
-
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-)
-```
-
-For styling, use our CSS:
-> [View the CSS here](https://gist.github.com/example/cross-chain-app-styles.css)
 
 ## What Makes This Combination So Powerful
 
@@ -601,5 +635,4 @@ This approach represents the future of web3 applications - where blockchain comp
 ## Resources
 
 - [Privy Documentation](https://docs.privy.io/)
-- [Biconomy Documentation](https://docs.biconomy.io/)
 - [EIP-7702 Specification](https://eips.ethereum.org/EIPS/eip-7702)

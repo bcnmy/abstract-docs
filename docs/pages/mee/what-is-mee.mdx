@@ -1,0 +1,90 @@
+# What is MEE? Unlocking Next-Level UX for Ethereum & Rollups
+
+## Overview
+
+Modular Execution Environment (MEE) is a revolutionary standard from Biconomy that unlocks seamless user experiences on Ethereum and across its growing ecosystem of rollups. By decoupling transaction signing from execution, MEE enables powerful new UX paradigms within both single-chain and multi-chain environments. Crucially, MEE provides significant benefits even when operating on a single chain, while also solving the challenges of cross-chain interaction.
+
+## Transforming User Experience
+
+### For End Users
+
+MEE eliminates the most significant friction points in the Ethereum ecosystem:
+
+- **Single-Signature Multi-Chain Actions** — Complete complex operations across Ethereum, Arbitrum, Optimism, Base, and more with just one signature
+- **No More Native Token Requirements** — Pay for transactions on any rollup using any token from any chain
+- **Simplified Onboarding** — New users can interact with multiple rollups without managing separate wallets or bridging tokens first
+
+### For Developers
+
+MEE dramatically simplifies building applications in the fragmented rollup ecosystem:
+
+- **Universal Chain Access** — Connect to all Ethereum rollups through a single endpoint
+- **Reduced Integration Complexity** — No need to maintain separate RPC connections, gas estimations, and signing flows for each chain
+- **True Composability** — Build complex multi-step transactions where each step can use the results of previous steps
+- **Accelerated Time-to-Market** — Launch multi-chain products in a fraction of the time
+
+## Real-World Use Cases
+
+### Cross-Rollup DeFi
+
+An investor can execute an entire multi-rollup strategy with one click:
+1. Swap tokens on Optimism
+2. Bridge to Arbitrum
+3. Enter a liquidity position
+4. Set up automated compounding
+
+All of this happens with a single signature, zero native token requirements, and automatic orchestration between steps.
+
+### NFT Marketplaces
+
+Buyers can purchase NFTs across multiple marketplaces on different rollups in a single transaction:
+- Buy an NFT on Optimism, another on Base, and a third on Arbitrum
+- Pay in any token from any chain
+- Complete the entire collection in one signature
+
+### Gaming & Social Applications
+
+Games and social apps can span multiple rollups while maintaining a seamless experience:
+- Players move between game environments on different rollups without noticing chain switches
+- Social platforms can optimize for cost/performance by distributing different functions across rollups
+- All while maintaining a single-signature, gasless experience for users
+
+## Technical Architecture
+
+MEE operates through "Supertransactions" — instructions that combine multiple actions across different chains into a single approved package. Key features include:
+
+- **Works with All Wallets** — Compatible with both EOA wallets and smart contract wallets
+- **True Composability** — Each step can use the output of previous steps as input
+- **Transaction Scheduling** — Set up future or recurring transactions across any rollup
+- **Collaborative Execution** — Multiple MEE nodes can contribute to executing parts of a Supertransaction
+
+## Beyond Account Abstraction
+
+While account abstraction (ERC-4337) improved single-chain UX, MEE extends these benefits across the entire Ethereum ecosystem:
+
+- Maintains all ERC-4337 capabilities
+- Adds cross-chain orchestration
+- Enables dynamic composability between transactions
+- Works with traditional EOA wallets
+
+## Getting Started
+
+Developers can start building with MEE through Biconomy's AbstractJS SDK, which handles all the complexity of interacting with the MEE infrastructure:
+
+```javascript
+// Example concept of a multi-chain flow with MEE
+meeClient.executeQuote({
+  instructions: [
+    // Actions across Ethereum, Arbitrum, Optimism, etc.
+  ],
+  feeToken: {
+    // Pay gas in any token from any chain
+  }
+})
+```
+
+## Conclusion
+
+As Ethereum's modular ecosystem continues to expand, MEE provides the missing orchestration layer that unites these specialized environments into a cohesive user experience. By abstracting away the complexities of cross-rollup interactions, MEE enables developers to build truly seamless applications and gives users the simplified experience they expect from modern applications.
+
+MEE isn't just an incremental improvement—it's a fundamental shift in how we build and interact with applications in Ethereum's multi-rollup future.
