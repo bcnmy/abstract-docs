@@ -427,58 +427,17 @@ async function main() {
     // Prepare initialization data for the validator
     const initData = encodeFunctionData({
       abi: [
-        {
-          name: "initNexusWithDefaultValidatorAndOtherModulesNoRegistry",
-          type: "function",
-          stateMutability: "nonpayable",
-          inputs: [
-            { type: "bytes", name: "defaultValidatorData" },
-            { type: "tuple[]", name: "validators", components: [
-              { type: "address", name: "module" },
-              { type: "bytes", name: "data" }
-            ]},
-            { type: "tuple[]", name: "executors", components: [
-              { type: "address", name: "module" },
-              { type: "bytes", name: "data" }
-            ]},
-            { type: "tuple", name: "hook", components: [
-              { type: "address", name: "module" },
-              { type: "bytes", name: "data" }
-            ]},
-            { type: "tuple[]", name: "fallbacks", components: [
-              { type: "address", name: "module" },
-              { type: "bytes", name: "data" }
-            ]},
-            { type: "tuple[]", name: "prevalidationHooks", components: [
-              { type: "address", name: "module" },
-              { type: "bytes", name: "data" },
-              { type: "uint256", name: "hookType" }
-            ]}
-          ],
-          outputs: []
+        { 
+          name: "initNexusWithDefaultValidator", type: "function",
+           stateMutability: "nonpayable", 
+           inputs: [
+            { type: "bytes", name: "data" }
+          ], 
+          outputs: [] 
         }
       ],
-      functionName: "initNexusWithDefaultValidatorAndOtherModulesNoRegistry",
-      args: [
-        encodeFunctionData({
-          abi: [
-            {
-              name: "initialize",
-              type: "function",
-              stateMutability: "nonpayable",
-              inputs: [{ type: "address", name: "owner" }],
-              outputs: []
-            }
-          ],
-          functionName: "initialize",
-          args: [ownerAddress]
-        }),
-        [], // validators
-        [], // executors
-        { module: config.emptyHookAddress, data: "0x" }, // hook
-        [], // fallbacks
-        [] // prevalidationHooks
-      ]
+      functionName: "initNexusWithDefaultValidator",
+      args: [ownerAddress as `0x${string}`]
     });
     
     // Encode bootstrap data
