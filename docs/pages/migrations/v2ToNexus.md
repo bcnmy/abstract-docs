@@ -133,6 +133,8 @@ async function migrateToNexus(V2Account) {
   const ownerAddress = process.env.USER_EOA_ADDRESS;
   
   // Prepare initialization data for the validator
+
+  // Use this to migrate to Nexus 1.0.2
   const initData = encodeFunctionData({
     abi: [
       {
@@ -160,6 +162,22 @@ async function migrateToNexus(V2Account) {
       ],
       1,
     ],
+  });
+
+  // Use this to migrate to Nexus 1.2.0
+  const initData = encodeFunctionData({
+    abi: [
+      { 
+        name: "initNexusWithDefaultValidator", type: "function",
+          stateMutability: "nonpayable", 
+          inputs: [
+          { type: "bytes", name: "data" }
+        ], 
+        outputs: [] 
+      }
+    ],
+    functionName: "initNexusWithDefaultValidator",
+    args: [ownerAddress as `0x${string}`]
   });
   
   // Encode bootstrap data
