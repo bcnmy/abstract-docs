@@ -156,6 +156,9 @@ const { hash } = await meeClient.execute({
   // Include authorization
   authorization: authorization,
   
+  // Must set delegate to true in otder for authorization to work
+  delegate: true,
+
   // Pay for gas with USDC on Optimism
   feeToken: {
     address: mcUSDC.addressOn(optimism.id), // USDC on Optimism Address

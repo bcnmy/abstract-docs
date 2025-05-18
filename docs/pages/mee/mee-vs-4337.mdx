@@ -4,39 +4,22 @@
 
 ERC-4337 introduced account abstraction, significantly improving blockchain UX. However, as applications grow in complexity and users operate across multiple chains, developers have encountered limitations that Modular Execution Environments (MEE) are designed to solve.
 
-## Real-World Scenarios: Where ERC-4337 Falls Short
+### Full ERC-4337 Parity
+The Modular Execution Environment (MEE) stack has *all* the features that ERC-4337 has _and_ it retains the 
+same industry-leading security profile while offering significantly more features, less latency and 
+easier integration.
 
-### Cross-Chain Investor: Priya
+MEE is compliant with the following standards:
 
-**Scenario:** Priya wants to bridge USDC from Ethereum to Arbitrum, swap for different tokens on Arbitrum, and provide liquidity.
+- **ERC-4337 UserOps** <br/>
+MEE Uses the same data model as ERC-4337 <br/> <br/>
+- **EIP-7702** <br/>
+MEE can easily be set as the execution environment for an EIP-7702 enabled EOA <br/> <br/>
+- **ERC-7579** <br/>
+MEE uses smart account validators which are compliant with the most widely used smart account standard. <br/> <br/>
+- **ERC-7710 / ERC-7715** <br/>
+MEE can request execution through an ERC-7715 delegation and claim it on an ERC-7710 compliant contract. <br/> <br/>
 
-**With ERC-4337:**
-- Multiple separate transactions across chains
-- Multiple signatures required
-- Manual monitoring of bridge completion
-- Managing gas on each chain independently
-
-**With MEE:**
-- One signature for the entire flow
-- Automatic detection of bridge completion
-- Seamless continuation of operations on destination chain
-- Payment for all gas using any supported token
-
-### Business Owner: Sam
-
-**Scenario:** Sam needs to pay team members monthly across multiple chains.
-
-**With ERC-4337:**
-- No native support for scheduling transactions
-- No mechanism for recurring payments
-- Each payment cycle requires new signatures
-- Each chain requires separate management
-
-**With MEE:**
-- Schedule all payments in advance
-- Set up recurring execution patterns
-- Pay team members across any supported chain
-- Use a single gas token for all payments
 
 ## Key Advantages of MEE Over ERC-4337
 
@@ -80,12 +63,14 @@ ERC-4337 introduced account abstraction, significantly improving blockchain UX. 
 | Unified gas sponsorship | ❌ | ✅ |
 | **Wallet Support** | | |
 | Smart contract wallets | ✅ | ✅ |
-| EOA wallets | ❌ | ✅ |
+| EOA wallets | ❌** | ✅ |
 | **Multi-Chain Support** | | |
 | Single-chain operations | ✅ | ✅ |
 | Cross-chain orchestration | ❌ | ✅ |
 | Bridge completion detection | ❌ | ✅ |
 | Chain-agnostic development | ❌ | ✅ |
+
+**   ERC-4337 supports EOA wallets exclusively when paired with EIP-7702. MEE supports EOA wallets by default.
 
 ## Beyond the Technical: Use Cases Enabled by MEE
 
@@ -104,4 +89,5 @@ MEE enables new user experiences that would be impractical with ERC-4337:
 
 ERC-4337 was a critical stepping stone for blockchain UX. MEE builds directly on this foundation, preserving all benefits while solving fundamental limitations in composability and cross-chain orchestration.
 
-MEE isn't replacing ERC-4337—it's fulfilling its vision of making blockchain interactions seamless across the increasingly fragmented chain landscape, benefiting both developers and users with simpler, more powerful transaction capabilities.
+MEE isn't replacing ERC-4337—it's fulfilling its vision of making blockchain interactions seamless across the increasingly fragmented chain landscape, benefiting both developers and users with simpler, more powerful transaction capabilities - while reatining
+all of the features of the ERC-4337 stack.
