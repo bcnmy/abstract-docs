@@ -477,19 +477,19 @@ export default defineConfig({
 							},
 					]
 				},
-				{
-					text: 'EIP-7702 for External Wallets',
-					collapsed: true,
-					items: [
-						{
-							text: 'Batch Execute from EOA with ERC-5792',
-							link: '/smarteoa/demos/batch-execute-5792-fusion'
-						},
-						{
-							text: 'Batch Execute from EOA with Fusion'
-						}
-					]
-				}
+				// {
+				// 	text: 'EIP-7702 for External Wallets',
+				// 	collapsed: true,
+				// 	items: [
+				// 		{
+				// 			text: 'Batch Execute from EOA with ERC-5792',
+				// 			link: '/smarteoa/demos/batch-execute-5792-fusion'
+				// 		},
+				// 		{
+				// 			text: 'Batch Execute from EOA with Fusion'
+				// 		}
+				// 	]
+				// }
 				
 			]
 		},
