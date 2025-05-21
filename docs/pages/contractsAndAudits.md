@@ -4,6 +4,7 @@
 | Name    | Address    | 
 |-------------|-------------|
 | MEE EntryPoint & Paymaster | `0xE854C84cD68fC434cB3B0042c29235D452cAD977`  |
+| Node Paymaster Factory | `0x000000f28C524B5f80550a074910bf68bf69A446` |
 | MEE K1 Validator module | `0x00000000d12897DDAdC2044614A9677B191A2d95`  |
 | Composability Module | `0x00000004430bB055dB66eBef6Fe5Ee1DA9668B10`  |
 | Composable Storage | `0x0000000671eb337E12fe5dB0e788F32e1D71B183`  |
