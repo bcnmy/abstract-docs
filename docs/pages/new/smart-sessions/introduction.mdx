@@ -1,0 +1,64 @@
+# 🗝️ What Are Smart Sessions?
+
+Smart Sessions let a **user‑owned Smart Account (SCA)** delegate *limited* control to a 
+secondary signer (the **Session Signer**). 
+
+Think of them as programmable “power‑of‑attorney” rules:
+
+| Aspect       | Example                       | Why It Matters                    |
+| ------------ | ----------------------------- | --------------------------------- |
+| **Who**      | Session Signer address        | Only that key can act.            |
+| **When**     | Until  OR every Monday 2‑5 PM | Prevents unlimited‑lifetime keys. |
+| **How much** | ≤ 100 USDC total              | Caps risk.                        |
+| **What**     | Only swap on Uniswap V3       | Blocks malicious calls.           |
+
+## Biconomy Smart Sessions are Multichain
+
+Unlike ERC-4337 account providers, the Biconomy Smart Session stack has been built
+from the ground up to be multichain first! It supports:
+
+- Installing sessions on multiple chains with a single signature
+- Orchestrating multiple function calls across multiple chains with a 
+single signature from the session signer
+- Permitting complex sessions which span various types of permissions across multiple
+chains with a single signature from the user
+
+The instructions for sessions are executed by the Modular Execution Environment ([learn more](/mee/what-is-mee))
+and have full support for our innovative multichain orchestration ([learn more here](/new/learn-about-biconomy/understanding-composable-orchestration))
+
+
+## Biconomy Smart Sessions work with EOAs
+
+Until now, Smart Sessions were limited to working with Smart Accounts only. This is due 
+to the fact that EOAs couldn't approve permissions. However, with the combination
+EIP-7702 coming to market and Biconomy publishing our innovative Fusion Execution stack,
+the smart sessions offered by Biconomy can work _directly_ from EOAs.
+
+[Learn about EIP-7702](/new/getting-started/enable-mee-eoa-7702) if you want to enable smart sessions for Embedded Wallet
+(Privy, Dynamic, Turnkey) users.
+
+[Learn about Fusion Execution](/new/getting-started/enable-mee-eoa-fusion) if you want to enable smart sessions for External 
+(MetaMask, Rabby, Trust, ...) users.
+
+
+## Using Smart Sessions
+How are smart sessions activated?
+
+:::steps
+#### Deploy Smart Account
+You deploy the Nexus smart account on all the chains where you want to use the 
+smart sessions
+
+#### Install Sessions Module
+Nexus smart account is _modular_ which means you can install custom modules on the 
+account which extend its functionality. One of those modules is the smart sessions 
+module.
+
+#### Define and Grant Permissions
+The developer defines all the permissions which they want the session signer 
+to have. The user must sign a payload which will grant those permissions to 
+the session signer.
+
+#### Consume Permissions
+The session signer can begin consuming permissions.
+:::

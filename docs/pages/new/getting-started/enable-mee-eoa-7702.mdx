@@ -1,0 +1,121 @@
+
+# 🔶 EIP-7702 Orchestration (Embedded Wallets)
+
+EIP-7702 enables smart account features to be directly installed on an EOA. This allows orchestration without the user needing to fund or interact with a separate smart account.
+
+:::warning[⚠️ Only Available on Some Wallets]
+As of now, installing the authorization on the EOA is only available for users of Embedded 
+Wallets - such as Privy, Dynamic, Turnkey, ... If your users are using External wallets, 
+such as MetaMask, Rabby, etc... - then you need to use the [Fusion Mode](/new/getting-started/enable-mee-eoa-fusion)
+:::
+
+::::steps
+### 1. Set Up Wallet Client
+```ts
+import { createWalletClient, http } from "viem";
+import { privateKeyToAccount } from "viem/accounts";
+
+const eoa = privateKeyToAccount(Bun.env.PRIVATE_KEY as `0x${string}`);
+
+const walletClient = createWalletClient({
+  transport: http(),
+});
+```
+
+### 2. Sign Authorization
+```ts
+const nexus120Singleton = '0x000000004F43C49e93C970E84001853a70923B03';
+
+const authorization = await walletClient.signAuthorization({
+  account: eoa,
+  contractAddress: nexus120Singleton,
+
+  // Chain ID 0 makes it valid across all chains
+  chainId: 0, 
+
+  // Use nonce 0 for fresh embedded wallet accounts
+  nonce: 0    
+});
+```
+
+:::warning[⚠️ Note for Embedded Wallets]
+Privy, Dynamic, and other embedded wallets may expose their own `signAuthorization()` helper with the same parameters. 
+In that case you can't use the `viem` `signAuthorization` method as it'll throw an error.
+
+Our docs have integration guides for every type of embedded wallet. You can follow them.
+:::
+
+### 3. Initialize Nexus Account
+```ts
+import { toMultichainNexusAccount } from "@biconomy/abstractjs";
+import { base, optimism } from "viem/chains";
+import { http } from "viem";
+
+const orchestrator = await toMultichainNexusAccount({
+  chains: [optimism, base],
+  transports: [http(), http()],
+  signer: eoa,
+
+  // Must be overridden when using EIP-7702
+  accountAddress: eoa.address 
+});
+```
+
+### 4. Connect to MEE Relayer
+```ts
+import { createMeeClient } from "@biconomy/abstractjs";
+
+const meeClient = await createMeeClient({
+  account: orchestrator
+});
+```
+
+### 5. Quote Orchestration
+```ts
+import { zeroAddress } from "viem";
+import { usdcAddresses } from "../utils/addresses/usdc.addresses";
+
+const quote = await meeClient.getQuote({
+  instructions: [{
+    calls: [{
+      to: zeroAddress,
+      value: 0n
+    }],
+    chainId: optimism.id
+  }],
+
+  // Must be set for EIP-7702-based orchestration
+  delegate: true,          
+  
+  // Can be passed manually or signed by the SDK
+  authorization,          
+
+  feeToken: {
+    address: usdcAddresses[base.id],
+    chainId: base.id
+  },
+});
+
+console.log(quote.paymentInfo.tokenAmount);
+```
+:::info[Passing Authorizations]
+We recommend passing authorizations manually as it gives you more control over signing for different chains
+and wallet providers. <br/> <br/> However, if you'd just like our SDK to automatically prompt users to sign authorizations,
+you can ommit the `authorizations` field and just set `delegate: true`
+:::
+
+### 6. Execute Orchestration
+```ts
+const { hash } = await meeClient.executeQuote({ quote });
+
+const receipt = await meeClient.waitForSupertransactionReceipt({ hash });
+```
+::::
+
+### Notes
+- `delegate: true` is **mandatory**.
+- `authorization` must be passed. You can pass it manually (recommended) or allow the SDK to prompt the user to sign.
+- `accountAddress` must be **explicitly overridden** to the EOA address to signal EIP-7702 usage.
+- The Nexus smart account logic will be executed directly on the EOA address.
+
+---

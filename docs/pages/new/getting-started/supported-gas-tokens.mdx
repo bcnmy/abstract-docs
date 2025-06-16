@@ -1,0 +1,21 @@
+# 📃 Supported Gas Tokens
+
+The Biconomy MEE uses a solver based approch for accepting gas tokens. If our solvers know how 
+to convert your token into `ETH` or `USDC` - we can accept the token as gas.
+
+This means you can use tokens such as AAVE/Venus/Morpho Position tokens (e.g. `aUSDC`, `vUSDT`, ...), 
+you can use Uniswap LP position tokens, staked tokens, governance tokens, etc...
+
+This means that - for most cases - you can just deduct the token which is actually being
+used for the transcation to pay for some of the gas. 
+
+Beyond this - gas abstraction and gas sponosorship are multi-chain so you can use 
+any of the thousands of gas tokens on any of the supported chains to pay for execution
+of a transaction on any other supported chain.
+
+## Integrated Gas Solvers
+
+GlueX → https://dapp.gluex.xyz/
+
+LiFi (Coming Soon) → https://li.fi/
+
