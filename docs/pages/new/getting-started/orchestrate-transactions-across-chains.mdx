@@ -10,10 +10,6 @@ This tutorial shows how to:
 
 All steps run as **one Fusion transaction** with gas paid in USDC. We rely on:
 
-* **Multichain Nexus Account** (see [EIP‑7702 guide](./eip-7702-gasless))
-* **Runtime Value Injection** for exact amounts (see [Runtime Injection](./runtime-injection))
-* **Fusion trigger** (`transferToNexusTrigger`) to kick‑off execution
-
 ## 📹 Check out the Demo of Composable Orchestration
 
 <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0 }}>
@@ -184,16 +180,7 @@ const quote = await meeClient.getFusionQuote({
 
 const { hash } = await meeClient.executeFusionQuote({ fusionQuote: quote });
 ```
-
 ::::
-
-
-## 📌 Notes & Links
-
-* **Fusion triggers** are covered in [Fusion Mode Basics](./fusion-basics)
-* **Runtime values & constraints** are detailed in [Runtime Injection](./runtime-injection)
-* **Gas abstraction** details in [EIP‑7702 guide](./eip-7702-gasless)
-
 
 
 ### ✅ What You Achieved
