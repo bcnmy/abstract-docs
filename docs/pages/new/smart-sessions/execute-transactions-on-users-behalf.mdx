@@ -1,19 +1,29 @@
-# What Are Smart Sessions?
+# Using Smart Sessions
+How are smart sessions activated?
 
-Smart Sessions let you authorize another key (called a **session key**) to execute **restricted** actions on a smart account across chains. This means:
+:::steps
+#### Deploy Smart Account
+You deploy the Nexus smart account on all the chains where you want to use the 
+smart sessions
 
-- User (the owner) sign once to define limits
-- Another key (session key) can operate the users account—but only within the limits the user explicitly approved defined
-- Everything is enforced at the smart contract level
+#### Install Sessions Module
+Nexus smart account is _modular_ which means you can install custom modules on the 
+account which extend its functionality. One of those modules is the smart sessions 
+module.
 
-Typical use cases:
+#### Define and Grant Permissions
+The developer defines all the permissions which they want the session signer 
+to have. The user must sign a payload which will grant those permissions to 
+the session signer.
 
-- Delegated automation
-- Time-bounded dApp actions
-- Spending controls
+#### Consume Permissions
+The session signer can begin consuming permissions.
+:::
 
-Each session defines **what, where, how much, and when** the session key can do things.
 
+## Implement 
+
+::::steps
 ### 1. Setup & Boilerplate
 
 ```ts
@@ -59,7 +69,12 @@ const sessionsMeeClient = meeClient.extend(meeSessionActions)
 
 ### 2. Preparing the Account
 
+We need to deploy the orchestrator account on all chains where we plan to use it _and_
+install the Smart Sessions module.
+
+:::info
 If the Smart Account is already deployed **and** the Smart Session module is installed on every required chain, this step can be skipped.
+:::
 
 #### ✅ Recommended: Use `prepareForPermissions`
 
@@ -91,7 +106,7 @@ if (payload) {
 }
 ```
 
-> Or, you can manually check:
+Or, you can manually check each chain - whether or not the deployment exists on that chain
 
 ```ts
 for (const deployment of mcNexus.deployments) {
@@ -197,6 +212,8 @@ const usePermissionPayload = await dappSessionClient.usePermission({
   feeToken
 })
 ```
+
+::::
 
 ## Summary
 

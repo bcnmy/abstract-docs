@@ -428,12 +428,12 @@ export default defineConfig({
 			items: [
 				{
 					text: '🤖 Modular Execution Environment (MEE)',
-					link: '/mee/what-is-mee',
+					link: '/new/learn-about-biconomy/what-is-mee',
 
 				},
 				{
 					text: '⚖️ MEE vs. ERC-4337',
-					link: '/mee/mee-vs-4337'
+					link: '/new/learn-about-biconomy/mee-vs-4337'
 				},
 				{
 					text: '📑 Nexus Smart Account',
@@ -441,19 +441,21 @@ export default defineConfig({
 				}
 			]
 		},
-		// {
-		// 	text: 'Quickstarts 🏃‍♂️',
-		// 	items: [
-		// 		{
-		// 			text: '🔶 Embedded Wallets Quickstart'
-		// 		},
-		// 		{
-		// 			text: '🧡 External Wallets Quickstart'
-		// 		}
-		// 	]
-		// },
 		{
-			text: 'Preparing for Gasless Orchestration 🦮',
+			text: 'Quickstarts 🏃‍♂️',
+			items: [
+				{
+					text: '🔶 Embedded Wallets Quickstart',
+					link: '/new/quickstart/embedded-wallets-quickstart'
+				},
+				{
+					text: '🧡 External Wallets Quickstart',
+					link: '/new/quickstart/external-wallets-quickstart'
+				}
+			]
+		},
+		{
+			text: 'Setting Up 🦮',
 			items: [
 				{
 					text: '🏁 Set up AbstractJS',
@@ -578,8 +580,23 @@ export default defineConfig({
 			]
 		},
 		{
+			text: 'Examples 👆',
+			items: [
+
+			]
+		},
+		{
 			text: "⛓️ Supported Chains",
 			link: "/supportedNetworks",
+		},
+		{
+			text: 'Resources 📦',
+			items: [
+				{
+					text: '📑 Contract Addresses & Audits',
+					link: ''
+				}
+			]
 		},
 		// {
 		// 	text: 'Quickstart Guides',
