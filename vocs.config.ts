@@ -214,7 +214,7 @@ export default defineConfig({
 							link: '/new/integration-guides/bridges-and-solvers/integrate-lifi'
 						},
 						{
-							text: 'Across (ERC-7683 Intents)',
+							text: 'Across',
 							link: '/new/integration-guides/bridges-and-solvers/integrate-across'
 						},
 						{
@@ -226,7 +226,7 @@ export default defineConfig({
 			]
 		},
 		{
-			text: 'Examples 👆',
+			text: 'Examples (Coming Soon) 👇',
 			items: [
 				{
 					text: '🔄 Swap → Bridge → Swap'
@@ -263,11 +263,7 @@ export default defineConfig({
 							text: "buildComposable",
 							link: "/sdk-reference/mee-client/account/methods/buildComposable",
 						},
-						{
-							text: "more*",
-							collapsed: true,
-							items: [
-								{
+					{
 									text: "deploymentOn",
 									link: "/sdk-reference/mee-client/account/methods/more/deploymentOn",
 								},
@@ -287,8 +283,6 @@ export default defineConfig({
 									text: "waitForTransactionReceipts",
 									link: "/sdk-reference/mee-client/account/methods/more/waitForTransactionReceipts",
 								},
-							],
-						}
 					],
 				},
 				{
