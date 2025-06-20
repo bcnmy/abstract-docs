@@ -20,5 +20,5 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["**/*.ts", "**/*.tsx", "pages/new/quickstart/external-wallets-quickstart.mdx"]
+  "include": ["**/*.ts", "**/*.tsx", "pages/new/quickstart/external-wallets-quickstart.mdx", "pages/new/integration-guides/bridges-and-solvers/integrate-lifi.mdx"]
 }
