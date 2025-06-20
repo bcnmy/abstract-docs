@@ -1,0 +1,182 @@
+# 🔐 EIP-7702 Gas Abstracted Transactions with Privy
+
+This guide demonstrates how to integrate Privy with Biconomy's AbstractJS to enable EIP-7702 gas abstracted transactions. You’ll learn how to:
+
+- Create smart accounts from embedded wallets
+- Sign EIP-7702 authorizations
+- Use runtime-injected parameters
+- Execute transactions across chains
+
+
+
+## 📦 1. Install dependencies
+
+```bash
+npm i @privy-io/react-auth @biconomy/abstractjs viem
+```
+
+
+
+## ⚙️ 2. Configure Privy
+
+Ensure your app creates embedded wallets upon login. For a detailed guide
+on how to initialize Privy, follow [their docs](https://docs.privy.io/wallets/connectors/setup/configuring-external-connector-wallets)
+
+```tsx
+<PrivyProvider
+  appId={import.meta.env.VITE_PRIVY_APP_ID}
+  config={{
+    loginMethods: ["email"],
+    embeddedWallets: {
+      createOnLogin: true,
+      noPromptOnSignature: true,
+    },
+  }}
+>
+  {children}
+</PrivyProvider>
+```
+
+
+
+## 🧠 3. Full Flow Implementation (Step-by-Step)
+
+::::steps
+### 🔑 Setup Imports and Constants
+
+```ts
+import {
+  createWalletClient,
+  http,
+  custom,
+  erc20Abi,
+} from "viem";
+import { optimism, base } from "viem/chains";
+import {
+  createMeeClient,
+  toMultichainNexusAccount,
+  runtimeERC20BalanceOf,
+  greaterThanOrEqualTo,
+} from "@biconomy/abstractjs";
+import { useWallets, useSignAuthorization } from "@privy-io/react-auth";
+
+const NEXUS_IMPLEMENTATION = "0x000000004F43C49e93C970E84001853a70923B03";
+const USDC_ADDRESS = "0xUSDC..."; // Replace with actual USDC address
+```
+
+### 👤 Access Embedded Wallet and Create Wallet Client
+
+```ts
+const { wallets } = useWallets();
+const { signAuthorization } = useSignAuthorization();
+
+const embeddedWallet = wallets?.[0];
+if (!embeddedWallet) throw new Error("No embedded wallet found");
+
+await embeddedWallet.switchChain(optimism.id);
+const provider = await embeddedWallet.getEthereumProvider();
+
+const walletClient = createWalletClient({
+  account: embeddedWallet.address,
+  chain: optimism,
+  transport: custom(provider),
+});
+```
+
+### ✍️ Sign EIP-7702 Authorization
+
+In this step we will be signing the EIP-7702 authorization, effectivelly installing the code of 
+the Biconomy Nexus smart account onto the address of our Privy EOA! Learn more about it 
+[here](/new/getting-started/enable-mee-eoa-users)
+
+```ts
+const authorization = await signAuthorization({
+  contractAddress: NEXUS_IMPLEMENTATION,
+  chainId: 0,
+});
+```
+
+### 🧱 Create Multichain Smart Account
+
+```ts
+const nexusAccount = await toMultichainNexusAccount({
+  chains: [optimism, base],
+  transports: [http(), http()],
+  signer: walletClient.account,
+  accountAddress: embeddedWallet.address,
+});
+```
+
+### 🌐 Create MEE Client
+
+```ts
+const meeClient = await createMeeClient({ account: nexusAccount });
+```
+
+### 🔄 Build Runtime-Injected Instruction
+
+```ts
+const runtimeInstruction = await nexusAccount.buildComposable({
+  type: "default",
+  data: {
+    abi: erc20Abi,
+    functionName: "transfer",
+    chainId: optimism.id,
+    to: USDC_ADDRESS,
+    args: [
+      embeddedWallet.address,
+      runtimeERC20BalanceOf({
+        targetAddress: nexusAccount.addressOn(optimism.id, true),
+        tokenAddress: USDC_ADDRESS,
+        constraints: [greaterThanOrEqualTo(1n)],
+      }),
+    ],
+  },
+});
+```
+
+### 🚀 Execute Gasless Composable Transaction
+
+[Learn More About EIP-7702 Authorizations](/new/getting-started/enable-mee-eoa-7702)
+
+```ts
+const { hash } = await meeClient.execute({
+
+  // Must pass authorization and set delegate to
+  // true when using EIP-7702 flows.
+  authorization,
+  delegate: true,
+
+
+  // Gas paid with USDC on Optimism
+  feeToken: {
+    address: USDC_ADDRESS,
+    chainId: optimism.id,
+  },
+  
+  instructions: [runtimeInstruction],
+});
+
+console.log("Submitted tx hash:", hash);
+```
+
+### 📬 Wait for Transaction Receipt
+
+```ts
+const receipt = await meeClient.waitForSupertransactionReceipt({ hash });
+console.log("Tx complete:", receipt.hash);
+```
+
+::::
+
+
+## ✅ Summary
+
+This implementation demonstrates:
+
+- How to derive a smart account at the EOA address using EIP-7702
+- Inject dynamic values using `runtimeERC20BalanceOf`
+- Abstract gas fees using any ERC-20 token (USDC in this case)
+- Execute safe, constraint-driven transactions using MEE
+
+Use this pattern as a base for more advanced orchestration or cross-chain strategies.

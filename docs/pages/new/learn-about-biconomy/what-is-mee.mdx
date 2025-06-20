@@ -1,0 +1,146 @@
+# What is MEE?
+
+## The Problem You Know Too Well
+
+You've built an amazing DeFi feature. It works perfectly... in your tests. Then real users try it:
+
+- **Transaction 1**: "Please approve spending"
+- **Transaction 2**: "Now execute the swap"  
+- *Needs to fund wallet with gas on destination chain*
+- **Transaction 3**: "Approve on the destination chain"
+- **User**: *closes tab*
+
+A customer lost due to the limiations of current Web3 UX. 
+
+Biconomy is here to solve it!
+
+## Enter the Modular Execution Environment
+
+MEE is Biconomy's infrastructure that lets you orchestrate complex blockchain operations with a single user signature. Think of it as a transaction compiler - you write high-level intents, MEE handles all the messy blockchain details.
+
+```typescript
+// Before MEE: Multiple transactions, multiple signatures
+await token.approve(spender, amount)  // Sign 1
+await protocol.deposit(amount)         // Sign 2
+await bridge.transfer(chainB, amount)  // Sign 3
+// ... user already left
+
+// With MEE: One signature, complete flow
+await meeClient.execute({
+  instructions: [approveAndDepositAndBridge],
+  feeToken: { address: ANY_TOKEN_USER_HAS }  // Even LP tokens!
+})
+```
+
+## How It Works
+
+MEE operates through a network of orchestrator nodes that:
+
+1. **Accept a single signature** from the user
+2. **Execute multiple operations** across chains  
+3. **Handle all timing and dependencies** (bridges, async operations)
+
+Your users sign once. MEE handles everything else.
+
+## Core Capabilities
+
+### 1. Composable Instructions
+Chain operations together like Lego blocks. Each instruction can use outputs from previous ones.
+
+```typescript
+const instructions = [
+  swap(USDC → USDT),              // Output: USDT amount
+  deposit(/* uses USDT amount */), // Output: aTokens
+  bridge(/* uses aTokens */)       // To another chain
+]
+```
+
+### 2. Universal Gas Abstraction
+Users can pay with **any valuable token** - not just native gas tokens.
+
+- ✅ Stablecoins (USDC, USDT)
+- ✅ LP tokens from Uniswap/Curve
+- ✅ Yield-bearing tokens (aUSDC, stETH)
+- ✅ Literally any ERC-20 with value
+
+### 3. Cross-Chain Orchestration
+Single signature, multiple chains. MEE handles bridge timing, confirmations, and execution.
+
+```typescript
+// This just works
+await meeClient.execute({
+  instructions: [
+    operationOnOptimism,
+    bridgeToBase,
+    operationOnBase,
+    bridgeToArbitrum,
+    finalOperationOnArbitrum
+  ]
+})
+```
+
+### 4. Runtime Parameter Injection
+Handle dynamic values that aren't known until execution time.
+
+```typescript
+supply({
+  amount: runtimeERC20BalanceOf({
+    token: USDT,
+    minBalance: parseUnits('100', 6)  // Safety constraints
+  })
+})
+```
+
+## Why Developers Choose MEE
+
+### Ship Features, Not Infrastructure
+- Write business logic in TypeScript
+- No smart contract deployments
+- Update logic without audits
+- Test locally with mainnet forks
+
+### 10x Better DevEx
+```typescript
+// Old way: 500 lines of Solidity across 3 contracts
+// New way: 50 lines of TypeScript
+const strategy = async (ctx) => {
+  await ctx.compose('abi', { /* your logic */ })
+}
+```
+
+### Your Users Will Thank You
+- **Industry leading conversion rates**
+- **One-click everything** (even complex DeFi strategies)
+- **Never "out of gas"** (pay with tokens they have)
+- **Automatic cleanup** (unused funds always returned)
+
+## Integration in 5 Minutes
+
+```typescript
+import { createMeeClient, toMultichainNexusAccount } from "@biconomy/abstractjs"
+
+// 1. Create account
+const account = await toMultichainNexusAccount({
+  signer: userWallet,
+  chains: [optimism, base, arbitrum],
+  transports: [http(), http(), http()]
+})
+
+// 2. Create client
+const meeClient = await createMeeClient({ account })
+
+// 3. Execute anything
+const { hash } = await meeClient.execute({
+  instructions: [...],  // Your orchestrated flow
+  feeToken: { address: USER_PREFERRED_TOKEN }
+})
+```
+
+## The Bottom Line
+
+Every signature you don't ask for is a user you keep. Every chain boundary you hide is friction removed. Every gas token hunt you eliminate is a transaction completed.
+
+MEE isn't just infrastructure - it's how you ship Web3 products that users actually want to use.
+
+**Ready to give your users superpowers?**
+

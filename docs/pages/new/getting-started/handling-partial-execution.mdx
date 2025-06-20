@@ -1,0 +1,99 @@
+
+## 🧹 Handling Cross-Chain Failures Gracefully
+
+In single-chain flows, Supertransaction execution is atomic by default—either all steps succeed or none do.
+
+ However, in **cross-chain orchestration**, there is no native atomicity guarantee. For example, a bridge transfer might succeed on the source chain, but fail on the destination chain due to unexpected conditions (e.g. protocol reverts, slippage, gas limits). In such cases, users may be left with partially executed operations and stranded tokens in intermediate smart accounts.
+
+**Cleanup transactions** provide a partial solution to this limitation. By attaching a follow-up userOp to return leftover funds, developers can ensure users regain access to any unspent or unutilized tokens even after a failed orchestration.
+
+This makes cleanup transactions a critical reliability feature for any multi-chain or multi-step workflow. They help preserve user trust, reduce support overhead, and ensure funds are never left behind due to unexpected cross-chain behavior.
+
+
+## ⚙️ How It Works
+
+1. The SDK builds a `transfer` instruction constrained by `runtimeNonceOf`.
+2. Cleanup userOps stay in the mempool until all dependent instructions complete.
+3. Once constraints are met, the cleanup executes.
+
+:::info[No execution if nothing to cleanup]
+If the runtime balance is 0, the cleanup userOp reverts (harmlessly).
+:::
+
+---
+
+### 🚀 For Fusion Orchestration
+
+[Learn how to set up Fusion Orhcestration]()
+
+```ts
+const quote = await meeClient.getFusionQuote({
+  trigger,
+  instructions,
+  cleanUps: [
+    {
+      chainId,
+      tokenAddress,
+      recipientAddress: eoa.address
+    }
+  ],
+  feeToken: { chainId, address: tokenAddress }
+});
+```
+
+* No `dependsOn` is needed—Fusion batches into a single userOp.
+
+---
+
+### 🔁 For EIP-7702 & Native SCA Orchestration
+
+```ts
+const quote = await meeClient.getQuote({
+  instructions,
+  cleanUps: [
+    {
+      chainId,
+      tokenAddress,
+      recipientAddress: eoa.address,
+      dependsOn: [userOp(2)],
+      amount: parseUnits("0.02", 6)
+    }
+  ],
+  feeToken: { chainId, address: tokenAddress }
+});
+```
+
+* Use `dependsOn` if cleanup must wait for specific instructions.
+* Otherwise, it defaults to the last executed instruction.
+
+---
+
+### 💸 Multi-Token Cleanup Example
+
+```ts
+cleanUps: [
+  {
+    tokenAddress: USDT,
+    dependsOn: [userOp(1)],
+    recipientAddress: eoa
+  },
+  {
+    tokenAddress: USDC,
+    dependsOn: [userOp(2)],
+    recipientAddress: eoa
+  }
+];
+```
+
+Each cleanup executes independently after its dependency resolves.
+
+---
+
+### 🧠 Developer Tips
+
+1. Cleanup userOps **always run last**.
+2. Cleanup is skipped if the balance < 1 wei.
+3. In **Fusion**, `dependsOn` is almost never needed.
+4. In **Normal** flows, specify `dependsOn` for non-sequential logic or multi-token flows.
+
+These mechanics ensure seamless recovery even in the event of failure mid-orchestration.

@@ -1,0 +1,96 @@
+# Setting up AbstractJS
+
+### Installation
+
+```bash
+npm install @biconomy/abstractjs viem
+```
+
+::::steps
+#### Basic Setup
+
+Import the required dependencies and set up your signer:
+
+```typescript
+import { createMeeClient, toMultichainNexusAccount } from "@biconomy/abstractjs";
+import { http } from "viem";
+import { privateKeyToAccount } from "viem/accounts";
+import { base, optimism } from "viem/chains";
+
+const eoa = privateKeyToAccount(Bun.env.PRIVATE_KEY as `0x${string}`)
+```
+
+#### Creating a Multichain Nexus Account
+
+Biconomy MEE orchestration uses the Nexus smart account system. The `toMultichainNexusAccount` method calculates addresses for the Nexus account on all specified chains.
+
+```typescript
+const orchestrator = await toMultichainNexusAccount({
+  chains: [
+    optimism, base 
+  ],
+  transports: [
+    http(), http()
+  ],
+  signer: eoa
+})
+```
+
+:::info[Lazy Deployment]
+Accounts are not deployed at this point - only their addresses are calculated. Deployment happens just-in-time when the first transaction is pushed to each chain.
+:::
+
+##### Configuration Parameters
+
+| Parameter | Description | Required |
+|-----------|-------------|----------|
+| `chains` | Array of chains your app will use | Yes |
+| `transports` | Viem-style transports (RPC URLs) in the same order as chains | Yes |
+| `signer` | The user wallet authorized to perform orchestration | Yes |
+| `accountAddress` | Override address for EIP-7702 orchestration (use EOA address) | No |
+
+::::
+### EIP-7702 Enabled Orchestration
+
+For EIP-7702 based orchestration (commonly used with embedded wallets like Privy, Dynamic, Magic), override the account address:
+
+```typescript
+const orchestrator7702 = await toMultichainNexusAccount({
+  chains: [
+    optimism, base
+  ],
+  transports: [
+    http(), http()
+  ],
+  signer: eoa,
+  accountAddress: eoa.address
+})
+```
+
+### Key Difference
+
+Setting `accountAddress: eoa.address` tells the function to use the EOA address directly instead of calculating smart account deployment addresses. The MEE Relayer will call the `execute` function on the user's EOA address, which requires the user to authorize the Nexus account via EIP-7702 delegation.
+
+## Creating an MEE Client
+
+Orchestration, gasless execution, and all other MEE features are provided by MEE Nodes. Create an MEE client to connect to these nodes:
+
+```typescript
+const meeClient = await createMeeClient({
+  account: orchestrator,
+  apiKey: 'your-api-key',
+  url: 'https://mee-node-url'
+})
+```
+
+[Read the EIP-7702 Guide Here](/new/getting-started/enable-mee-eoa-7702)
+
+### MEE Client Parameters
+
+| Parameter | Description | Required |
+|-----------|-------------|----------|
+| `account` | The orchestrator account instance | Yes |
+| `apiKey` | API key for authentication (rate limiting applied without it) | No |
+| `url` | MEE Node URL (defaults to Biconomy Network if not specified) | No |
+
+When no URL is provided, the client connects to the Biconomy Network - a globally distributed network of MEE Nodes run by professional operators. View operators at [https://token.biconomy.io](https://token.biconomy.io).

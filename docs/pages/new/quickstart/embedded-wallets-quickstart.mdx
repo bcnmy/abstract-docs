@@ -1,0 +1,191 @@
+# 🏃‍♂️ 🔶 Embedded Wallets Quickstart
+
+In this guide we'll see a quick example of using the Biconomy MEE stack with an Embedded wallet provider.
+
+For this guide, we'll use [Privy](https://privy.io). Use the sidebar on the left and scroll down to _Integrations_
+section to find tutorials for integration with other embedded wallet providers.
+
+:::info[‼️ Important]
+To keep things short, this guide will show you a simple example of _single-chain orchestration_ with
+cross-chain gas. However, the Biconomy MEE stack supports multi-chain orchestration cases. If you're looking
+to build a multi-chain DeFi strategy - read [this guide](/new/getting-started/orchestrate-transactions-across-chains).
+:::
+
+This tutorial walks you through how to use **Privy** (for authentication and embedded wallets) together with **Biconomy MEE** (for gasless, cross-chain transactions using EIP-7702). We will integrate these in a Vite + React + Wagmi application.
+
+## 🧱 Project Setup
+
+Create your project using Vite:
+
+```bash
+bun create vite biconomy-mee-embedded-example --template react-ts
+cd biconomy-mee-embedded-example
+```
+
+Add the following to your `package.json`:
+
+```json
+"dependencies": {
+  "@biconomy/abstractjs": "^1.0.17",
+  "@privy-io/react-auth": "^2.14.2",
+  "@privy-io/wagmi": "^1.0.4",
+  "@tanstack/react-query": "^5.80.7",
+  "react": "^19.1.0",
+  "react-dom": "^19.1.0",
+  "viem": "^2.31.3",
+  "wagmi": "^2.15.6"
+}
+```
+
+Install dependencies:
+
+```bash
+bun install
+```
+
+Set up your `main.tsx`:
+
+```tsx
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App.tsx';
+import './index.css';
+
+import { PrivyProvider } from '@privy-io/react-auth';
+import { WagmiProvider } from 'wagmi';
+import { wagmiConfig } from './wagmi.ts';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const appId = 'your-privy-app-id';
+const queryClient = new QueryClient();
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <PrivyProvider
+      appId={appId}
+      config={{
+        embeddedWallets: {
+          ethereum: {
+            createOnLogin: 'all-users',
+          },
+        },
+      }}
+    >
+      <QueryClientProvider client={queryClient}>
+        <WagmiProvider config={wagmiConfig}>
+          <App />
+        </WagmiProvider>
+      </QueryClientProvider>
+    </PrivyProvider>
+  </React.StrictMode>
+);
+```
+
+In `wagmi.ts`:
+
+```ts
+import { createConfig } from '@privy-io/wagmi';
+import { http } from 'wagmi';
+import { baseSepolia, optimismSepolia } from 'viem/chains';
+
+export const wagmiConfig = createConfig({
+  chains: [optimismSepolia, baseSepolia],
+  transports: {
+    [optimismSepolia.id]: http(),
+    [baseSepolia.id]: http(),
+  },
+});
+```
+
+## ⬇️ Get the Embedded Wallet Instance
+
+After logging in the user with Privy, you can find the embedded wallet as follows:
+
+```ts
+const wallet = wallets.find(wallet => wallet.walletClientType === 'privy');
+```
+
+## ✍️ Authorizing with EIP-7702
+
+To install the Biconomy Nexus 1.2.0 smart account on the address of your Privy embedded
+wallet EOA, you need to sign the following authorization. Note: This is using the 
+`signAuthorization` method exposed by the `useSignAuthorization` Privy hook.
+
+```ts
+const authorization = await signAuthorization({
+  contractAddress: NEXUS_V120,
+  chainId: baseSepolia.id, // or 0 for universal
+  nonce: 0,
+});
+```
+
+## ⛽️ ↔ Execute a Cross-Chain Gas Abstracted Transaction
+
+After signing, you can submit a transaction through Biconomy MEE Relayers. Notice 
+few things for this transaction:
+
+- Gas is paid with USDC
+- Gas is paid on a different chain than the instruction being executed
+- The `amount` arg in the ERC-20 `transfer` call is not fixed to a value, but uses
+`runtimeERC20BalanceOf` which will inject the full amount of USDC available. 
+
+This demonstrates few key points of MEE:
+- Gas abstraction / gas sponsorship
+- Multi-chain execution/orchestration
+- Runtime parameter injection enabling multi-transaction composability
+
+```ts
+const orchestrator = await toMultichainNexusAccount({
+  chains: [optimismSepolia, baseSepolia],
+  transports: [http(), http()],
+  signer: await wallet.getEthereumProvider(),
+  accountAddress: wallet.address as Address,
+});
+
+const meeClient = await createMeeClient({ account: orchestrator });
+
+const sendUSDCBase = await orchestrator.buildComposable({
+  type: 'default',
+  data: {
+    abi: erc20Abi,
+    chainId: baseSepolia.id,
+    to: usdcAddresses[baseSepolia.id],
+    functionName: 'transfer',
+    args: [
+      wallet.address,
+      runtimeERC20BalanceOf({
+        tokenAddress: usdcAddresses[baseSepolia.id],
+        targetAddress: orchestrator.addressOn(baseSepolia.id, true),
+        constraints: [greaterThanOrEqualTo(1n)],
+      }),
+    ],
+  },
+});
+
+const quote = await meeClient.getQuote({
+  instructions: [sendUSDCBase],
+  authorization,
+  delegate: true,
+
+  // Paying for gas with USDC on Optimism, while
+  // executing a transaction on Base!
+  feeToken: {
+    address: usdcAddresses[optimismSepolia.id],
+    chainId: optimismSepolia.id,
+  },
+});
+
+const { hash } = await meeClient.executeQuote({ quote });
+```
+
+You can then link the user to MEE Scan to track:
+
+```ts
+const link = getMeeScanLink(hash);
+```
+
+## Storing the **Authorization**
+
+If you've used the `chainId === 0` for your authorization you can store it (e.g. in localStorage or DB) and 
+replay it for other chains in the future. This gives your users an even more seamless UX.
+

@@ -1,0 +1,49 @@
+
+# ⚙️ Setting Manual Gas Limits
+
+AbstractJS assigns **generous default gas limits** to every instruction so you can prototype quickly without tweaking `gasLimit` values. Once you move to production, those defaults become sub‑optimal—quotes may look expensive and confuse users.
+
+## 🤔 Why you should care
+
+| 🔢 Stage             | 🤝 Default behaviour                             | ✅ Impact                                         |
+| ----------------- | --------------------------------------------- | ---------------------------------------------- |
+| **PoC / testing** | High gas limits keep dev friction near‑zero   | Faster iterations                              |
+| **Production**    | High limits over‑inflate the **quoted price** | Users see a larger “max cost” and may drop off |
+
+### 🧾 Quote vs. Actual Cost
+
+* The price returned by `meeClient.getQuote()` is a **maximum**. <br />If you overshoot, MEE refunds all unspent gas to the user **on‑chain**.
+* Lowering `gasLimit` keeps the quote realistic and improves conversion, without risking “out of gas” as long as you size it sensibly.
+
+## ✍️ How to set manual limits
+
+Add a `gasLimit` field (in wei) to each instruction’s `data` object:
+
+```ts
+const instruction = await orchestrator.buildComposable({
+  type: "default",
+  data: {
+    abi: erc20Abi,
+    to: "0xUSDC_ADDRESS",
+    chainId: optimism.id,
+    functionName: "transfer",
+    args: [
+      "0xRecipient",
+      parseUnits("10", 6),
+    ],
+    gasLimit: 35_000n, // manual limit
+  },
+});
+```
+
+### ⚙️ Recommended workflow
+
+1. **Start high**, observe gas used in testnet.
+2. **Trim** the limit to \~20 % above observed usage.
+3. **Ship** with explicit limits so quotes stay tight.
+
+## Takeaways
+
+* High defaults are fine for dev, but tune gas limits before mainnet launch.
+* Quotes show *max* cost; unused gas is always refunded.
+* Clear, lower quotes reduce sticker shock and user drop‑off.

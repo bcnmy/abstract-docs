@@ -1,0 +1,66 @@
+# 🗝️ What Are Smart Sessions?
+
+Smart Sessions are a powerful feature of the Biconomy stack which allows accounts (EOAs and Smart Accounts) to delegate
+certain permissions to other signers. These permissions are delegated with certain conditions attached (e.g. how much
+funds the new signer can use, which contracts and functions they can call or _when_ they can exeucute).
+
+Smart Sessions are extremely useful for **automation** and **agentic execution**.
+
+## 👁️ Example
+
+Imagine an agent which rebalances the user funds across chains into the highest yielding USDC oportunity across
+blue chip lending and yield farming protocols. We can set up a multichain Smart Session like this:
+
+1. The agent is only allowed to call Morpho, Venus, AAVE and Yearn contracts on Optimism, Base, Ethereum Mainnet and Polygon.
+2. The agent is only allowed to spend USDC
+3. The maximum amount the agent can spend is 10,000.00 USDC
+
+As a developer, you would:
+
+:::steps
+##### Create a private key for the agent signer
+
+##### Request for the user to sign a transaction which installs the Smart Sessions module (gasless)
+
+##### Request the user to sign the specific permissions being given
+
+##### Sign transactions on the users behalf (e.g. move the position from AAVE on OP to Morpho on Base)
+::::
+
+This would be two signatures for the user (one to install the module, one to approve the permissions) and both 
+would be fully gasless.
+
+## 🧡 Choose Biconomy for Smart Sessions
+
+### ↔️ Biconomy Smart Sessions are Multichain
+
+Unlike ERC-4337 account providers, the Biconomy Smart Session stack has been built
+from the ground up to be multichain first! It supports:
+
+- Installing sessions on multiple chains with a single signature
+- Orchestrating multiple function calls across multiple chains with a 
+single signature from the session signer
+- Permitting complex sessions which span various types of permissions across multiple
+chains with a single signature from the user
+
+:::info[Powered by MEE]
+The instructions for sessions are executed by the Modular Execution Environment ([learn more](/new/learn-about-biconomy/what-is-mee))
+and have full support for our innovative multichain orchestration ([learn more here](/new/learn-about-biconomy/understanding-composable-orchestration))
+:::
+
+### 🔐 Biconomy Smart Sessions work with EOAs
+
+Until now, Smart Sessions were limited to working with Smart Accounts only. This is due 
+to the fact that EOAs couldn't approve permissions. However, with the combination
+EIP-7702 coming to market and Biconomy publishing our innovative Fusion Execution stack,
+the smart sessions offered by Biconomy can work _directly_ from EOAs.
+
+:::info[EIP-7702 + Smart Sessions]
+[Learn about EIP-7702](/new/getting-started/enable-mee-eoa-7702) if you want to enable smart sessions for Embedded Wallet
+(Privy, Dynamic, Turnkey) users.
+:::
+
+:::info[Fusion + Smart Sessions]
+[Learn about Fusion Execution](/new/getting-started/enable-mee-eoa-fusion) if you want to enable smart sessions for External 
+(MetaMask, Rabby, Trust, ...) users.
+:::

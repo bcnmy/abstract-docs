@@ -1,0 +1,614 @@
+# LiFi + Biconomy MEE Integration Guide
+
+## 🌉 Cross-Chain USDC Supply to AAVE with Gasless Fusion Orchestration
+
+This guide demonstrates how to use LiFi Protocol together with Biconomy's Modular Execution Environment (MEE) to perform a cross-chain supply of USDC into AAVE, completely gasless using Fusion Orchestration.
+
+## 🎯 Overview
+
+The integration enables:
+- **🔀 Cross-chain bridging** from Optimism to Base using LiFi Protocol
+- **🏦 Automated AAVE supply** on the destination chain
+- **⛽ Gasless execution** through Fusion Orchestration
+- **✍️ Single signature UX** for the entire flow
+- **⚡ Optimized routing** with FASTEST or CHEAPEST options
+
+## 🏗️ Architecture
+
+### Key Components
+
+1. **🌐 LiFi Protocol**: Smart routing aggregator for cross-chain swaps and bridges
+2. **🔧 Biconomy MEE**: Orchestrates the entire transaction flow
+3. **🎭 Fusion Mode**: Enables gasless execution with external wallets
+4. **🤝 Companion Account**: Temporary smart account for orchestration
+
+### Flow Diagram
+
+```
+User EOA (Optimism) 💰
+    ↓ [Sign Trigger] ✍️
+Companion Account 🤖
+    ↓ [Bridge via LiFi] 🌉
+Base Network ⛓️
+    ↓ [Supply to AAVE] 🏦
+aUSDC → User EOA (Base) 💎
+```
+
+## 📝 Implementation Guide
+
+### 1. Setup and Dependencies
+
+First, create the LiFi Quote Service file. **Copy and paste this entire code block** into a new file called `lifi-quote-service.ts`:
+
+```typescript
+// lifi-quote-service.ts
+import type { Address, Hex } from 'viem';
+
+/**
+ * -------------------------------------------------------------
+ *  LI.FI Quote Service — typed with viem
+ * -------------------------------------------------------------
+ */
+
+export interface TokenInfo {
+  address: Address;
+  symbol: string;
+  decimals: number;
+  chainId: number;
+  name: string;
+  coinKey: string;
+  priceUSD?: string;
+  logoURI: string;
+}
+
+export interface GasCost {
+  type: string;
+  price: string;
+  estimate: string;
+  limit: string;
+  amount: string;
+  amountUSD: string;
+  token: TokenInfo;
+}
+
+export interface ProtocolStep {
+  name: string;
+  part: number;
+  fromTokenAddress: Address;
+  toTokenAddress: Address;
+}
+
+export interface EstimateData {
+  fromToken: TokenInfo;
+  toToken: TokenInfo;
+  toTokenAmount: string;
+  fromTokenAmount: string;
+  protocols: ProtocolStep[][][];
+  estimatedGas: number;
+}
+
+export interface FeeCost {
+  name: string;
+  description: string;
+  percentage: string;
+  token: TokenInfo;
+  amount: string;
+  amountUSD: string;
+  included: boolean;
+}
+
+export interface Action {
+  fromChainId: number;
+  toChainId: number;
+  fromToken: TokenInfo;
+  toToken: TokenInfo;
+  fromAmount: string;
+  slippage: number;
+  fromAddress: Address;
+  toAddress: Address;
+}
+
+export interface Estimate {
+  fromAmount: string;
+  toAmount: string;
+  toAmountMin: string;
+  approvalAddress: Address;
+  feeCosts: FeeCost[];
+  gasCosts: GasCost[];
+  data: EstimateData;
+}
+
+export interface ToolDetails {
+  key: string;
+  logoURI: string;
+  name: string;
+}
+
+export interface TransactionRequest {
+  from: Address;
+  to: Address;
+  chainId: number;
+  data: Hex;
+  value: Hex;
+  gasPrice: Hex;
+  gasLimit: Hex;
+}
+
+export interface Step {
+  id: string;
+  type: string;
+  tool: string;
+  toolDetails: ToolDetails;
+  action: Action;
+  estimate: Estimate;
+}
+
+export interface QuoteRequest {
+  fromChain: string;
+  toChain: string;
+  fromToken: Address;
+  toToken: Address;
+  fromAddress: Address;
+  toAddress?: Address;
+  fromAmount: string;
+  order?: 'FASTEST' | 'CHEAPEST';
+  slippage?: number;
+  integrator?: string;
+  fee?: number;
+  referrer?: string;
+}
+
+export interface QuoteResponse {
+  id: string;
+  type: string;
+  tool: string;
+  toolDetails: ToolDetails;
+  action: Action;
+  estimate: Estimate;
+  transactionRequest: TransactionRequest;
+  includedSteps: Step[];
+  integrator?: string;
+  referrer?: string;
+  execution?: unknown;
+}
+
+const BASE_URL = 'https://li.quest/v1/quote';
+
+function buildQuery(params: QuoteRequest): string {
+  const qs = new URLSearchParams();
+  qs.set('fromChain', params.fromChain);
+  qs.set('toChain', params.toChain);
+  qs.set('fromToken', params.fromToken);
+  qs.set('toToken', params.toToken);
+  qs.set('fromAddress', params.fromAddress);
+  qs.set('toAddress', params.toAddress ?? params.fromAddress);
+  qs.set('fromAmount', params.fromAmount);
+  if (params.order) qs.set('order', params.order);
+  qs.set('slippage', (params.slippage ?? 0.005).toString());
+  if (params.integrator) qs.set('integrator', params.integrator);
+  if (params.fee !== undefined) qs.set('fee', params.fee.toString());
+  if (params.referrer) qs.set('referrer', params.referrer);
+  return qs.toString();
+}
+
+export async function getLifiQuote(params: QuoteRequest): Promise<QuoteResponse> {
+  const query = buildQuery(params);
+  const resp = await fetch(`${BASE_URL}?${query}`, {
+    method: 'GET',
+    headers: {
+      // Optional: Add your LiFi API key if you have one
+      // 'x-lifi-api-key': process.env.LIFI_API_KEY,
+    },
+  });
+
+  if (!resp.ok) {
+    const errorText = await resp.text();
+    throw new Error(`LI.FI quote failed: ${errorText}`);
+  }
+
+  return await resp.json() as QuoteResponse;
+}
+```
+
+Now, import the dependencies in your main file:
+
+```typescript
+import { 
+  createMeeClient, 
+  toMultichainNexusAccount,
+  createChainAddressMap,
+  runtimeERC20BalanceOf,
+  greaterThanOrEqualTo,
+  type Trigger 
+} from "@biconomy/abstractjs"
+import { getLifiQuote } from "./lifi-quote-service" // 👈 Import the service you just created
+import { base, optimism } from "viem/chains"
+import { privateKeyToAccount } from "viem/accounts"
+import { http, parseAbi, parseUnits } from "viem"
+```
+
+### 2. 📍 Configure Token and Protocol Addresses
+
+```typescript
+// 💵 USDC addresses on different chains
+const usdcAddresses = createChainAddressMap([
+  [base.id, '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913'],
+  [optimism.id, '0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85']
+])
+
+// 🏦 AAVE Pool addresses
+const aavePoolAddresses = createChainAddressMap([
+  [base.id, '0xA238Dd80C259a72e81d7e4664a9801593F98d1c5'],
+  [optimism.id, '0x794a61358D6845594F94dc1DB02A252b5b4814aD']
+])
+
+// 💎 aUSDC (AAVE interest-bearing USDC)
+const aUSDCAddresses = createChainAddressMap([
+  [base.id, '0x4e65fE4DbA92790696d040ac24Aa414708F5c0AB'],
+  [optimism.id, '0x625E7708f30cA75bfd92586e17077590C60eb4cD']
+])
+```
+
+### 3. 🚀 Initialize MEE Client and Orchestrator
+
+```typescript
+// Create orchestrator account
+const eoa = privateKeyToAccount(PRIVATE_KEY)
+const orchestrator = await toMultichainNexusAccount({
+  chains: [optimism, base],
+  transports: [http(), http('https://base.llamarpc.com')],
+  signer: eoa
+})
+
+// Initialize MEE client
+const meeClient = await createMeeClient({
+  account: orchestrator,
+  apiKey: 'your_mee_api_key'
+})
+```
+
+### 4. 🔍 Get LiFi Bridge Quote
+
+⚠️ **Important**: Make sure you've created the `lifi-quote-service.ts` file from Step 1 before proceeding!
+
+LiFi provides smart routing across multiple bridges and DEXs:
+
+```typescript
+const { transactionRequest } = await getLifiQuote({
+  fromAddress: orchestrator.addressOn(optimism.id, true),
+  toAddress: orchestrator.addressOn(base.id, true),
+  fromAmount: inputAmount.toString(),
+  fromChain: optimism.id.toString(),
+  fromToken: usdcAddresses[optimism.id],
+  toChain: base.id.toString(),
+  toToken: usdcAddresses[base.id],
+  order: 'FASTEST' // or 'CHEAPEST' for cost optimization
+})
+```
+
+### 5. 🛠️ Build Orchestration Instructions
+
+#### Step 1: Define Trigger 🎬
+The trigger initiates the orchestration by pulling tokens from the EOA:
+
+```typescript
+const trigger: Trigger = {
+  chainId: optimism.id,
+  tokenAddress: usdcAddresses[optimism.id],
+  amount: inputAmount,
+}
+```
+
+#### Step 2: Approve LiFi ✅
+```typescript
+const approveLiFi = await orchestrator.buildComposable({
+  type: 'approve',
+  data: {
+    amount: inputAmount,
+    chainId: optimism.id,
+    spender: transactionRequest.to,
+    tokenAddress: usdcAddresses[optimism.id]
+  }
+})
+```
+
+#### Step 3: Execute Bridge Transaction 🌉
+```typescript
+const callLiFiInstruction = await orchestrator.buildComposable({
+  type: 'rawCalldata',
+  data: {
+    to: transactionRequest.to,
+    calldata: transactionRequest.data,
+    chainId: transactionRequest.chainId,
+    gasLimit: BigInt(transactionRequest.gasLimit),
+    value: BigInt(transactionRequest.value)
+  }
+})
+```
+
+#### Step 4: Approve AAVE (with runtime balance) 🔄
+Using runtime balance ensures we approve exactly what arrived:
+
+```typescript
+const approveAAVEInstruction = await orchestrator.buildComposable({
+  type: 'approve',
+  data: {
+    amount: runtimeERC20BalanceOf({
+      targetAddress: orchestrator.addressOn(base.id),
+      tokenAddress: usdcAddresses[base.id],
+      constraints: [greaterThanOrEqualTo(1n)]
+    }),
+    chainId: base.id,
+    spender: aavePoolAddresses[base.id],
+    tokenAddress: usdcAddresses[base.id]
+  }
+})
+```
+
+#### Step 5: Supply to AAVE 🏦
+```typescript
+const aaveSupplyAbi = parseAbi([
+  'function supply(address asset, uint256 amount, address onBehalfOf, uint16 referralCode)'
+])
+
+const callAAVEInstruction = await orchestrator.buildComposable({
+  type: 'default',
+  data: {
+    abi: aaveSupplyAbi,
+    chainId: base.id,
+    functionName: 'supply',
+    to: aavePoolAddresses[base.id],
+    args: [
+      usdcAddresses[base.id],
+      runtimeERC20BalanceOf({
+        targetAddress: orchestrator.addressOn(base.id),
+        tokenAddress: usdcAddresses[base.id],
+        constraints: [greaterThanOrEqualTo(1n)]
+      }),
+      orchestrator.addressOn(base.id),
+      0
+    ]
+  }
+})
+```
+
+#### Step 6: Withdraw aUSDC to EOA 💎
+```typescript
+const withdrawInstruction = await orchestrator.buildComposable({
+  type: 'withdrawal',
+  data: {
+    amount: runtimeERC20BalanceOf({
+      targetAddress: orchestrator.addressOn(base.id),
+      tokenAddress: aUSDCAddresses[base.id],
+      constraints: [greaterThanOrEqualTo(1n)]
+    }),
+    chainId: base.id,
+    tokenAddress: aUSDCAddresses[base.id],
+  }
+})
+```
+
+### 6. 🎯 Execute Fusion Orchestration
+
+```typescript
+const fusionQuote = await meeClient.getFusionQuote({
+  trigger,
+  instructions: [
+    approveLiFi, 
+    callLiFiInstruction,
+    approveAAVEInstruction,
+    callAAVEInstruction,
+    withdrawInstruction
+  ],
+  cleanUps: [{
+    chainId: base.id,
+    recipientAddress: eoa.address,
+    tokenAddress: usdcAddresses[base.id]
+  }],
+  feeToken: { 
+    address: usdcAddresses[optimism.id], 
+    chainId: optimism.id 
+  },
+  lowerBoundTimestamp: nowInSeconds,
+  upperBoundTimestamp: nowInSeconds + 60
+})
+
+const { hash } = await meeClient.executeFusionQuote({ fusionQuote })
+console.log(getMeeScanLink(hash))
+```
+
+## 🧠 Key Concepts
+
+### 🎯 LiFi Smart Routing
+
+LiFi aggregates multiple bridges and DEXs to find the best route:
+- **⚡ FASTEST**: Optimizes for speed
+- **💰 CHEAPEST**: Optimizes for lowest cost
+- **🔄 Multi-hop**: Can route through multiple chains if needed
+
+### 📊 Runtime Balance Constraints
+
+The `runtimeERC20BalanceOf` function ensures instructions use the exact amount that arrives:
+- ✅ Handles bridge slippage automatically
+- ✅ Ensures proper sequencing
+- ✅ Avoids failed transactions
+
+### 🔗 Constraints and Execution Order
+
+Instructions execute only when their constraints are met:
+1. 🏦 AAVE approval waits for bridged funds
+2. 💸 AAVE supply waits for approval
+3. 📤 Withdrawal waits for aUSDC
+
+### 🛡️ Cleanup Mechanism
+
+If any step fails, cleanup instructions ensure funds are returned:
+```typescript
+cleanUps: [{
+  chainId: base.id,
+  recipientAddress: eoa.address,
+  tokenAddress: usdcAddresses[base.id]
+}]
+```
+
+### ⛽ Gas Payment
+
+The orchestration is gasless because:
+- 💰 Gas paid using bridged USDC
+- 🔧 MEE handles gas abstraction
+- ✍️ Users only sign once
+
+## 🎭 LiFi Quote Service
+
+### Quote Parameters
+
+```typescript
+interface QuoteRequest {
+  fromChain: string;        // Source chain ID
+  toChain: string;          // Destination chain ID
+  fromToken: Address;       // Source token address
+  toToken: Address;         // Destination token address
+  fromAddress: Address;     // Sender address
+  toAddress?: Address;      // Receiver (optional)
+  fromAmount: string;       // Amount to bridge
+  order?: 'FASTEST' | 'CHEAPEST';  // Routing preference
+  slippage?: number;        // Max slippage (default: 0.5%)
+  integrator?: string;      // Your app name
+  fee?: number;            // Revenue share fee
+  referrer?: string;       // Referrer address
+}
+```
+
+### Response Structure
+
+```typescript
+interface QuoteResponse {
+  id: string;                    // Quote ID
+  transactionRequest: {          // Ready-to-send transaction
+    to: Address;
+    data: Hex;
+    value: Hex;
+    gasLimit: Hex;
+  };
+  estimate: {                    // Cost breakdown
+    fromAmount: string;
+    toAmount: string;
+    toAmountMin: string;
+    gasCosts: GasCost[];
+    feeCosts: FeeCost[];
+  };
+  toolDetails: {                 // Bridge/DEX used
+    name: string;
+    logoURI: string;
+  };
+}
+```
+
+## 💡 Best Practices
+
+1. **🔄 Always use runtime balances** for cross-chain operations
+2. **🛡️ Include cleanup instructions** for failure scenarios
+3. **⏰ Set reasonable time bounds** (60 seconds recommended)
+4. **🧪 Test on testnets first** before mainnet deployment
+5. **📊 Monitor transactions** using MEE Scan
+6. **🎯 Choose appropriate routing**:
+   - Use `FASTEST` for time-sensitive operations
+   - Use `CHEAPEST` for cost optimization
+7. **🔑 Secure your API keys** in environment variables
+
+## 🚨 Error Handling
+
+```typescript
+try {
+  const { transactionRequest } = await getLifiQuote(params)
+  // ... orchestration logic
+} catch (error) {
+  if (error.message.includes('LI.FI quote failed')) {
+    console.error('❌ Bridge route not available')
+    // Try alternative routes or notify user
+  }
+  console.error('🚨 Orchestration failed:', error)
+}
+```
+
+## 🚀 Advanced Features
+
+### 🎨 Custom Slippage
+```typescript
+const quote = await getLifiQuote({
+  // ... other params
+  slippage: 0.01, // 1% slippage tolerance
+})
+```
+
+### 💰 Revenue Sharing
+Earn fees by setting integrator params:
+```typescript
+const quote = await getLifiQuote({
+  // ... other params
+  integrator: 'YourAppName',
+  fee: 0.003, // 0.3% fee
+  referrer: '0xYourAddress'
+})
+```
+
+### 🔄 Multi-Chain Cleanups
+```typescript
+cleanUps: [
+  { 
+    chainId: optimism.id, 
+    recipientAddress: eoa.address, 
+    tokenAddress: usdcOptimism 
+  },
+  { 
+    chainId: base.id, 
+    recipientAddress: eoa.address, 
+    tokenAddress: usdcBase 
+  }
+]
+```
+
+### 🌐 Supported Chains & Bridges
+
+LiFi aggregates 30+ bridges across 20+ chains including:
+- **🌉 Bridges**: Stargate, Across, Hop, Connext, etc.
+- **🔄 DEXs**: Uniswap, SushiSwap, Curve, etc.
+- **⛓️ Chains**: Ethereum, Arbitrum, Optimism, Base, Polygon, etc.
+
+## 📊 Monitoring & Analytics
+
+Track your orchestrations:
+```typescript
+const meeScanUrl = getMeeScanLink(hash)
+console.log(`🔍 Track transaction: ${meeScanUrl}`)
+```
+
+## 🔧 Optional: Using LiFi API Key
+
+If you have high volume or need priority access, you can get a LiFi API key:
+
+1. Visit [LiFi Developer Portal](https://developers.li.fi)
+2. Sign up and get your API key
+3. Update the `lifi-quote-service.ts` file:
+
+```typescript
+// In lifi-quote-service.ts, update the headers:
+headers: {
+  'x-lifi-api-key': process.env.LIFI_API_KEY!, // Add your API key
+}
+```
+
+4. Set your environment variable:
+```bash
+LIFI_API_KEY=your_api_key_here
+```
+
+## 🏁 Conclusion
+
+This integration combines LiFi's powerful routing engine with Biconomy MEE's orchestration capabilities to deliver:
+- 🌐 Access to the best cross-chain routes
+- ⛽ Completely gasless experience
+- ✍️ Single signature for complex flows
+- 🛡️ Built-in failure protection
+
+The result is a seamless DeFi experience that abstracts away all the complexity of cross-chain operations.

@@ -1,0 +1,190 @@
+
+# 💉 Runtime Parameter Injection
+
+Runtime injection gives developers a powerful way to compose transactions when some values — like token amounts — aren’t known until execution time. This is a major evolution beyond traditional static batching, where all parameters must be known upfront.
+
+Instead of asking users to guess or estimate how much will arrive after a bridge or swap, AbstractJS lets you define **placeholders** — runtime values — that get resolved dynamically when the transaction is executed.
+
+<img style={{ height: 700 }} src='https://i.imgur.com/5ry2SJ6.jpeg'/>
+
+## 💡 Why It Matters
+
+Traditional transaction batching is rigid:
+
+* You must hardcode every parameter
+* You can't adapt to bridges, swaps, or slippage
+* You often over- or under-estimate received amounts
+
+With **runtime injection**, orchestration becomes **adaptive**:
+
+* Use actual token balances at the moment of execution
+* Protect users with constraints (e.g. slippage limits)
+* Compose flows across chains with fewer assumptions
+
+This eliminates entire classes of user experience problems and makes your apps more reliable.
+
+## 🧑‍💻 Basic Usage
+
+```ts
+import { runtimeERC20BalanceOf } from "@biconomy/abstractjs";
+import { balanceNotZeroConstraint } from "../utils/balanceNotZero.util";
+
+const swapInstruction = await oNexus.buildComposable({
+  type: "default",
+  data: {
+    chainId: optimism.id,
+    to: "0xProtocolAddress",
+    abi: protocolAbi,
+    functionName: "swap",
+    args: [
+      runtimeERC20BalanceOf({
+        tokenAddress: "0xTokenAddress",
+        targetAddress: nexusAddress,
+        constraints: [balanceNotZeroConstraint]
+      })
+    ]
+  }
+});
+```
+
+## 🛠️ Available Runtime Functions
+
+| Function                | Description                                             |
+| ----------------------- | ------------------------------------------------------- |
+| `runtimeERC20BalanceOf` | Inject the ERC20 balance of a target address at runtime |
+
+### `runtimeERC20BalanceOf`
+
+Inject the token balance of an address — most often your orchestrator address — at the time of execution.
+
+```ts
+import { balanceNotZeroConstraint } from "../utils/balanceNotZero.util";
+
+const transferAll = await mcNexus.buildComposable({
+  type: "default",
+  data: {
+    to: tokenContract,
+    abi: erc20Abi,
+    functionName: "transfer",
+    args: [
+      recipient,
+      runtimeERC20BalanceOf({
+        tokenAddress: tokenAddress,
+        targetAddress: mcNexus.addressOn(chain.id),
+        constraints: [balanceNotZeroConstraint]
+      })
+    ],
+    chainId: chain.id
+  }
+});
+```
+
+## 🧱 Constraints = Execution Control
+
+Constraints ensure that runtime-injected values meet specific criteria. If constraints are not met, the instruction will not execute.
+
+But even more importantly — they determine **when** instructions will execute. This is key for cross-chain orchestration.
+
+### ⛓️ Transaction Ordering
+
+When a runtime value is used, the orchestration system will **wait until all constraints are satisfied** before executing. This means constraints enforce dependency:
+
+```ts
+await oNexus.buildComposable({
+  chainId: optimism.id,
+  args: [
+    runtimeERC20BalanceOf({
+      tokenAddress: usdcOnOptimism,
+      targetAddress: nexusAddress,
+      constraints: [balanceNotZeroConstraint]
+    })
+  ]
+});
+```
+
+This instruction won’t execute until `nexusAddress` has a non-zero balance of USDC.
+
+In multi-chain orchestration, this is the mechanism that controls execution sequencing.
+
+### 💸 Handling Slippage
+
+```ts
+constraints: [
+  greaterThanOrEqualTo((expectedAmount * 90n) / 100n)
+]
+```
+
+Use constraints to ensure execution only proceeds under acceptable conditions.
+
+### 🛡️ Safety Nets
+
+Constraints act like assert statements. If the value isn't good — don’t execute.
+
+## 🌉 Cross-Chain Example
+
+```ts
+import { balanceNotZeroConstraint } from "../utils/balanceNotZero.util";
+
+// Step 1: Bridge
+const bridgeInstruction = await oNexus.buildComposable({
+  // bridging config
+});
+
+// Step 2: Wait for funds, then swap
+const swapInstruction = await oNexus.buildComposable({
+  type: "default",
+  data: {
+    chainId: optimism.id,
+    to: "0xSwapProtocol",
+    abi: swapAbi,
+    functionName: "swapExactTokensForTokens",
+    args: [
+      runtimeERC20BalanceOf({
+        tokenAddress: usdcOnOptimism,
+        targetAddress: nexusAddress,
+        constraints: [balanceNotZeroConstraint]
+      })
+    ]
+  }
+});
+```
+
+**How this works:**
+
+1. MEE simulates the swap instruction
+2. Simulation fails (no tokens yet)
+3. MEE waits and retries
+4. Bridge completes
+5. Constraints satisfied → transaction proceeds
+
+
+## ✅ Best Practices
+
+* ✅ Use runtime injection when values are unknown ahead of time
+* ✅ Always apply constraints to protect users and define execution rules
+* ✅ Use with transfer instructions to sweep remaining balances
+* ✅ Design for graceful failure if constraints aren't met
+
+
+## ⚙️ How It Works
+
+AbstractJS builds orchestration callData with **placeholders**. During execution:
+
+1. The smart account receives `executeComposable()`
+2. The fallback handler reads blockchain state
+3. Runtime values are injected into calldata
+4. The final transaction executes with those resolved parameters
+
+This eliminates the need for custom smart contracts or multi-step user flows.
+
+![Composable Fallback Handler](https://i.imgur.com/zESn9BO.png)
+
+## 🧠 Summary
+
+Runtime injection turns your orchestration flows into **state-aware, auto-sequencing logic** that adapts to bridge results, swap outputs, slippage conditions, and more.
+
+Use it when:
+
+* You’re building cross-chain workflows
+* You can’t predict output values
+* You want fewer failures and better UX

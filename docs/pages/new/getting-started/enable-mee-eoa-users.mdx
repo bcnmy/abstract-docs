@@ -1,0 +1,45 @@
+
+
+# ⚙️ Enable MEE on EOAs
+
+Biconomy MEE supports native Externally Owned Accounts (EOAs) through two orchestration methods:
+
+- **EIP-7702 Delegation** (embedded wallets only)
+- **Fusion Mode** (external wallets)
+
+## 💳 Wallet Type Support
+
+Wallet compatibility depends on how much control the wallet exposes over the EOA. 
+
+- **Embedded wallets** <br/> (e.g. Privy, Dynamic, Magic) allow developers to install smart account logic directly on the user’s EOA address using EIP-7702. <br/> <br/>
+- **External wallets** <br/> (e.g. MetaMask, Rabby, Trust) block apps from changing code on user EOAs for security reasons. These require Fusion mode.
+
+<br/>
+| Wallet Type        | EIP-7702 Support | Requires Trigger |  Fusion Mode |
+|--------------------|------------------|------------------|-----------------------|
+| Privy, Dynamic, Turnkey     | ✅ Yes           | ❌ No            | 💛 Optional           |
+| MetaMask, Rabby    | ❌ No            | ✅ Yes           | ✅ Required           |
+
+:::info[Choosing Between EIP-7702 and Fusion]
+Use **EIP-7702** if your embedded wallet supports smart account installation on EOAs. Use **Fusion Mode** for external wallets where smart account delegation isn’t possible.
+:::
+
+#### For EIP-7702 Tutorial (Embedded Wallets) [Go Here](/new/getting-started/enable-mee-eoa-7702)
+#### For Fusion Tutorial Tutorial (External/Extension Wallets) [Go Here](/new/getting-started/enable-mee-eoa-fusion)
+
+
+## 🙏 Summary: When to Use Which
+
+| Feature                      | EIP-7702                         | Fusion Mode                       |
+|-----------------------------|----------------------------------|-----------------------------------|
+| Wallet Type                 | Embedded (Privy, Dynamic)        | External (MetaMask, Rabby)        |
+| Trigger Required            | ❌                                | ✅ (`approve`, `permit`) required |
+| Direct Smart Account on EOA | ✅ Yes                            | ❌ No                              |
+| Sponsorship Support         | ✅                                | ✅                                 |
+| Requires Native Gas         | ❌ (if sponsored)                 | 💛 Sometimes         |
+| Token Limit per Signature   | ✅ Multiple allowed               | ❌ Single-token only               |
+| Authorization Requirements  | `delegate: true` and `authorization` required | Not applicable |
+
+
+
+
