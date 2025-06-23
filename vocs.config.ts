@@ -260,10 +260,10 @@ export default defineConfig({
 					text: '🔏 Single Signature Approve + Execute',
 					link: '/new/examples/single-sig-approve-execute'
 				},
-				{
-					text: '🔄 One Sig: Swap → Bridge → Execute',
-					link: '/new/examples/swap-bridge-execute'
-				},
+				// {
+				// 	text: '🔄 One Sig: Swap → Bridge → Execute',
+				// 	link: '/new/examples/swap-bridge-execute'
+				// },
 
 			]
 		},
