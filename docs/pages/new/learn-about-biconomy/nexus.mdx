@@ -1,0 +1,90 @@
+# Biconomy Nexus - The Ultimate Smart Account Solution
+
+## Smart Accounts Overview
+
+As a developer building Web3 applications, you're likely encountering significant user experience barriers:
+
+- **Onboarding friction**: Private key management and seed phrases result in user drop-offs
+- **Gas token requirements**: Users must hold native tokens (ETH/MATIC/etc) before interacting with your dApp
+- **Account recovery limitations**: Lost private keys mean permanent loss of user accounts and assets
+- **Transaction complexity**: Multi-step processes and cross-chain operations require multiple signatures
+- **Limited automation**: EOAs cannot execute scheduled or conditional transactions
+
+These constraints limit your user base to crypto-natives and create support overhead.
+
+## How Smart Accounts Transform Your Application
+
+Smart Accounts replace traditional EOAs with programmable accounts, enabling:
+
+### Simplified Onboarding
+- **Passkey authentication** via WebAuthn eliminates seed phrases
+- **Social recovery modules** enable account recovery through guardian contracts
+- **Session keys** allow pre-approved transactions without repeated signatures
+
+### Flexible Payment Options
+- **ERC-20 gas payments** let users pay fees in USDC, USDT, or your native token
+- **Sponsored transactions** via paymasters enable gasless user experiences
+- **Batch operations** reduce total gas costs by bundling multiple actions
+
+### Enhanced Automation
+- **Delegated execution** enables bot and AI agent integrations with granular permissions
+- **Scheduled transactions** execute based on time or condition triggers
+- **Cross-chain sequencing** orchestrates multi-chain operations with single approval
+
+
+## Biconomy Nexus - The Most Gas Efficient and Secure Smart Account
+
+### Performance & Cost Efficiency
+- **25% lower gas costs** compared to alternative implementations through optimized contract design
+- **Batched operations** via ERC-7579 modules reduce transaction overhead
+- **Efficient calldata encoding** minimizes L2 data availability costs
+
+### Composable Batching
+Nexus is the only smart account solution on the market enabling composable batch execution. It 
+allows developers to encode batch calls where the next instruction depends on the output of the 
+previous one.
+
+### Production-Ready Architecture
+- **EIP-7702 compatibility** ensures forward compatibility with Ethereum's account abstraction roadmap
+- **Modular design** (ERC-7579) enables you to install third-party modules on user accounts
+- **Cross-chain support** includes all major EVM networks with unified deployment addresses
+
+### Security & Reliability
+- **92% DefiSafety score** demonstrates adherence to security best practices
+- **Battle-tested contracts** 2M+ smart accounts, $500M+ value processed without incidents
+
+### Developer Experience
+- **AbstractJS SDK** provides type-safe interfaces for account interactions
+- **Pre-built modules** for common features (recovery, spending limits, session keys)
+- **Standardized interfaces** ensure compatibility with ecosystem tooling
+- **Comprehensive documentation** with implementation examples and best practices
+
+## Implementation Benefits
+
+### For Your Users
+- Onboard with email/social login instead of managing seed phrases
+- Execute transactions without holding ETH
+- Recover accounts through social recovery mechanisms
+- Approve once for complex multi-step operations
+
+### For Your Application
+- Increase conversion rates by removing wallet friction
+- Reduce support tickets related to key management
+- Enable advanced features like subscription payments and automated strategies
+- Maintain compatibility with existing Web3 infrastructure
+
+### For Your Development Team
+- Ship faster with production-ready smart contracts
+- Add features through modules without redeploying core contracts
+- Leverage extensive testing and security audits
+- Build on industry standards ensuring long-term compatibility
+
+## Technical Architecture
+
+Nexus implements a modular smart account system based on:
+- **Core Account**: Minimal proxy implementation for gas efficiency
+- **Validation Modules**: Support for ECDSA, passkeys, and custom authentication
+- **Execution Modules**: Enable batching, automation, and cross-chain operations
+- **Fallback Handlers**: Extend functionality for specific use cases
+
+This architecture ensures optimal gas costs while maintaining upgradeability through the module system.

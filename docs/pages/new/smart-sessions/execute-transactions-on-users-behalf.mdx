@@ -1,0 +1,227 @@
+# Using Smart Sessions
+How are smart sessions activated?
+
+:::steps
+#### Deploy Smart Account
+You deploy the Nexus smart account on all the chains where you want to use the 
+smart sessions
+
+#### Install Sessions Module
+Nexus smart account is _modular_ which means you can install custom modules on the 
+account which extend its functionality. One of those modules is the smart sessions 
+module.
+
+#### Define and Grant Permissions
+The developer defines all the permissions which they want the session signer 
+to have. The user must sign a payload which will grant those permissions to 
+the session signer.
+
+#### Consume Permissions
+The session signer can begin consuming permissions.
+:::
+
+
+## Implement 
+
+::::steps
+### 1. Setup & Boilerplate
+
+```ts
+import {
+  createMeeClient,
+  getSudoPolicy,
+  meeSessionActions,
+  toMultichainNexusAccount,
+  toSmartSessionsModule,
+  waitForSupertransactionReceipt,
+} from "@biconomy/abstractjs";
+import { http, parseUnits, type Hex } from "viem";
+import { privateKeyToAccount } from "viem/accounts";
+import { arbitrum, base, optimism, polygon } from "viem/chains";
+import { usdcAddresses } from "../utils/addresses/usdc.addresses";
+
+const eoa = privateKeyToAccount(Bun.env.PRIVATE_KEY as Hex)
+const sessionSigner = privateKeyToAccount(Bun.env.SESSION_SIGNER_PRIVATE_KEY as Hex)
+
+// This creates an ERC-7579 module which will be installed on 
+// the users account to enable Smart Sessions capabilities.
+const ssValidator = toSmartSessionsModule({
+  signer: sessionSigner
+})
+
+// This calculates the address for the user owned Smart Account.
+// In this case - we call this account the `orchestrator` since 
+// it will be used to orchestrate actions on users behalf.
+const orchestrator = await toMultichainNexusAccount({
+  chains: [optimism, base, arbitrum, polygon],
+  transports: [http(), http(), http(), http()],
+  signer: eoa
+})
+
+// The execution is done through the Modular Execution Environment.
+// This cretes a connection to the Biconomy MEE Relayers.
+const meeClient = await createMeeClient({ account: orchestrator })
+
+// This extends the `meeClient` object with additional methods which 
+// are used to work with Smart Sessions.
+const sessionsMeeClient = meeClient.extend(meeSessionActions)
+```
+
+### 2. Preparing the Account
+
+We need to deploy the orchestrator account on all chains where we plan to use it _and_
+install the Smart Sessions module.
+
+:::info
+If the Smart Account is already deployed **and** the Smart Session module is installed on every required chain, this step can be skipped.
+:::
+
+#### ✅ Recommended: Use `prepareForPermissions`
+
+This will:
+- Deploy the account where needed
+- Install the Smart Session module
+- Use a funding token (e.g. USDC) to pay fees
+- Optionally send trigger transactions (e.g. transfer USDC to Nexus)
+
+```ts
+const payload = await sessionsMeeClient.prepareForPermissions({
+  smartSessionsValidator: ssValidator,
+  feeToken: {
+    address: usdcAddresses[base.id],
+    chainId: base.id
+  },
+  trigger: {
+    tokenAddress: usdcAddresses[base.id],
+    chainId: base.id,
+    amount: parseUnits('10', 6)
+  }
+})
+
+if (payload) {
+  const receipt = await meeClient.waitForSupertransactionReceipt({ hash: payload.hash })
+  await grantPermissions()
+} else {
+  await grantPermissions()
+}
+```
+
+Or, you can manually check each chain - whether or not the deployment exists on that chain
+
+```ts
+for (const deployment of mcNexus.deployments) {
+  const isDeployed = await deployment.isDeployed()
+  const isSsInstalled = await isModuleInstalled(deployment.client, {
+    account: deployment,
+    module: {
+      address: smartSessionsValidator.address,
+      initData: "0x",
+      type: smartSessionsValidator.type
+    }
+  })
+}
+```
+
+### 4. Granting Permissions
+
+Once setup is complete, grant limited access to the `sessionSigner`:
+
+```ts
+const sessionDetails = await sessionsMeeClient.grantPermission({
+  redeemer: sessionSigner.address,
+  feeToken: {
+    address: usdcAddresses[base.id],
+    chainId: base.id
+  },
+  actions: [
+    {
+      chainId: base.id,
+      actionTargetSelector: '0x273ea3e3',
+      actionTarget: '0x',
+      actionPolicies: [getSudoPolicy()]
+    }
+  ],
+  maxPaymentAmount: parseUnits('2', 6)
+})
+```
+
+#### 🔒 What You’re Controlling:
+- **What they can do:** (`actionTargetSelector`, `actionPolicies`)
+- **Where they can do it:** (`chainId`)
+- **How long / how often:** via policy
+- **How much gas/fees/tokens:** `maxPaymentAmount`
+
+Store the `sessionDetails` safely—this object is required to use the permission later.
+
+---
+
+### 5. Using the Permission
+
+This is done by the session signer, on behalf of the owner. Setup is slightly different:
+
+```ts
+const userOwnedOrchestratorWithSessionSigner = await toMultichainNexusAccount({
+  chains: [optimism, base, arbitrum, polygon],
+  transports: [http(), http(), http(), http()],
+  accountAddress: orchestrator.addressOn(base.id)!,
+  signer: sessionSigner
+})
+
+const sessionSignerMeeClient = await createMeeClient({
+  account: userOwnedOrchestratorWithSessionSigner
+})
+
+const sessionSignerSessionMeeClient = sessionSignerMeeClient.extend(meeSessionActions)
+```
+
+### 🔁 Use the Permission:
+
+```ts
+const executionPayload = await sessionSignerSessionMeeClient.usePermission({
+  sessionDetails,
+  mode: 'ENABLE_AND_USE',
+  feeToken: {
+    address: usdcAddresses[base.id],
+    chainId: base.id
+  },
+  instructions: [] // must match granted actions
+})
+
+const receipt = await meeClient.waitForSupertransactionReceipt({
+  hash: executionPayload.hash
+})
+```
+
+You can optionally sponsor the transaction:
+
+```ts
+const usePermissionPayload = await dappSessionClient.usePermission({
+  sponsorship: true,
+  sessionDetails,
+  mode: "ENABLE_AND_USE",
+  instructions: [
+    {
+      chainId: paymentChain.id,
+      calls: [{ to: COUNTER_ON_OPTIMISM, data: "0x273ea3e3" }]
+    },
+    {
+      chainId: targetChain.id,
+      calls: [{ to: COUNTER_ON_BASE, data: "0x273ea3e3" }]
+    }
+  ],
+  feeToken
+})
+```
+
+::::
+
+## Summary
+
+1. **Prepare** the smart account and install modules
+2. **Grant** permission from owner to session key
+3. **Use** that permission from the session key (under strict constraints)
+
+Everything runs on-chain and is enforced by smart contract logic. Smart Sessions offer powerful, secure delegation across chains with minimal overhead.
+
+
+That’s the full flow—fully supported by Biconomy’s Multichain Execution Environment (MEE) and Abstract SDK.

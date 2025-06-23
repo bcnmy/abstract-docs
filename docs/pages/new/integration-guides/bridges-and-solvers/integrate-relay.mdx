@@ -1,0 +1,634 @@
+# Relay Protocol + Biconomy MEE Integration Guide
+
+## 🌉 Cross-Chain USDC Supply to AAVE with Gasless Fusion Orchestration
+
+This guide demonstrates how to use Relay Protocol together with Biconomy's Modular Execution Environment (MEE) to perform a cross-chain supply of USDC into AAVE, completely gasless using Fusion Orchestration.
+
+## 🎯 Overview
+
+The integration enables:
+- **🔀 Cross-chain bridging** from Optimism to Base using Relay Protocol
+- **🏦 Automated AAVE supply** on the destination chain
+- **⛽ Gasless execution** through Fusion Orchestration
+- **✍️ Single signature UX** for the entire flow
+- **🚀 Fast and reliable bridging** with Relay's optimized routes
+
+## 🏗️ Architecture
+
+### Key Components
+
+1. **🌐 Relay Protocol**: Fast cross-chain bridging with intent-based architecture
+2. **🔧 Biconomy MEE**: Orchestrates the entire transaction flow
+3. **🎭 Fusion Mode**: Enables gasless execution with external wallets
+4. **🤝 Companion Account**: Temporary smart account for orchestration
+
+### Flow Diagram
+
+```
+User EOA (Optimism) 💰
+    ↓ [Sign Trigger] ✍️
+Companion Account 🤖
+    ↓ [Bridge via Relay] 🌉
+Base Network ⛓️
+    ↓ [Supply to AAVE] 🏦
+aUSDC → User EOA (Base) 💎
+```
+
+## 📝 Implementation Guide
+
+### 1. Setup and Dependencies
+
+First, create the Relay Service file. **Copy and paste this entire code block** into a new file called `relay-service.ts`:
+
+```typescript
+// relay-service.ts
+import type { Address, Hex } from 'viem'
+
+/**
+ * -------------------------------------------------------------
+ *  Relay Protocol Service — typed with viem
+ * -------------------------------------------------------------
+ */
+
+export type TradeType = 'EXACT_INPUT' | 'EXACT_OUTPUT'
+
+export type Transaction = {
+  to: Address
+  value: string
+  data: Hex
+}
+
+export type AppFee = {
+  recipient: Address
+  fee: string
+}
+
+export type GetQuoteParameters = {
+  user: Address
+  recipient: Address
+  originChainId: number
+  destinationChainId: number
+  originCurrency: Address
+  destinationCurrency: Address
+  amount: string
+  tradeType: TradeType
+  txs?: Transaction[]
+  txsGasLimit?: number
+  referrer?: string
+  referrerAddress?: Address
+  refundTo?: Address
+  refundOnOrigin?: boolean
+  topupGas?: boolean
+  useReceiver?: boolean
+  useProtocol?: boolean
+  useExternalLiquidity?: boolean
+  usePermit?: boolean
+  useDepositAddress?: boolean
+  slippageTolerance?: string
+  appFees?: AppFee[]
+  gasLimitForDepositSpecifiedTxs?: number
+  userOperationGasOverhead?: number
+  forceSolverExecution?: boolean
+  includedSwapSources?: string[]
+  excludedSwapSources?: string[]
+}
+
+export type Currency = {
+  chainId: number
+  address: Address
+  symbol: string
+  name: string
+  decimals: number
+  metadata: {
+    logoURI: string
+    verified: boolean
+    isNative: boolean
+  }
+}
+
+export type CurrencyAmount = {
+  currency: Currency
+  amount: string
+  amountFormatted: string
+  amountUsd: string
+  minimumAmount: string
+}
+
+export type TransactionData = {
+  from: Address
+  to: Address
+  data: Hex
+  value: string
+  maxFeePerGas: string
+  maxPriorityFeePerGas: string
+  chainId: number
+}
+
+export type CheckEndpoint = {
+  endpoint: string
+  method: 'GET' | 'POST' | 'PUT' | 'DELETE'
+}
+
+export type StepItem = {
+  status: 'incomplete' | 'complete' | 'failed'
+  data: TransactionData
+  check: CheckEndpoint
+}
+
+export type Step = {
+  id: string
+  action: string
+  description: string
+  kind: 'transaction' | 'signature' | 'permit'
+  requestId: Hex
+  items: StepItem[]
+}
+
+export type Fees = {
+  gas: CurrencyAmount
+  relayer: CurrencyAmount
+  relayerGas: CurrencyAmount
+  relayerService: CurrencyAmount
+  app: CurrencyAmount
+}
+
+export type Impact = {
+  usd: string
+  percent: string
+}
+
+export type SlippageTolerance = {
+  origin: {
+    usd: string
+    value: string
+    percent: string
+  }
+  destination: {
+    usd: string
+    value: string
+    percent: string
+  }
+}
+
+export type Details = {
+  operation: string
+  sender: string
+  recipient: string
+  currencyIn: CurrencyAmount
+  currencyOut: CurrencyAmount
+  currencyGasTopup: CurrencyAmount
+  totalImpact: Impact
+  swapImpact: Impact
+  rate: string
+  slippageTolerance: SlippageTolerance
+  timeEstimate: number
+  userBalance: string
+}
+
+export type RelayerTransaction = {
+  steps: Step[]
+  fees: Fees
+  details: Details
+}
+
+export type GetQuoteReturnType = RelayerTransaction
+export type GetQuoteErrorType = Error
+
+export async function getRelayQuote(
+  parameters: GetQuoteParameters
+): Promise<GetQuoteReturnType> {
+  const response = await fetch('https://api.relay.link/quote', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(parameters),
+  })
+
+  if (!response.ok) {
+    const error = await response.text()
+    throw new Error(`Relayer API error: ${response.status} - ${error}`)
+  }
+
+  return response.json() as Promise<GetQuoteReturnType>
+}
+```
+
+Now, import the dependencies in your main file:
+
+```typescript
+import { 
+  createMeeClient, 
+  toMultichainNexusAccount,
+  createChainAddressMap,
+  runtimeERC20BalanceOf,
+  greaterThanOrEqualTo,
+  type Trigger 
+} from "@biconomy/abstractjs"
+import { getRelayQuote } from "./relay-service" // 👈 Import the service you just created
+import { base, optimism } from "viem/chains"
+import { privateKeyToAccount } from "viem/accounts"
+import { http, parseAbi, parseUnits } from "viem"
+```
+
+### 2. 📍 Configure Token and Protocol Addresses
+
+```typescript
+// 💵 USDC addresses on different chains
+const usdcAddresses = createChainAddressMap([
+  [base.id, '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913'],
+  [optimism.id, '0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85']
+])
+
+// 🏦 AAVE Pool addresses
+const aavePoolAddresses = createChainAddressMap([
+  [base.id, '0xA238Dd80C259a72e81d7e4664a9801593F98d1c5'],
+  [optimism.id, '0x794a61358D6845594F94dc1DB02A252b5b4814aD']
+])
+
+// 💎 aUSDC (AAVE interest-bearing USDC)
+const aUSDCAddresses = createChainAddressMap([
+  [base.id, '0x4e65fE4DbA92790696d040ac24Aa414708F5c0AB'],
+  [optimism.id, '0x625E7708f30cA75bfd92586e17077590C60eb4cD']
+])
+```
+
+### 3. 🚀 Initialize MEE Client and Orchestrator
+
+```typescript
+// Create orchestrator account
+const eoa = privateKeyToAccount(PRIVATE_KEY)
+const orchestrator = await toMultichainNexusAccount({
+  chains: [optimism, base],
+  transports: [http(), http('https://base.llamarpc.com')],
+  signer: eoa
+})
+
+// Initialize MEE client
+const meeClient = await createMeeClient({
+  account: orchestrator,
+  apiKey: 'your_mee_api_key'
+})
+```
+
+### 4. 🔍 Get Relay Bridge Quote
+
+⚠️ **Important**: Make sure you've created the `relay-service.ts` file from Step 1 before proceeding!
+
+Relay provides fast, intent-based bridging:
+
+```typescript
+const relayQuote = await getRelayQuote({
+  amount: inputAmount.toString(),
+  originChainId: optimism.id,
+  originCurrency: usdcAddresses[optimism.id],
+  destinationChainId: base.id,
+  destinationCurrency: usdcAddresses[base.id],
+  recipient: orchestrator.addressOn(base.id)!,
+  tradeType: 'EXACT_INPUT',
+  user: orchestrator.addressOn(optimism.id)!
+})
+
+// Extract transaction data from Relay quote
+const txStep = relayQuote.steps.find(step => step.kind === 'transaction')
+const transactionRequest = txStep?.items.at(0)?.data
+
+if (!transactionRequest) {
+  throw Error("No transaction parsed from Relay")
+}
+```
+
+### 5. 🛠️ Build Orchestration Instructions
+
+#### Step 1: Define Trigger 🎬
+The trigger initiates the orchestration by pulling tokens from the EOA:
+
+```typescript
+const trigger: Trigger = {
+  chainId: optimism.id,
+  tokenAddress: usdcAddresses[optimism.id],
+  amount: inputAmount,
+}
+```
+
+#### Step 2: Approve Relay Protocol ✅
+```typescript
+const approveRelay = await orchestrator.buildComposable({
+  type: 'approve',
+  data: {
+    amount: inputAmount,
+    chainId: optimism.id,
+    spender: transactionRequest.to,
+    tokenAddress: usdcAddresses[optimism.id]
+  }
+})
+```
+
+#### Step 3: Execute Bridge Transaction 🌉
+```typescript
+const callRelayInstruction = await orchestrator.buildComposable({
+  type: 'rawCalldata',
+  data: {
+    to: transactionRequest.to,
+    calldata: transactionRequest.data,
+    chainId: transactionRequest.chainId,
+    value: BigInt(transactionRequest.value)
+  }
+})
+```
+
+#### Step 4: Approve AAVE (with runtime balance) 🔄
+Using runtime balance ensures we approve exactly what arrived:
+
+```typescript
+const approveAAVEInstruction = await orchestrator.buildComposable({
+  type: 'approve',
+  data: {
+    amount: runtimeERC20BalanceOf({
+      targetAddress: orchestrator.addressOn(base.id)!,
+      tokenAddress: usdcAddresses[base.id],
+      constraints: [greaterThanOrEqualTo(1n)]
+    }),
+    chainId: base.id,
+    spender: aavePoolAddresses[base.id],
+    tokenAddress: usdcAddresses[base.id]
+  }
+})
+```
+
+#### Step 5: Supply to AAVE 🏦
+```typescript
+const aaveSupplyAbi = parseAbi([
+  'function supply(address asset, uint256 amount, address onBehalfOf, uint16 referralCode)'
+])
+
+const callAAVEInstruction = await orchestrator.buildComposable({
+  type: 'default',
+  data: {
+    abi: aaveSupplyAbi,
+    chainId: base.id,
+    functionName: 'supply',
+    to: aavePoolAddresses[base.id],
+    args: [
+      usdcAddresses[base.id],
+      runtimeERC20BalanceOf({
+        targetAddress: orchestrator.addressOn(base.id)!,
+        tokenAddress: usdcAddresses[base.id],
+        constraints: [greaterThanOrEqualTo(1n)]
+      }),
+      orchestrator.addressOn(base.id)!,
+      0
+    ]
+  }
+})
+```
+
+#### Step 6: Withdraw aUSDC to EOA 💎
+```typescript
+const withdrawInstruction = await orchestrator.buildComposable({
+  type: 'withdrawal',
+  data: {
+    amount: runtimeERC20BalanceOf({
+      targetAddress: orchestrator.addressOn(base.id)!,
+      tokenAddress: aUSDCAddresses[base.id],
+      constraints: [greaterThanOrEqualTo(1n)]
+    }),
+    chainId: base.id,
+    tokenAddress: aUSDCAddresses[base.id],
+  }
+})
+```
+
+### 6. 🎯 Execute Fusion Orchestration
+
+```typescript
+const fusionQuote = await meeClient.getFusionQuote({
+  trigger,
+  instructions: [
+    approveRelay, 
+    callRelayInstruction,
+    approveAAVEInstruction,
+    callAAVEInstruction,
+    withdrawInstruction
+  ],
+  cleanUps: [{
+    chainId: base.id,
+    recipientAddress: eoa.address,
+    tokenAddress: usdcAddresses[base.id]
+  }],
+  feeToken: { 
+    address: usdcAddresses[optimism.id], 
+    chainId: optimism.id 
+  },
+  lowerBoundTimestamp: nowInSeconds,
+  upperBoundTimestamp: nowInSeconds + 60
+})
+
+const { hash } = await meeClient.executeFusionQuote({ fusionQuote })
+console.log(getMeeScanLink(hash))
+```
+
+## 🧠 Key Concepts
+
+### 🎯 Relay Intent-Based Architecture
+
+Relay uses an intent-based system that:
+- **⚡ Fast execution**: Intents are fulfilled by relayers instantly
+- **💰 Competitive pricing**: Relayers compete to fill your intent
+- **🔒 Guaranteed delivery**: Funds are secured until successful completion
+
+### 📊 Runtime Balance Constraints
+
+The `runtimeERC20BalanceOf` function ensures instructions use the exact amount that arrives:
+- ✅ Handles any bridge fees automatically
+- ✅ Ensures proper sequencing
+- ✅ Avoids failed transactions
+
+### 🔗 Constraints and Execution Order
+
+Instructions execute only when their constraints are met:
+1. 🏦 AAVE approval waits for bridged funds
+2. 💸 AAVE supply waits for approval
+3. 📤 Withdrawal waits for aUSDC
+
+### 🛡️ Cleanup Mechanism
+
+If any step fails, cleanup instructions ensure funds are returned:
+```typescript
+cleanUps: [{
+  chainId: base.id,
+  recipientAddress: eoa.address,
+  tokenAddress: usdcAddresses[base.id]
+}]
+```
+
+### ⛽ Gas Payment
+
+The orchestration is gasless because:
+- 💰 Gas paid using bridged USDC
+- 🔧 MEE handles gas abstraction
+- ✍️ Users only sign once
+
+## 🎭 Relay Quote Service
+
+### Quote Parameters
+
+```typescript
+interface GetQuoteParameters {
+  user: Address                // Sender address
+  recipient: Address           // Receiver address
+  originChainId: number       // Source chain ID
+  destinationChainId: number  // Destination chain ID
+  originCurrency: Address     // Source token
+  destinationCurrency: Address // Destination token
+  amount: string              // Amount to bridge
+  tradeType: TradeType        // 'EXACT_INPUT' or 'EXACT_OUTPUT'
+  
+  // Optional parameters
+  slippageTolerance?: string  // Max slippage (e.g., "0.005" for 0.5%)
+  referrerAddress?: Address   // For revenue sharing
+  appFees?: AppFee[]         // Custom fees
+  usePermit?: boolean        // Use permit for gasless approvals
+}
+```
+
+### Response Structure
+
+```typescript
+interface RelayerTransaction {
+  steps: Step[]              // Execution steps
+  fees: {                    // Fee breakdown
+    gas: CurrencyAmount
+    relayer: CurrencyAmount
+    relayerService: CurrencyAmount
+    app: CurrencyAmount
+  }
+  details: {                 // Transaction details
+    currencyIn: CurrencyAmount
+    currencyOut: CurrencyAmount
+    rate: string
+    timeEstimate: number
+    slippageTolerance: SlippageTolerance
+  }
+}
+```
+
+## 💡 Best Practices
+
+1. **🔄 Always use runtime balances** for cross-chain operations
+2. **🛡️ Include cleanup instructions** for failure scenarios
+3. **⏰ Set reasonable time bounds** (60 seconds recommended)
+4. **🧪 Test on testnets first** before mainnet deployment
+5. **📊 Monitor transactions** using MEE Scan
+6. **💰 Consider slippage tolerance** for volatile assets
+7. **🔑 Secure your API keys** in environment variables
+
+## 🚨 Error Handling
+
+```typescript
+try {
+  const relayQuote = await getRelayQuote(parameters)
+  const txStep = relayQuote.steps.find(step => step.kind === 'transaction')
+  
+  if (!txStep?.items.at(0)?.data) {
+    throw new Error('❌ No valid transaction in Relay quote')
+  }
+  // ... orchestration logic
+} catch (error) {
+  if (error.message.includes('Relayer API error')) {
+    console.error('❌ Bridge route not available')
+    // Handle specific Relay errors
+  }
+  console.error('🚨 Orchestration failed:', error)
+}
+```
+
+## 🚀 Advanced Features
+
+### 💰 Revenue Sharing
+Earn fees by setting referrer address:
+```typescript
+const quote = await getRelayQuote({
+  // ... other params
+  referrerAddress: '0xYourAddress',
+  appFees: [{
+    recipient: '0xYourAddress',
+    fee: '30' // 0.3% in basis points
+  }]
+})
+```
+
+### 🎯 Exact Output Bridging
+Bridge to receive exact amount on destination:
+```typescript
+const quote = await getRelayQuote({
+  // ... other params
+  tradeType: 'EXACT_OUTPUT',
+  amount: desiredOutputAmount.toString()
+})
+```
+
+### 🔄 Multi-Chain Cleanups
+```typescript
+cleanUps: [
+  { 
+    chainId: optimism.id, 
+    recipientAddress: eoa.address, 
+    tokenAddress: usdcOptimism 
+  },
+  { 
+    chainId: base.id, 
+    recipientAddress: eoa.address, 
+    tokenAddress: usdcBase 
+  }
+]
+```
+
+### ⚡ Gas Optimization Options
+
+```typescript
+const quote = await getRelayQuote({
+  // ... other params
+  topupGas: true,              // Top up gas on destination
+  usePermit: true,             // Use permit for gasless approval
+  useExternalLiquidity: true,  // Access external liquidity sources
+})
+```
+
+## 📊 Monitoring & Analytics
+
+Track your orchestrations:
+```typescript
+const meeScanUrl = getMeeScanLink(hash)
+console.log(`🔍 Track transaction: ${meeScanUrl}`)
+```
+
+Monitor Relay bridge status:
+```typescript
+// Check step status using the check endpoint
+const checkUrl = txStep.items[0].check.endpoint
+const status = await fetch(checkUrl).then(r => r.json())
+```
+
+## 🌐 Supported Chains & Features
+
+Relay supports fast bridging across major chains:
+- **⛓️ Chains**: Ethereum, Arbitrum, Optimism, Base, Polygon, etc.
+- **💱 Features**: Intent-based filling, MEV protection, guaranteed delivery
+- **⏱️ Speed**: Usually completes in under 60 seconds
+
+## 🏁 Conclusion
+
+This integration combines Relay's fast intent-based bridging with Biconomy MEE's orchestration capabilities to deliver:
+- 🚀 Lightning-fast cross-chain transfers
+- ⛽ Completely gasless experience
+- ✍️ Single signature for complex flows
+- 🛡️ Built-in failure protection
+
+The result is a seamless DeFi experience that abstracts away all the complexity of cross-chain operations while maintaining speed and reliability.
+
+## 📚 Resources
+
+- 🌐 [Relay Protocol Documentation](https://docs.relay.link)
+- 🔧 [Relay API Reference](https://docs.relay.link/api-reference)
+- 💬 [Relay Discord](https://discord.gg/relay)

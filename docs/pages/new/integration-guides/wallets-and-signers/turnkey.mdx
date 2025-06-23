@@ -1,0 +1,179 @@
+# 🔐 Gasless Transactions with Turnkey and EIP-7702
+
+This guide shows how to combine **Turnkey** and **Biconomy AbstractJS** to send secure gasless transactions using EIP-7702. You'll use Turnkey to manage your private keys, and Biconomy to abstract gas via the MEE stack.
+
+
+
+::::steps
+### Install Dependencies
+
+Install core SDKs from Turnkey, Biconomy, and viem.
+
+```bash
+npm install @turnkey/sdk-server @turnkey/viem @biconomy/abstractjs viem dotenv
+```
+
+
+
+### 2. Configure `.env`
+
+Store Turnkey credentials and signing key in environment variables.
+
+```bash
+BASE_URL=https://api.turnkey.com
+API_PRIVATE_KEY=your_api_private_key
+API_PUBLIC_KEY=your_api_public_key
+ORGANIZATION_ID=your_organization_id
+SIGN_WITH=your_private_key_id
+```
+
+
+
+### Initialize Turnkey Client
+
+Set up Turnkey client for key management and signing.
+
+```ts
+import { Turnkey } from "@turnkey/sdk-server";
+import * as dotenv from "dotenv";
+dotenv.config();
+
+const client = new Turnkey({
+  apiBaseUrl: process.env.BASE_URL,
+  apiPrivateKey: process.env.API_PRIVATE_KEY,
+  apiPublicKey: process.env.API_PUBLIC_KEY,
+  defaultOrganizationId: process.env.ORGANIZATION_ID,
+});
+```
+
+
+
+### Create Wallet Client
+
+Create a `viem` wallet client from the Turnkey account.
+
+```ts
+import { createWalletClient, http } from "viem";
+import { createAccount } from "@turnkey/viem";
+import { optimism } from "viem/chains";
+
+const account = await createAccount({
+  client: client.apiClient(),
+  organizationId: process.env.ORGANIZATION_ID,
+  signWith: process.env.SIGN_WITH,
+});
+
+const walletClient = createWalletClient({
+  account,
+  chain: optimism,
+  transport: http(),
+});
+```
+
+
+
+### Sign EIP-7702 Authorization
+
+Sign the delegation message needed to enable smart account functionality on the EOA.
+
+```ts
+const nexusImplementationAddress = "0x000000004F43C49e93C970E84001853a70923B03";
+
+const authorization = await walletClient.signAuthorization({
+  contractAddress: nexusImplementationAddress,
+  account,
+});
+```
+
+
+
+### Create Nexus Smart Account
+
+Override `accountAddress` to match the EOA — this activates EIP-7702 delegation.
+
+```ts
+import { toMultichainNexusAccount } from "@biconomy/abstractjs";
+import { base } from "viem/chains";
+
+const nexusAccount = await toMultichainNexusAccount({
+  chains: [optimism, base],
+  transports: [http(), http()],
+  signer: walletClient,
+  accountAddress: account.address // use EOA for EIP-7702
+});
+```
+
+
+
+### Create MEE Client
+
+Connect to the Modular Execution Environment for gasless transaction execution.
+
+```ts
+import { createMeeClient } from "@biconomy/abstractjs";
+
+const meeClient = await createMeeClient({
+  account: nexusAccount
+});
+```
+
+### Send Gasless Transaction
+
+Set `delegate: true` and include `authorization` to trigger execution via EIP-7702 delegation.
+
+```ts
+const { hash } = await meeClient.execute({
+  authorization,
+  delegate: true,
+  feeToken: {
+    address: "0xYourUSDCAddress",
+    chainId: optimism.id,
+  },
+  instructions: [
+    {
+      chainId: optimism.id,
+      calls: [
+        {
+          to: "0x0000000000000000000000000000000000000000",
+          value: 0n
+        }
+      ]
+    }
+  ]
+});
+```
+
+
+
+### Cross-Chain Execution (Optional)
+
+Instructions can target multiple chains. Everything is handled by one user signature.
+
+```ts
+const { hash } = await meeClient.execute({
+  authorization,
+  delegate: true,
+  instructions: [
+    {
+      chainId: optimism.id,
+      calls: [{ to: "0x...", value: 0n }]
+    },
+    {
+      chainId: base.id,
+      calls: [{ to: "0x...", value: 0n }]
+    }
+  ]
+});
+```
+::::
+
+
+### ✅ Summary
+
+* Turnkey securely manages EOA keys
+* Biconomy enables EIP-7702-based smart account delegation
+* Set `accountAddress` to the EOA address for EIP-7702 flow
+* Use `delegate: true` + `authorization` in the execution call
+* MEE handles gas payment using ERC-20s or sponsorship
+
+This setup gives you secure, gas-abstracted, and cross-chain smart account transactions with minimal UX friction.
