@@ -1,10 +1,24 @@
-# 🔁 Composable, Atomic Orchestration on Base
+# 🔁 Atomic and Composable Batch Execute
 
 This tutorial demonstrates how to execute a **fully gas-abstracted, multi-step transaction** on Base using one user signature. No bridging. No leftover tokens. Just one-click UX with **gas paid in USDC** and a guarantee that either **all instructions succeed or none do**.
 
 Unlike regular batch execute, composable batch execution allows developers to use the
 output of one function call as the input for the next one. To learn more, read the 
 [Runtime Parameter Injection](/new/getting-started/understanding-runtime-injection) guide.
+
+:::tip[Single Chain]
+This guide covers single-chain batch execution. The Biconomy stack supports
+multi-chain batch execution with a single signature as well. Follow [this guide](/new/getting-started/orchestrate-transactions-across-chains)
+to learn how.
+:::
+
+:::info[‼️ Using EIP-7702]
+This guide focuses on atomic execution from External Wallets though the usage of 
+_Fusion Execution_. If you're working with Embedded Wallets - adapt the `toMultichainNexusAccount`,
+`.getQuote` and `.execute` steps to work with EIP-7702.
+
+[Follow the EIP-7702 guide here](/new/getting-started/enable-mee-eoa-7702)
+:::
 
 ## 🧠 Why Should You Care?
 

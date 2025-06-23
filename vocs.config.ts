@@ -85,21 +85,12 @@ export default defineConfig({
 			]
 		},
 		{
-			text: 'Quickstarts 🏃‍♂️',
+			text: 'Integrate Biconomy 🦮',
 			items: [
 				{
-					text: '🔶 Embedded EOAs (React) Quickstart',
-					link: '/new/quickstart/embedded-wallets-quickstart'
+					text: '🎬 Getting Started',
+					link: '/new/getting-started/getting-started'
 				},
-				{
-					text: '🧡 External EOAs (React) Quickstart',
-					link: '/new/quickstart/external-wallets-quickstart'
-				}
-			]
-		},
-		{
-			text: 'Setting Up 🦮',
-			items: [
 				{
 					text: '🏁 Set up AbstractJS',
 					link: '/new/getting-started/set-up-abstractjs'
@@ -118,6 +109,20 @@ export default defineConfig({
 				}
 			]
 		},
+		{
+			text: 'Quickstart Guides 🏃‍♂️',
+			items: [
+				{
+					text: '🔶 Get Started w/ Embedded Wallets',
+					link: '/new/quickstart/embedded-wallets-quickstart'
+				},
+				{
+					text: '🧡 Get Started w/ External Wallets',
+					link: '/new/quickstart/external-wallets-quickstart'
+				}
+			]
+		},
+
 		{
 			text: 'Gasless Multichain Orchestration 🎻',
 			items: [
@@ -164,7 +169,7 @@ export default defineConfig({
 			]
 		},
 		{
-			text: 'Give Granular Permissions to Signers 🗝️',
+			text: 'Smart Sessions (Account Permissions) 🗝️',
 			items: [
 				{
 					text: '🔖 Introduction to Smart Sessions',
@@ -173,7 +178,30 @@ export default defineConfig({
 				{
 					text: '✍️ Execute Transactions on Users Behalf',
 					link: '/new/smart-sessions/execute-transactions-on-users-behalf'
-				}
+				},
+				{
+					text: '📐 Smart Sessions Policies Overview',
+					link: '/new/smart-sessions/policies',
+					collapsed: true,
+					items: [
+						{
+							text: 'Sudo Policy',
+							link: '/new/smart-sessions/policies/sudo-policy'
+						},
+						{
+							text: 'Time Range',
+							link: '/new/smart-sessions/policies/time-range-policy'
+						},
+						{
+							text: 'Universal Action',
+							link: '/new/smart-sessions/policies/universal-action-policy'
+						},
+						{
+							text: 'Sudo Policy',
+							link: '/new/smart-sessions/policies/usage-limit-policy'
+						}
+					]
+				},
 			]
 		},
 		{
@@ -226,11 +254,17 @@ export default defineConfig({
 			]
 		},
 		{
-			text: 'Examples (Coming Soon) 👇',
+			text: 'Examples👇',
 			items: [
+								{
+					text: '🔏 Single Signature Approve + Execute',
+					link: '/new/examples/single-sig-approve-execute'
+				},
 				{
-					text: '🔄 Swap → Bridge → Swap'
-				}
+					text: '🔄 One Sig: Swap → Bridge → Execute',
+					link: '/new/examples/swap-bridge-execute'
+				},
+
 			]
 		},
 		{
@@ -263,26 +297,26 @@ export default defineConfig({
 							text: "buildComposable",
 							link: "/sdk-reference/mee-client/account/methods/buildComposable",
 						},
-					{
-									text: "deploymentOn",
-									link: "/sdk-reference/mee-client/account/methods/more/deploymentOn",
-								},
-								{
-									text: "addressOn",
-									link: "/sdk-reference/mee-client/account/methods/more/addressOn",
-								},
-								{
-									text: "isDelegated",
-									link: "/sdk-reference/mee-client/account/methods/more/isDelegated",
-								},
-								{
-									text: "unDelegate",
-									link: "/sdk-reference/mee-client/account/methods/more/unDelegate",
-								},
-								{
-									text: "waitForTransactionReceipts",
-									link: "/sdk-reference/mee-client/account/methods/more/waitForTransactionReceipts",
-								},
+						{
+							text: "deploymentOn",
+							link: "/sdk-reference/mee-client/account/methods/more/deploymentOn",
+						},
+						{
+							text: "addressOn",
+							link: "/sdk-reference/mee-client/account/methods/more/addressOn",
+						},
+						{
+							text: "isDelegated",
+							link: "/sdk-reference/mee-client/account/methods/more/isDelegated",
+						},
+						{
+							text: "unDelegate",
+							link: "/sdk-reference/mee-client/account/methods/more/unDelegate",
+						},
+						{
+							text: "waitForTransactionReceipts",
+							link: "/sdk-reference/mee-client/account/methods/more/waitForTransactionReceipts",
+						},
 					],
 				},
 				{
@@ -310,50 +344,50 @@ export default defineConfig({
 							text: "waitForSuperTransactionReceipt",
 							link: "/sdk-reference/mee-client/methods/waitForSuperTransactionReceipt",
 						},
-		{
-									text: "getSuperTransactionReceipt",
-									link: "/sdk-reference/mee-client/methods/more/getSuperTransactionReceipt",
-								},
-								{
-									text: "execute",
-									link: "/sdk-reference/mee-client/methods/more/execute",
-								},
-								{
-									text: "executeSignedQuote",
-									link: "/sdk-reference/mee-client/methods/more/executeSignedQuote",
-								},
-								{
-									text: "signQuote",
-									link: "/sdk-reference/mee-client/methods/more/signQuote",
-								},
-								{
-									text: "getGasToken",
-									link: "/sdk-reference/mee-client/methods/more/getGasToken",
-								},
-								{
-									text: "getInfo",
-									link: "/sdk-reference/mee-client/methods/more/getInfo",
-								},
-								{
-									text: "getOnChainQuote",
-									link: "/sdk-reference/mee-client/methods/more/getOnChainQuote",
-								},
-								{
-									text: "getPermitQuote",
-									link: "/sdk-reference/mee-client/methods/more/getPermitQuote",
-								},
-								{
-									text: "signOnChainQuote",
-									link: "/sdk-reference/mee-client/methods/more/signOnChainQuote",
-								},
-								{
-									text: "signPermitQuote",
-									link: "/sdk-reference/mee-client/methods/more/signPermitQuote",
-								},
-								{
-									text: "getPaymentToken",
-									link: "/sdk-reference/mee-client/methods/more/getPaymentToken",
-								},
+						{
+							text: "getSuperTransactionReceipt",
+							link: "/sdk-reference/mee-client/methods/more/getSuperTransactionReceipt",
+						},
+						{
+							text: "execute",
+							link: "/sdk-reference/mee-client/methods/more/execute",
+						},
+						{
+							text: "executeSignedQuote",
+							link: "/sdk-reference/mee-client/methods/more/executeSignedQuote",
+						},
+						{
+							text: "signQuote",
+							link: "/sdk-reference/mee-client/methods/more/signQuote",
+						},
+						{
+							text: "getGasToken",
+							link: "/sdk-reference/mee-client/methods/more/getGasToken",
+						},
+						{
+							text: "getInfo",
+							link: "/sdk-reference/mee-client/methods/more/getInfo",
+						},
+						{
+							text: "getOnChainQuote",
+							link: "/sdk-reference/mee-client/methods/more/getOnChainQuote",
+						},
+						{
+							text: "getPermitQuote",
+							link: "/sdk-reference/mee-client/methods/more/getPermitQuote",
+						},
+						{
+							text: "signOnChainQuote",
+							link: "/sdk-reference/mee-client/methods/more/signOnChainQuote",
+						},
+						{
+							text: "signPermitQuote",
+							link: "/sdk-reference/mee-client/methods/more/signPermitQuote",
+						},
+						{
+							text: "getPaymentToken",
+							link: "/sdk-reference/mee-client/methods/more/getPaymentToken",
+						},
 					],
 				},
 				{
@@ -374,17 +408,17 @@ export default defineConfig({
 							link: "/sdk-reference/mee-client/helpers/getMultichainContract",
 						},
 						{
-									text: "getExplorerTxLink",
-									link: "/sdk-reference/mee-client/helpers/more/getExplorerTxLink",
-								},
-								{
-									text: "getMeeScanLink",
-									link: "/sdk-reference/mee-client/helpers/more/getMeeScanLink",
-								},
-								{
-									text: "getJiffyScanLink",
-									link: "/sdk-reference/mee-client/helpers/more/getJiffyScanLink",
-								},
+							text: "getExplorerTxLink",
+							link: "/sdk-reference/mee-client/helpers/more/getExplorerTxLink",
+						},
+						{
+							text: "getMeeScanLink",
+							link: "/sdk-reference/mee-client/helpers/more/getMeeScanLink",
+						},
+						{
+							text: "getJiffyScanLink",
+							link: "/sdk-reference/mee-client/helpers/more/getJiffyScanLink",
+						},
 
 					],
 				},
