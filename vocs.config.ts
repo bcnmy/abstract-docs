@@ -268,6 +268,15 @@ export default defineConfig({
 			]
 		},
 		{
+			text: '🧠 Advanced',
+			items: [
+				{
+					text: '💾 Self-Hosted Sponsorship',
+					link: '/new/advanced/self-hosted-sponsorship'
+				}
+			]
+		},
+		{
 			text: 'Resources 📦',
 			items: [
 				{

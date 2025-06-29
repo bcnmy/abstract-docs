@@ -1,0 +1,168 @@
+# Self Hosted Sponsorships
+
+The self-hosted sponsorship feature allows you to operate your own backend service to sponsor gas fees on multiple chains. This is ideal for teams that want full control over sponsorship logic, authentication, and rate limits.
+
+We’ve provided a ready-to-use starter kit to help you get started:
+
+:::info[Starter Kit]
+
+You can fork the starter kit project to get a quick start on implementing your own sponsorship service
+
+[mee-self-hosted-sponsorship-starter-kit](https://github.com/bcnmy/mee-self-hosted-sponsorship-starter-kit/tree/main)
+:::
+
+## 🤔 Why Use Self-Hosted Sponsorship?
+
+Self-hosting gives you:
+
+- **Programmable Control:** Define custom logic to determine **when**, and **under what conditions** users are eligible for gas sponsorship.
+- **Full Key Ownership:** Manage your own private keys for gas tanks and service accounts.
+- **On-Premise Hosting:** Deploy the sponsorship backend in your own secure environment—no dependency on third-party infrastructure.
+
+This is particularly useful for enterprise use cases, partner platforms, or gated dApps requiring more than a one-size-fits-all sponsorship logic.
+
+
+## 🏗️ Architecture Overview
+
+There are two main components where you'll use the AbstractJS SDK:
+
+1. **Frontend/App Integration** – Use the SDK within your application to connect to your sponsorship backend when sending supertransactions.
+2. **Backend Implementation** – Use the SDK in your self-hosted backend to manage gas tank accounts, check balances, deploy contracts, and fulfill sponsorship logic.
+
+:::info
+Your backend can be written in **any language**. The AbstractJS SDK is provided as a convenience layer, but what really matters is that your backend exposes the correct HTTP API endpoints as defined in the [starter kit](https://github.com/bcnmy/mee-self-hosted-sponsorship-starter-kit/tree/main). 
+:::
+
+## 🎒 Sponsorship Backend API Reference
+
+In order for MEE sponsorships to work, your backend should expose the following HTTP endpoints:
+
+### `GET /v1/sponsorship/info`
+Returns available gas tanks and their balances.
+
+### `GET /v1/sponsorship/nonce/:chainId/:gasTankAddress`
+Returns the current nonce and nonce key for a given gas tank.
+
+### `GET /v1/sponsorship/receipt/:chainId/:hash`
+Returns the transaction receipt for a sponsorship transaction.
+
+### `POST /v1/sponsorship/sign/:chainId/:gasTankAddress`
+Signs a sponsorship quote using a specific gas tank account.
+- **Body:** `GetQuotePayload` as defined in AbstractJS.
+- Perform project-specific logic here (e.g., rate limits, auth).
+
+## ⌨️ Using Self-Hosted Sponsorship in AbstractJS
+
+To integrate your own backend, pass `sponsorshipOptions` when calling `getFusionQuote`. Your backend should expose a compatible API to fetch sponsorship data.
+
+### ⚙️ Configuration
+
+- `url`: URL of your sponsorship backend
+- `customHeaders`: Optional custom headers (e.g. for authentication)
+- `gasTank`: Configuration for the gas tank account
+
+### 💡 Example
+
+```ts
+const meeClient = await createMeeClient({
+  account: mcNexus,
+  apiKey: "YOUR_MEE_API_KEY"
+})
+
+const quote = await meeClient.getFusionQuote({
+  trigger: {
+    tokenAddress: testnetMcUSDC.addressOn(baseSepolia.id),
+    chainId: baseSepolia.id,
+    amount: 1n
+  },
+  sponsorship: true,
+  sponsorshipOptions: {
+    url: "https://your-backend.com/sponsorship",
+    customHeaders: {
+      sponsorshipApiKey: "your-api-key",
+      otherHeader: "custom-value"
+    },
+    gasTank: {
+      address: "0xC2461985dE59CcA97eBAcBBF1eDBe904ea859c84",
+      token: "0x036cbd53842c5426634e7929541ec2318f3dcf7e",
+      chainId: baseSepolia.id
+    }
+  },
+  instructions: [
+    {
+      calls: [
+        {
+          to: eoaAccount.address,
+          value: 1n
+        }
+      ],
+      chainId: baseSepolia.id
+    }
+  ]
+})
+
+const { hash } = await meeClient.executeFusionQuote({ fusionQuote: quote })
+const { transactionStatus } = await meeClient.waitForSupertransactionReceipt({ hash })
+```
+
+## ⛽️ Utilities for Sponsorship Gas Tanks
+
+The following utility functions are primarily intended for backend developers managing a gas tank account.
+
+### Create a Gas Tank Account
+
+```ts
+const gasTankAccount = await toGasTankAccount({
+  transport: http(), // Use a paid RPC in production
+  chain: baseSepolia,
+  privateKey: "YOUR_PRIVATE_KEY",
+  options: {
+    mee: {
+      apiKey: "mee_3ZLvzYAmZa89WLGa3gmMH8JJ"
+    }
+  }
+})
+```
+
+### Get Gas Tank Address
+
+```ts
+const { address: gasTankAddress } = await gasTankAccount.getAddress()
+```
+
+### Get Gas Tank Balance
+
+```ts
+const { balance, decimals } = await gasTankAccount.getBalance({
+  tokenAddress: testnetMcUSDC.addressOn(baseSepolia.id)
+})
+```
+
+### Check Deployment Status
+
+```ts
+const isDeployed = await gasTankAccount.isDeployed()
+```
+
+### Deploy and Fund Gas Tank
+
+```ts
+const { isDeployed, address } = await gasTankAccount.deploy({
+  tokenAddress: testnetMcUSDC.addressOn(chain.id),
+  amount: parseUnits("0.1", 6)
+})
+```
+
+### Withdraw Funds
+
+```ts
+await gasTankAccount.withdraw({
+  tokenAddress: testnetMcUSDC.addressOn(baseSepolia.id),
+  recipient: eoaAccount.address,
+  amount: runtimeERC20BalanceOf({
+    targetAddress: gasTankAddress,
+    tokenAddress: testnetMcUSDC.addressOn(baseSepolia.id)
+  }),
+  confirmations: 3
+})
+```
