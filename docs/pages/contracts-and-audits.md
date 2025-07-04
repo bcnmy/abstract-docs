@@ -5,12 +5,23 @@
 |-------------|-------------|
 | MEE EntryPoint & Paymaster | `0xE854C84cD68fC434cB3B0042c29235D452cAD977`  |
 | Node Paymaster Factory | `0x000000f28C524B5f80550a074910bf68bf69A446` |
-| MEE K1 Validator module | `0x00000000d12897DDAdC2044614A9677B191A2d95`  |
+| MEE K1 Validator module | `0x00000000d74E2e8874475b0Ecc0432A8aEC929fb`  |
 | Composability Module | `0x00000004430bB055dB66eBef6Fe5Ee1DA9668B10`  |
 | Composable Storage | `0x0000000671eb337E12fe5dB0e788F32e1D71B183`  |
 | ETH Forwarder Addr:  | `0x000000Afe527A978Ecb761008Af475cfF04132a1`  |
 
 ### Nexus v1.2.0 => For chains with EIP-7702 support
+#### Nexus with latest MEE K1 Validator
+| Name    | Address    | 
+|-------------|-------------|
+| Nexus Implementation v1.2.0 | `0x0000000025a29E0598c88955fd00E256691A089c`  |
+| Nexus Bootstrap v1.2.0 | `0x000000001aafD7ED3B8baf9f46cD592690A5BBE5`  |
+| Nexus Account Factory | `0x000000008b898679A19ac138831F26bE07a2aA08`  |
+
+[GitHub](https://github.com/bcnmy/nexus/releases/tag/v1.2.0)
+
+#### Nexus v1.2.0 with 0x00000000d12897DDAdC2044614A9677B191A2d95 as Default Validator
+<details markdown="1">
 
 | Name    | Address    | 
 |-------------|-------------|
@@ -18,9 +29,7 @@
 | Nexus Bootstrap v1.2.0 | `0x00000000D3254452a909E4eeD47455Af7E27C289`  |
 | Nexus Account Factory | `0x000000001D1D5004a02bAfAb9de2D6CE5b7B13de`  |
 
-[GitHub](https://github.com/bcnmy/nexus/releases/tag/v1.2.0)
-
-
+</details>
 
 ### Nexus v1.0.2 => For chains w/o EIP-7702 support
 
