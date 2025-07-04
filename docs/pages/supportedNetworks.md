@@ -28,6 +28,10 @@
 | Avalanche Fuji Testnet      | ✅         | ⏳               |
 | Apechain                    | ✅         | ✅               |
 | Apechain Curtis Testnet     | ✅         | ⏳               |
+| Hyper EVM                   | ✅         | ⏳               |
+| Core DAO Testnet            | ✅         | ⏳               |
+| Neura Testnet               | ✅         | ⏳               |
+
 
 [👉 View contracts & audits](https://docs.biconomy.io/contractsAndAudits)
 
