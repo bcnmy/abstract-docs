@@ -8,7 +8,7 @@ This tutorial represents the API integration flow where smart contract wallet ha
 
 ## Pre-requisites: 
 
-- Biconomy bundler url (refer to the [docs](/dashboard#bundler-keys) to get the same)
+- Biconomy bundler url
 - Partial user operation, where
     - sender is the smart account Address
     - nonce can be calculated using the smart account contract methods.

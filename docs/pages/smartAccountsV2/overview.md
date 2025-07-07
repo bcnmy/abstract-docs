@@ -68,13 +68,13 @@ For the mainnet bundler URL, reach out to us via email at ```bd@biconomy.io``` o
 
 If you are looking to integrate account abstraction using APIs, checkout the [bundler APIs](/smartAccountsV2/bundler/api/) and [tutorials](/smartAccountsV2/tutorials/apiIntegration/).
 
-## [Paymaster](/smartAccountsV2/paymaster)
+## Paymaster
 
-Biconomy's paymaster service enables Dapps to sponsor transactions and, also allows users to use ERC-20 tokens as payment for gas. Log in to the [Biconomy dashboard](/dashboard) to get the paymaster URL and switch modes between our sponsorship and token Paymaster. Make use of different [Spending limits](/dashboard/spendingLimits) to customize the paymaster usage.
+Biconomy's paymaster service enables Dapps to sponsor transactions and, also allows users to use ERC-20 tokens as payment for gas. Log in to the Biconomy dashboard to get the paymaster URL and switch modes between our sponsorship and token Paymaster. Make use of different spending limits to customize the paymaster usage.
 
 ### Sponsorship Paymaster
 
-Enabling the Sponsored mode facilitates gasless transactions, eliminating the necessity for users to have native tokens to cover gas fees. Learn how to set up your paymaster [here](/dashboard/paymaster).
+Enabling the Sponsored mode facilitates gasless transactions, eliminating the necessity for users to have native tokens to cover gas fees.
 
 ### Token Paymaster
 
