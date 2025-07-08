@@ -127,7 +127,7 @@ for (const deployment of mcNexus.deployments) {
 Once setup is complete, grant limited access to the `sessionSigner`:
 
 ```ts
-const sessionDetails = await sessionsMeeClient.grantPermission({
+const sessionDetails = await sessionsMeeClient.grantPermissionTypedDataSign({
   redeemer: sessionSigner.address,
   feeToken: {
     address: usdcAddresses[base.id],
@@ -135,10 +135,10 @@ const sessionDetails = await sessionsMeeClient.grantPermission({
   },
   actions: [
     {
-      chainId: base.id,
-      actionTargetSelector: '0x273ea3e3',
-      actionTarget: '0x',
-      actionPolicies: [getSudoPolicy()]
+      chainId: base.id, // chain where permission is granted
+      actionTarget: '0x', // contract that contains an allowed method
+      actionTargetSelector: toFunctionSelector(getAbiItem({ abi: CounterAbi, name: "incrementNumber" })), // an allowed method selector
+      actionPolicies: [getSudoPolicy()] // Policy to apply
     }
   ],
   maxPaymentAmount: parseUnits('2', 6)
@@ -146,12 +146,15 @@ const sessionDetails = await sessionsMeeClient.grantPermission({
 ```
 
 #### 🔒 What You’re Controlling:
-- **What they can do:** (`actionTargetSelector`, `actionPolicies`)
+- **What they can do:** (`actionTarget`, `actionTargetSelector`, `actionPolicies`)
 - **Where they can do it:** (`chainId`)
 - **How long / how often:** via policy
 - **How much gas/fees/tokens:** `maxPaymentAmount`
 
 Store the `sessionDetails` safely—this object is required to use the permission later.
+
+This example is using `grantPermissionTypedDataSign` method. It will prompt user with an EIP-712 signature request (signTypedData).
+If you want `personal_sign`, use `grantPermissionPersonalSign` method.
 
 ---
 
@@ -212,6 +215,8 @@ const usePermissionPayload = await dappSessionClient.usePermission({
   feeToken
 })
 ```
+
+If you are using `sponsorship: true`, do not provide the `feeToken` param when granting the permission. 
 
 ::::
 

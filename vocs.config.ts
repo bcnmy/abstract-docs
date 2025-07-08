@@ -197,7 +197,7 @@ export default defineConfig({
 							link: '/new/smart-sessions/policies/universal-action-policy'
 						},
 						{
-							text: 'Sudo Policy',
+							text: 'Usage Limit Policy',
 							link: '/new/smart-sessions/policies/usage-limit-policy'
 						}
 					]
