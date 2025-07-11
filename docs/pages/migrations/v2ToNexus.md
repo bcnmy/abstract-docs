@@ -64,8 +64,9 @@ const config = {
   paymasterApiKey: "YOUR_PAYMASTER_API_KEY", // Replace with your Paymaster API key
   
   // Nexus contract addresses
-  nexusImplementationAddress: "0x000000008761E87F023f65c49DC9cb1C7EdFEaaf",
-  nexusBootstrapAddress: "0x000000F5b753Fdd20C5CA2D7c1210b3Ab1EA5903",
+  // Use the latest addresses from here https://docs.biconomy.io/contracts-and-audits/
+  nexusImplementationAddress: "",
+  nexusBootstrapAddress: "",
   emptyHookAddress: "0x0000000000000000000000000000000000000001"
 };
 
