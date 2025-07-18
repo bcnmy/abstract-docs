@@ -30,7 +30,9 @@
 | Apechain Curtis Testnet     | ✅         | ⏳               |
 | Hyper EVM                   | ✅         | ⏳               |
 | Core DAO Testnet            | ✅         | ⏳               |
-| Neura Testnet               | ✅         | ⏳               |
+| Neura Testnet               | ⏳         | ⏳               |
+| Sei Mainnet                 | ✅         | ⏳               |
+| Sei Testnet                 | ✅         | ⏳               |
 
 
 [👉 View contracts & audits](https://docs.biconomy.io/contractsAndAudits)
