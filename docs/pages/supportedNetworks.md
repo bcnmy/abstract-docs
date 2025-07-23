@@ -33,6 +33,9 @@
 | Neura Testnet               | ⏳         | ⏳               |
 | Sei Mainnet                 | ✅         | ⏳               |
 | Sei Testnet                 | ✅         | ⏳               |
+| Unichain Mainnet            | ✅         | ⏳               |
+| Unichain Testnet            | ✅         | ⏳               |
+| Katana Mainnet              | ✅         | ⏳               |
 
 
 [👉 View contracts & audits](https://docs.biconomy.io/contractsAndAudits)
