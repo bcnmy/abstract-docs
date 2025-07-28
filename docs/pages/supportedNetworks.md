@@ -36,6 +36,7 @@
 | Unichain Mainnet            | ✅         | ⏳               |
 | Unichain Testnet            | ✅         | ⏳               |
 | Katana Mainnet              | ✅         | ⏳               |
+| Lisk Mainnet                | ✅         | ⏳               |
 
 
 [👉 View contracts & audits](https://docs.biconomy.io/contractsAndAudits)
