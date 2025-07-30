@@ -1,6 +1,7 @@
 # Production Contracts
 
 ## MEE Contracts suite v2.1.0
+New K1 Mee module introduced that allows ERC-7702-delegated EOAs owning Nexus accounts
 
 ### Nexus & MEE Validator
 | Name    | Address    | 
@@ -13,15 +14,15 @@
 ### Composability and utility
 | Name    | Address    | 
 |-------------|-------------|
-| Composability Module | `0x00000004430bB055dB66eBef6Fe5Ee1DA9668B10`  |
 | Composable Storage | `0x0000000671eb337E12fe5dB0e788F32e1D71B183`  |
 | ETH Forwarder Addr:  | `0x000000Afe527A978Ecb761008Af475cfF04132a1`  |
 
 
 ## MEE Contracts suite v2.0.0
+Major release, featuring Nexus 1.2.0 with ERC-7702 support and native composability.
+MEE K1 Validator is pre-installed as a default validator module.
 
 ### Nexus & MEE
-
 | Name    | Address    | 
 |-------------|-------------|
 | Nexus Implementation v1.2.0 | `0x000000004F43C49e93C970E84001853a70923B03`  |
@@ -33,7 +34,6 @@
 ### Composability and utility
 | Name    | Address    | 
 |-------------|-------------|
-| Composability Module | `0x00000004430bB055dB66eBef6Fe5Ee1DA9668B10`  |
 | Composable Storage | `0x0000000671eb337E12fe5dB0e788F32e1D71B183`  |
 | ETH Forwarder Addr:  | `0x000000Afe527A978Ecb761008Af475cfF04132a1`  |
 
@@ -41,7 +41,8 @@
 Same as MEE Contracts suite v1.0.0, just the Nexus Account Factory introduced at `0x000000903887EA36EBe051038287f49fD4A07733`
 
 ## MEE Contracts suite v1.0.0
-
+First release for the MEE contracts suite, based on Nexus 1.0.2
+Requires installing MEE K1 validator and Composability module explicitly
 ### Nexus v1.0.2
 | Name    | Address    | 
 |-------------|-------------|
