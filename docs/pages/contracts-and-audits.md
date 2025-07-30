@@ -1,45 +1,61 @@
 # Production Contracts
 
-## Biconomy Network: Genesis Mainnet Release
+## MEE Contracts suite v2.1.0
+
+### Nexus & MEE Validator
 | Name    | Address    | 
 |-------------|-------------|
-| MEE EntryPoint & Paymaster | `0xE854C84cD68fC434cB3B0042c29235D452cAD977`  |
-| Node Paymaster Factory | `0x000000005824a1ED617994dF733151D26a4cf03d` |
-| MEE K1 Validator module | `0x0000000031ef4155C978d48a8A7d4EDba03b04fE`  |
+| Nexus Implementation v1.2.0 | `0x00000000383e8cBe298514674Ea60Ee1d1de50ac`  |
+| MEE K1 Validator module v1.0.3 | `0x0000000031ef4155C978d48a8A7d4EDba03b04fE`  |
+| Nexus Bootstrap v1.2.1 | `0x0000003eDf18913c01cBc482C978bBD3D6E8ffA3`  |
+| Nexus Account Factory | `0x0000006648ED9B2B842552BE63Af870bC74af837`  |
+
+### Composability and utility
+| Name    | Address    | 
+|-------------|-------------|
 | Composability Module | `0x00000004430bB055dB66eBef6Fe5Ee1DA9668B10`  |
 | Composable Storage | `0x0000000671eb337E12fe5dB0e788F32e1D71B183`  |
 | ETH Forwarder Addr:  | `0x000000Afe527A978Ecb761008Af475cfF04132a1`  |
 
-### Nexus v1.2.0 => For chains with EIP-7702 support
-#### Nexus with latest MEE K1 Validator
-| Name    | Address    | 
-|-------------|-------------|
-| Nexus Implementation v1.2.0 | `0x00000000383e8cBe298514674Ea60Ee1d1de50ac`  |
-| Nexus Bootstrap v1.2.0 | `0x0000003eDf18913c01cBc482C978bBD3D6E8ffA3`  |
-| Nexus Account Factory | `0x0000006648ED9B2B842552BE63Af870bC74af837`  |
 
-[GitHub](https://github.com/bcnmy/nexus/releases/tag/v1.2.0)
+## MEE Contracts suite v2.0.0
 
-#### Nexus v1.2.0 with 0x00000000d12897DDAdC2044614A9677B191A2d95 as Default Validator
-<details markdown="1">
+### Nexus & MEE
 
 | Name    | Address    | 
 |-------------|-------------|
 | Nexus Implementation v1.2.0 | `0x000000004F43C49e93C970E84001853a70923B03`  |
-| Nexus Bootstrap v1.2.0 | `0x00000000D3254452a909E4eeD47455Af7E27C289`  |
+| MEE K1 Validator module v1.0.1 | `0x00000000d12897DDAdC2044614A9677B191A2d95`  |
+| Nexus Bootstrap v1.2.1 | `0x00000000D3254452a909E4eeD47455Af7E27C289`  |
 | Nexus Account Factory | `0x000000001D1D5004a02bAfAb9de2D6CE5b7B13de`  |
+| MEE EntryPoint & Paymaster | `0xE854C84cD68fC434cB3B0042c29235D452cAD977`  |
 
-</details>
+### Composability and utility
+| Name    | Address    | 
+|-------------|-------------|
+| Composability Module | `0x00000004430bB055dB66eBef6Fe5Ee1DA9668B10`  |
+| Composable Storage | `0x0000000671eb337E12fe5dB0e788F32e1D71B183`  |
+| ETH Forwarder Addr:  | `0x000000Afe527A978Ecb761008Af475cfF04132a1`  |
 
-### Nexus v1.0.2 => For chains w/o EIP-7702 support
+## MEE Contracts suite v1.0.1
+Same as MEE Contracts suite v1.0.0, just the Nexus Account Factory introduced at `0x000000903887EA36EBe051038287f49fD4A07733`
 
-<details markdown="1">
+## MEE Contracts suite v1.0.0
 
+### Nexus v1.0.2
 | Name    | Address    | 
 |-------------|-------------|
 | Nexus implementation v1.0.2 | `0x000000aC74357BFEa72BBD0781833631F732cf19`  |
-| Account Factory  | `0x000000c3A93d2c5E02Cb053AC675665b1c4217F9`  |
+| MEE K1 Validator module v1.0.1 | `0x00000000d12897DDAdC2044614A9677B191A2d95`  |
 | Nexus Bootstrap v1.0.2 | `0x879fa30248eeb693dcCE3eA94a743622170a3658`  |
+| Nexus Account Factory  | `0x000000c3A93d2c5E02Cb053AC675665b1c4217F9`  |
+
+### Composability and utility
+| Name    | Address    | 
+|-------------|-------------|
+| Composability Module | `0x00000004430bB055dB66eBef6Fe5Ee1DA9668B10`  |
+| Composable Storage | `0x0000000671eb337E12fe5dB0e788F32e1D71B183`  |
+| ETH Forwarder Addr:  | `0x000000Afe527A978Ecb761008Af475cfF04132a1`  |
 
 [GitHub](https://github.com/bcnmy/nexus/releases/tag/v1.0.2)
 
@@ -69,18 +85,6 @@
 | Zenith | [Report](https://github.com/bcnmy/composability/blob/main/audits/Biconomy-Composability_Zenith-Audit-Report.pdf) |
 | Pashov | [Report](https://github.com/bcnmy/composability/blob/9e090c24b195822f668f96cb4ff518a9b7ff712d/audits/2025-03-Composability-Pashov-Review.pdf) |
 
-## Nexus v1.0.2 Production Contracts
-<details markdown="1">
-
-| Name    | Address    | 
-|-------------|-------------|
-| Nexus implementation  | `0x000000aC74357BFEa72BBD0781833631F732cf19`  |
-| K1 Validator  | `0x0000002D6DB27c52E3C11c1Cf24072004AC75cBa`  | 
-| K1 Validator Factory  | `0x2828A0E0f36d8d8BeAE95F00E2BbF235e4230fAc`  | 
-| Account Factory  | `0x000000c3A93d2c5E02Cb053AC675665b1c4217F9`  |
-| Bootstrap  | `0x879fa30248eeb693dcCE3eA94a743622170a3658`  |
-
-</details>
 
 # Legacy Production Contracts
 
@@ -112,15 +116,5 @@
 |-------------|-------------|
 | Sponsorship Paymaster | `0x00000072a5F551D6E80b2f6ad4fB256A27841Bbc` |
 | Token Paymaster | `0x00000000301515A5410e0d768aF4f53c416edf19` |
-
-</details>
-
-## Paymasters Audits
-<details markdown="1">
-
-| Audited by    | Links    | 
-|-------------|-------------|
-| Chainlight | [Sponsorship Paymaster report](https://github.com/bcnmy/gasdaddy/blob/6bb9ad9b74cb48cd9284461b31b5624edf8a6eb5/audits/ChainLight_Biconomy_Sponsorship_Paymaster_Security_Audit_v1_1.pdf) |
-| Chainlight | [Token Paymaster report](https://github.com/bcnmy/gasdaddy/blob/20239ae8bf5696d57341ff90e0be52e6038bf47f/audits/ChainLight_Biconomy_Token_Paymaster_Security_Audit_v1_0.pdf) |
 
 </details>
