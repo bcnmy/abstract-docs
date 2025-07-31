@@ -1,0 +1,196 @@
+<script defer data-domain="docs.biconomy.io" src="https://plausible.io/js/script.file-downloads.hash.outbound-links.pageview-props.tagged-events.js"></script>
+<script dangerouslySetInnerHTML={{
+  __html: `window.plausible = window.plausible || function() { (window.plausible.q = window.plausible.q || []).push(arguments) }`
+}} />
+
+# Move: One-Click DeFi Position Migration
+
+## Overview
+
+Your users are earning yield on other DeFi protocols when they discover better rates on your protocol. Simple enough for them to move, right? In practice, position migration involves coordination challenges that often aren't worth the effort for your users.
+
+Consider this scenario: your users are earning yield on another protocol and find better rates on yours. They have four options:
+
+- **Multiple manual transactions** → Withdraw, approve, deposit - each step requiring signatures and gas fees
+- **Custom migration contracts** → Rarely built due to development complexity, audit costs, and smart contract risk
+- **Accept the status quo** → Stay put because the migration effort outweighs the benefit
+- **Risk manual operations at scale** → For funds managing large positions, manual multi-step processes create operational risk and require careful coordination
+
+When your users scale this across chains or more complex positions, most simply don't migrate despite better opportunities on your protocol. For larger funds, the operational risk of manual coordination becomes a significant concern that keeps them locked in suboptimal positions elsewhere.
+
+Biconomy Move changes this entirely. Your users can move positions from any DeFi protocols to yours with a single signature. They click once. Everything happens atomically. What required careful multi-step coordination now happens seamlessly.
+
+## What is Move?
+
+Move is a feature that allows your DeFi positions to simply migrate anywhere you want, in a single operation. It solves the fundamental coordination problem that makes protocol migration so painful today.
+
+### Use Cases
+
+Move is useful for:
+
+- Lending positions to find higher yield
+- Borrow positions to find cheaper borrow rates
+- Moving between versions e.g. Moving between Aave V3 to Aave V4
+- Moving your expiring Pendle position to a new one
+
+
+## How Move Works
+
+Move makes the problems associated with migrating any DeFi position a thing of the past. Instead of managing complex multi-step processes manually, users trigger intelligent migration flows that handle all the complexity automatically.
+
+### Fusion Mode Integration
+
+Works with any wallet (MetaMask, Rabby, etc.) through Biconomy's Fusion Mode - no special wallet software required.
+
+## Key Capabilities
+
+### 1. Atomic Cross-Protocol Operations
+
+Your entire position moves in one coordinated flow:
+
+```
+withdraw(entire Aave position) → approve(exact amount) → deposit(exact amount to Venus)
+```
+
+### 2. Runtime Amount Resolution
+
+Instead of guessing balances, Move uses exact amounts at execution time:
+
+```javascript
+// Not this: withdraw(1.5 ETH) // Hope that's still your balance!
+// But this: withdraw(runtimeBalance(aTokens)) // Exact amount including accrued interest
+```
+
+### 3. Gasless Execution
+
+Optional gas sponsorship means users can migrate positions without holding ETH. Pay with the tokens you're already moving.
+
+### 4. Graceful Failure Handling & Atomic Execution
+
+If any step fails, automatic cleanup ensures funds return safely to your wallet. No partial states, no stuck funds.
+
+However, if you're moving positions on a single chain — all execution is done atomically.
+
+## Example: AAVE to Venus Migration
+
+This example demonstrates a complete migration from AAVE to Venus Protocol using Move's composable orchestration:
+
+### Step 1: Transfer Accrued Interest
+
+```javascript
+const transferInterest = await nexusAccount.buildComposable({
+  type: 'transferFrom',
+  data: {
+    recipient: nexusAccountAddress,  // Companion Account address
+    sender: accountAddress,          // User's EOA
+    tokenAddress: position.aTokenAddress,
+    amount: runtimeERC20BalanceOf({
+      targetAddress: accountAddress,
+      tokenAddress: position.aTokenAddress,
+      constraints: [greaterThanOrEqualTo(100n)],
+    }),
+    chainId,
+    gasLimit: 100000n,
+  },
+});
+```
+
+### Step 2: Withdraw Entire AAVE Position
+
+```javascript
+const withdrawFromAave = await nexusAccount.buildComposable({
+  type: 'default',
+  data: {
+    to: aaveV3PoolContractAddress,
+    abi: aaveV3PoolAbi,
+    functionName: 'withdraw',
+    args: [
+      position.tokenAddress,        // Asset to withdraw
+      MAX_UINT256.toFixed(),       // Amount (MAX = entire position)
+      nexusAccountAddress,         // Recipient
+    ],
+    chainId,
+    gasLimit: 100000n,
+  },
+});
+```
+
+### Step 3: Approve Venus to Spend Tokens
+
+```javascript
+const approveVenus = await nexusAccount.buildComposable({
+  type: 'approve',
+  data: {
+    tokenAddress: position.tokenAddress,
+    spender: vToken.address,
+    amount: runtimeERC20BalanceOf({
+      targetAddress: nexusAccountAddress,
+      tokenAddress: position.tokenAddress,
+      constraints: [greaterThanOrEqualTo(100n)],
+    }),
+    chainId,
+    gasLimit: 100000n,
+  },
+});
+```
+
+### Step 4: Mint vTokens on Venus
+
+```javascript
+const mintVTokens = await nexusAccount.buildComposable({
+  type: 'default',
+  data: {
+    to: vToken.address,
+    abi: vBep20Abi,
+    functionName: 'mintBehalf',
+    args: [
+      accountAddress,  // Mint on behalf of user's EOA
+      runtimeERC20BalanceOf({
+        targetAddress: nexusAccountAddress,
+        tokenAddress: position.tokenAddress,
+        constraints: [greaterThanOrEqualTo(100n)],
+      }),
+    ],
+    chainId,
+    gasLimit: 100000n,
+  },
+});
+```
+
+### Creating the Fusion Quote
+
+```javascript
+// Buffer the approval amount to account for interest accrual
+const approvalAmount = buffer({
+  amountMantissa: position.userATokenBalanceWithInterestsMantissa,
+});
+
+const fusionQuote = await meeClient.getFusionQuote({
+  trigger: {
+    chainId,
+    tokenAddress: position.aTokenAddress,
+    amount: position.userATokenBalanceMantissa,
+    approvalAmount,  // Buffered amount
+    gasLimit: 500000n,
+  },
+  instructions: [
+    transferInterest,
+    withdrawFromAave,
+    approveVenus,
+    mintVTokens
+  ],
+  sponsorship: true,  // Enable gasless execution
+});
+```
+
+### Key Features Demonstrated
+
+- **Runtime Balance Resolution**: Uses `runtimeERC20BalanceOf` to capture exact amounts at execution time
+- **Atomic Execution**: All operations succeed together or fail together with automatic cleanup
+- **Buffer Strategy**: Accounts for interest accrual between signing and execution
+- **Gasless Execution**: Optional gas sponsorship for seamless user experience
+- **Fusion Mode**: Works with any external wallet through Companion Account mechanism
+
+## Summary
+
+Think of Move as replacing the entire manual coordination of DeFi position movements with an automated system that understands protocol dependencies, timing, and user safety.
