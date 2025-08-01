@@ -28,7 +28,7 @@
 | Apechain Curtis Testnet     | ✅         | 2.0.1, 2.0.0     |
 | Hyper EVM                   | ✅         | 2.0.1, 2.0.0     |
 | Core DAO Testnet            | ✅         | 2.0.1, 2.0.0     |
-| Neura Testnet               | ⏳         | ⏳               |
+| Neura Testnet               | ✅         | 2.0.1            |
 | Sei Mainnet                 | ✅         | 2.0.1, 2.0.0     |
 | Sei Testnet                 | ✅         | 2.0.1, 2.0.0     |
 | Unichain Mainnet            | ✅         | 2.0.1            |
