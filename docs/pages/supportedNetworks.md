@@ -4,41 +4,41 @@
 
 | Network                     | Supported | [MEE version](https://docs.biconomy.io/contractsAndAudits)      |
 |-----------------------------|-----------|------------------|
-| Ethereum Mainnet            | ✅         | 2.0.1, 2.0.0, 1.0.3, 1.0.1      |
-| Ethereum Sepolia            | ✅         | 2.0.1, 2.0.0, 1.0.3, 1.0.1      |
-| Base Mainnet                | ✅         | 2.0.1, 2.0.0, 1.0.3, 1.0.1      |
-| Base Sepolia                | ✅         | 2.0.1, 2.0.0, 1.0.3, 1.0.1      |
-| Polygon Mainnet             | ✅         | 2.0.1, 2.0.0, 1.0.3, 1.0.1      |
-| Polygon Amoy Testnet        | ✅         | 2.0.1, 2.0.0, 1.0.3, 1.0.1      |
-| Arbitrum Mainnet            | ✅         | 2.0.1, 2.0.0, 1.0.3, 1.0.1      |
-| Arbitrum Sepolia            | ✅         | 2.0.1, 2.0.0, 1.0.3, 1.0.1      |
-| OP Mainnet                  | ✅         | 2.0.1, 2.0.0, 1.0.3, 1.0.1      |
-| OP Sepolia Testnet          | ✅         | 2.0.1, 2.0.0, 1.0.3, 1.0.1      |
-| BSC Mainnet                 | ✅         | 2.0.1, 2.0.0, 1.0.3, 1.0.1      |
-| BSC Testnet                 | ✅         | 2.0.1, 2.0.0, 1.0.3, 1.0.1      |
-| Sonic Mainnet               | ✅         | 2.0.1, 2.0.0, 1.0.3, 1.0.1      |
-| Sonic Blaze Testnet         | ✅         | 2.0.1, 2.0.0, 1.0.3, 1.0.1      |
-| Scroll Mainnet              | ✅         | 2.0.1, 2.0.0, 1.0.3, 1.0.1      |
-| Scroll Sepolia Testnet      | ✅         | 2.0.1, 2.0.0, 1.0.3, 1.0.1      |
-| Gnosis Mainnet              | ✅         | 2.0.1, 2.0.0, 1.0.3, 1.0.1      |
-| Gnosis Chiado Testnet       | ✅         | 2.0.1, 2.0.0, 1.0.3, 1.0.1      |
-| Avalanche Mainnet           | ✅         | 2.0.1, 2.0.0, 1.0.3    |
-| Avalanche Fuji Testnet      | ✅         | 2.0.1, 2.0.0, 1.0.3    |
-| Apechain                    | ✅         | 2.0.1, 2.0.0, 1.0.3    |
-| Apechain Curtis Testnet     | ✅         | 2.0.1, 2.0.0, 1.0.3    |
-| Hyper EVM                   | ✅         | 2.0.1, 2.0.0, 1.0.3    |
-| Core DAO Testnet            | ✅         | 2.0.1, 2.0.0, 1.0.3    |
-| Neura Testnet               | ✅         | 2.0.1, 1.0.3           |
-| Sei Mainnet                 | ✅         | 2.0.1, 2.0.0, 1.0.3    |
-| Sei Testnet                 | ✅         | 2.0.1, 2.0.0, 1.0.3    |
-| Unichain Mainnet            | ✅         | 2.0.1, 1.0.3           |
-| Unichain Testnet            | ✅         | 2.0.1, 1.0.3           |
-| Katana Mainnet              | ✅         | 2.0.1, 1.0.3           |
-| Lisk Mainnet                | ✅         | 2.0.1, 1.0.3           |
-| Worldchain Mainnet          | ✅         | 2.0.1, 1.0.3           |
-| Worldchain Testnet          | ✅         | 2.0.1, 1.0.3           |
-| Fluent Testnet              | ✅         | 2.0.1, 1.0.3           |
-| Chiliz Spicy Testnet        | ✅         | 1.0.3            |
+| Ethereum Mainnet            | ✅         | 2.0.1, 2.0.0, 1.1.0, 1.0.0      |
+| Ethereum Sepolia            | ✅         | 2.0.1, 2.0.0, 1.1.0, 1.0.0      |
+| Base Mainnet                | ✅         | 2.0.1, 2.0.0, 1.1.0, 1.0.0      |
+| Base Sepolia                | ✅         | 2.0.1, 2.0.0, 1.1.0, 1.0.0      |
+| Polygon Mainnet             | ✅         | 2.0.1, 2.0.0, 1.1.0, 1.0.0      |
+| Polygon Amoy Testnet        | ✅         | 2.0.1, 2.0.0, 1.1.0, 1.0.0      |
+| Arbitrum Mainnet            | ✅         | 2.0.1, 2.0.0, 1.1.0, 1.0.0      |
+| Arbitrum Sepolia            | ✅         | 2.0.1, 2.0.0, 1.1.0, 1.0.0      |
+| OP Mainnet                  | ✅         | 2.0.1, 2.0.0, 1.1.0, 1.0.0      |
+| OP Sepolia Testnet          | ✅         | 2.0.1, 2.0.0, 1.1.0, 1.0.0      |
+| BSC Mainnet                 | ✅         | 2.0.1, 2.0.0, 1.1.0, 1.0.0      |
+| BSC Testnet                 | ✅         | 2.0.1, 2.0.0, 1.1.0, 1.0.0      |
+| Sonic Mainnet               | ✅         | 2.0.1, 2.0.0, 1.1.0, 1.0.0      |
+| Sonic Blaze Testnet         | ✅         | 2.0.1, 2.0.0, 1.1.0, 1.0.0      |
+| Scroll Mainnet              | ✅         | 2.0.1, 2.0.0, 1.1.0, 1.0.0      |
+| Scroll Sepolia Testnet      | ✅         | 2.0.1, 2.0.0, 1.1.0, 1.0.0      |
+| Gnosis Mainnet              | ✅         | 2.0.1, 2.0.0, 1.1.0, 1.0.0      |
+| Gnosis Chiado Testnet       | ✅         | 2.0.1, 2.0.0, 1.1.0, 1.0.0      |
+| Avalanche Mainnet           | ✅         | 2.0.1, 2.0.0, 1.1.0    |
+| Avalanche Fuji Testnet      | ✅         | 2.0.1, 2.0.0, 1.1.0    |
+| Apechain                    | ✅         | 2.0.1, 2.0.0, 1.1.0    |
+| Apechain Curtis Testnet     | ✅         | 2.0.1, 2.0.0, 1.1.0    |
+| Hyper EVM                   | ✅         | 2.0.1, 2.0.0, 1.1.0    |
+| Core DAO Testnet            | ✅         | 2.0.1, 2.0.0, 1.1.0    |
+| Neura Testnet               | ✅         | 2.0.1, 1.1.0           |
+| Sei Mainnet                 | ✅         | 2.0.1, 2.0.0, 1.1.0    |
+| Sei Testnet                 | ✅         | 2.0.1, 2.0.0, 1.1.0    |
+| Unichain Mainnet            | ✅         | 2.0.1, 1.1.0           |
+| Unichain Testnet            | ✅         | 2.0.1, 1.1.0           |
+| Katana Mainnet              | ✅         | 2.0.1, 1.1.0           |
+| Lisk Mainnet                | ✅         | 2.0.1, 1.1.0           |
+| Worldchain Mainnet          | ✅         | 2.0.1, 1.1.0           |
+| Worldchain Testnet          | ✅         | 2.0.1, 1.1.0           |
+| Fluent Testnet              | ✅         | 2.0.1, 1.1.0           |
+| Chiliz Spicy Testnet        | ✅         | 1.1.0            |
 
 [👉 View contracts & audits](https://docs.biconomy.io/contractsAndAudits)
 

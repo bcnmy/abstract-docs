@@ -50,7 +50,7 @@ Features:
 |-------------|-------------|
 | Nexus Implementation v1.0.2 | `0x000000001964d23C59962Fc7A912872EE8fB3b6A`  |
 | MEE K1 Validator module v1.0.3 | `0x00000000E894100bEcFc7c934Ab7aC8FBA08A44c`  |
-| Nexus Bootstrap v1.0.2 | `0x000000c4781Be3349F81d341027fd7A4EdFa4Dd2`  |
+| Nexus Bootstrap v1.0.0 | `0x000000c4781Be3349F81d341027fd7A4EdFa4Dd2`  |
 | Nexus Account Factory  | `0x0000000C8B6b3329cEa5d15C9d8C15F1f254ec3C`  |
 
 ### Composability and utility
@@ -71,7 +71,7 @@ Requires installing MEE K1 validator and Composability module explicitly
 |-------------|-------------|
 | Nexus Implementation v1.0.2 | `0x000000aC74357BFEa72BBD0781833631F732cf19`  |
 | MEE K1 Validator module v1.0.1 | `0x00000000d12897DDAdC2044614A9677B191A2d95`  |
-| Nexus Bootstrap v1.0.2 | `0x879fa30248eeb693dcCE3eA94a743622170a3658`  |
+| Nexus Bootstrap v1.0.0 | `0x879fa30248eeb693dcCE3eA94a743622170a3658`  |
 | Nexus Account Factory  | `0x000000c3A93d2c5E02Cb053AC675665b1c4217F9`  |
 | MEE EntryPoint & Paymaster | `0xE854C84cD68fC434cB3B0042c29235D452cAD977`  |
 
