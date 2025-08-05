@@ -37,7 +37,7 @@ MEE K1 Validator is pre-installed as a default validator module.
 | Composable Storage | `0x0000000671eb337E12fe5dB0e788F32e1D71B183`  |
 | ETH Forwarder Addr:  | `0x000000Afe527A978Ecb761008Af475cfF04132a1`  |
 
-## MEE Contracts suite v1.0.3
+## MEE Contracts suite v1.1.0
 Features:
 - Nexus v1.0.2 
 - New Account Factory 
@@ -60,10 +60,10 @@ Features:
 | Composable Storage | `0x0000002C2A3b6DA7dfa38AAcdD950097B30B108d`  |
 | ETH Forwarder Addr:  | `0x000000001f1c68bD5bF69aa1cCc1d429700D41Da`  |
 
-## MEE Contracts suite v1.0.2
+## MEE Contracts suite v1.0.1
 Same as MEE Contracts suite v1.0.1, just the Nexus Account Factory introduced at `0x000000903887EA36EBe051038287f49fD4A07733`
 
-## MEE Contracts suite v1.0.1
+## MEE Contracts suite v1.0.0
 First release for the MEE contracts suite, based on Nexus 1.0.2
 Requires installing MEE K1 validator and Composability module explicitly
 ### Nexus v1.0.2 & MEE
