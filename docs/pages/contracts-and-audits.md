@@ -37,19 +37,43 @@ MEE K1 Validator is pre-installed as a default validator module.
 | Composable Storage | `0x0000000671eb337E12fe5dB0e788F32e1D71B183`  |
 | ETH Forwarder Addr:  | `0x000000Afe527A978Ecb761008Af475cfF04132a1`  |
 
-## MEE Contracts suite v1.0.1
-Same as MEE Contracts suite v1.0.0, just the Nexus Account Factory introduced at `0x000000903887EA36EBe051038287f49fD4A07733`
+## MEE Contracts suite v1.0.3
+Features:
+- Nexus v1.0.2 
+- New Account Factory 
+- MEE K1 Validator v1.0.3
+- **Compiled for evm Paris** (No PUSH0, no MCOPY, no TSTORE)
 
-## MEE Contracts suite v1.0.0
-First release for the MEE contracts suite, based on Nexus 1.0.2
-Requires installing MEE K1 validator and Composability module explicitly
-### Nexus v1.0.2
+### Nexus v1.0.2 with the new Account Factory and latest MEE K1 Validator, compiled 
+
 | Name    | Address    | 
 |-------------|-------------|
-| Nexus implementation v1.0.2 | `0x000000aC74357BFEa72BBD0781833631F732cf19`  |
+| Nexus Implementation v1.0.2 | `0x000000001964d23C59962Fc7A912872EE8fB3b6A`  |
+| MEE K1 Validator module v1.0.3 | `0x00000000E894100bEcFc7c934Ab7aC8FBA08A44c`  |
+| Nexus Bootstrap v1.0.2 | `0x000000c4781Be3349F81d341027fd7A4EdFa4Dd2`  |
+| Nexus Account Factory  | `0x0000000C8B6b3329cEa5d15C9d8C15F1f254ec3C`  |
+
+### Composability and utility
+| Name    | Address    | 
+|-------------|-------------|
+| Composability Module | `0x000000eff5C221A6bdB12381868307c9Db5eB462`  |
+| Composable Storage | `0x0000002C2A3b6DA7dfa38AAcdD950097B30B108d`  |
+| ETH Forwarder Addr:  | `0x000000001f1c68bD5bF69aa1cCc1d429700D41Da`  |
+
+## MEE Contracts suite v1.0.2
+Same as MEE Contracts suite v1.0.1, just the Nexus Account Factory introduced at `0x000000903887EA36EBe051038287f49fD4A07733`
+
+## MEE Contracts suite v1.0.1
+First release for the MEE contracts suite, based on Nexus 1.0.2
+Requires installing MEE K1 validator and Composability module explicitly
+### Nexus v1.0.2 & MEE
+| Name    | Address    | 
+|-------------|-------------|
+| Nexus Implementation v1.0.2 | `0x000000aC74357BFEa72BBD0781833631F732cf19`  |
 | MEE K1 Validator module v1.0.1 | `0x00000000d12897DDAdC2044614A9677B191A2d95`  |
 | Nexus Bootstrap v1.0.2 | `0x879fa30248eeb693dcCE3eA94a743622170a3658`  |
 | Nexus Account Factory  | `0x000000c3A93d2c5E02Cb053AC675665b1c4217F9`  |
+| MEE EntryPoint & Paymaster | `0xE854C84cD68fC434cB3B0042c29235D452cAD977`  |
 
 ### Composability and utility
 | Name    | Address    | 
