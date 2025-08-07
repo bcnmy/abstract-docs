@@ -26,7 +26,7 @@ Here's how to initialize the MEE Client:
 
 ```typescript
 import { privateKeyToAccount } from "viem/accounts";
-import { createMeeClient, toMultichainNexusAccount } from "@biconomy/abstractjs";
+import { createMeeClient, toMultichainNexusAccount, getMEEVersion, MEEVersion } from "@biconomy/abstractjs";
 import { baseSepolia, mainnet } from "viem/chains";
 import { http } from "viem";
 
@@ -36,8 +36,18 @@ const account = privateKeyToAccount(`0x${privateKey}`);
 
 // 2. Initialize the multichain smart account
 const mcNexus = await toMultichainNexusAccount({
-  chains: [baseSepolia, mainnet],
-  transports: [http(), http()],
+  chainConfigurations: [
+    {
+      chain: baseSepolia,
+      transport: http(),
+      version: getMEEVersion(MEEVersion.V2_1_0)
+    },
+    {
+      chain: mainnet,
+      transport: http(),
+      version: getMEEVersion(MEEVersion.V2_1_0)
+    }
+  ],
   signer: account
 });
 

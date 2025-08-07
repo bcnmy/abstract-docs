@@ -47,8 +47,11 @@ After migration, you **must always** use the `accountAddress` parameter when rec
 // CORRECT: Specifying accountAddress preserves access to the existing account
 const nexusAccount = await toNexusAccount({
   signer: eoaAccount,
-  chain: baseChain,
-  transport: http(),
+  chainConfiguration: {
+    chain: baseChain,
+    transport: http(),
+    version: getMEEVersion(MEEVersion.V2_1_0)
+  },
   accountAddress: "0xUserExistingAccountAddress" // CRITICAL!
 });
 
@@ -56,8 +59,11 @@ const nexusAccount = await toNexusAccount({
 // This will result in loss of access to the existing account and its funds!
 const newAccount = await toNexusAccount({
   signer: eoaAccount,
-  chain: baseChain,
-  transport: http()
+  chainConfiguration: {
+    chain: baseChain,
+    transport: http(),
+    version: getMEEVersion(MEEVersion.V2_1_0)
+  },
 });
 ```
 

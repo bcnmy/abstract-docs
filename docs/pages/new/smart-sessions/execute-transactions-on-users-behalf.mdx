@@ -34,6 +34,8 @@ import {
   toMultichainNexusAccount,
   toSmartSessionsModule,
   waitForSupertransactionReceipt,
+  getMEEVersion,
+  MEEVersion
 } from "@biconomy/abstractjs";
 import { http, parseUnits, type Hex } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
@@ -53,8 +55,28 @@ const ssValidator = toSmartSessionsModule({
 // In this case - we call this account the `orchestrator` since 
 // it will be used to orchestrate actions on users behalf.
 const orchestrator = await toMultichainNexusAccount({
-  chains: [optimism, base, arbitrum, polygon],
-  transports: [http(), http(), http(), http()],
+  chainConfigurations: [
+    {
+      chain: optimism,
+      transport: http(),
+      version: getMEEVersion(MEEVersion.V2_1_0)
+    },
+    {
+      chain: base,
+      transport: http(),
+      version: getMEEVersion(MEEVersion.V2_1_0)
+    },
+    {
+      chain: arbitrum,
+      transport: http(),
+      version: getMEEVersion(MEEVersion.V2_1_0)
+    },
+    {
+      chain: polygon,
+      transport: http(),
+      version: getMEEVersion(MEEVersion.V2_1_0)
+    },
+  ],
   signer: eoa
 })
 
@@ -164,8 +186,28 @@ This is done by the session signer, on behalf of the owner. Setup is slightly di
 
 ```ts
 const userOwnedOrchestratorWithSessionSigner = await toMultichainNexusAccount({
-  chains: [optimism, base, arbitrum, polygon],
-  transports: [http(), http(), http(), http()],
+  chainConfigurations: [
+    {
+      chain: optimism,
+      transport: http(),
+      version: getMEEVersion(MEEVersion.V2_1_0)
+    },
+    {
+      chain: base,
+      transport: http(),
+      version: getMEEVersion(MEEVersion.V2_1_0)
+    },
+    {
+      chain: arbitrum,
+      transport: http(),
+      version: getMEEVersion(MEEVersion.V2_1_0)
+    },
+    {
+      chain: polygon,
+      transport: http(),
+      version: getMEEVersion(MEEVersion.V2_1_0)
+    },
+  ],
   accountAddress: orchestrator.addressOn(base.id)!,
   signer: sessionSigner
 })

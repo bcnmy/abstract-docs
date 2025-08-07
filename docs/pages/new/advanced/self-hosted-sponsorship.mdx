@@ -113,8 +113,11 @@ The following utility functions are primarily intended for backend developers ma
 
 ```ts
 const gasTankAccount = await toGasTankAccount({
-  transport: http(), // Use a paid RPC in production
-  chain: baseSepolia,
+  chainConfiguration: {
+    chain: baseSepolia,
+    transport: http(), // Use a paid RPC in production
+    version: getMEEVersion(MEEVersion.V2_1_0)
+  },
   privateKey: "YOUR_PRIVATE_KEY",
   options: {
     mee: {

@@ -219,7 +219,9 @@ import {
   createChainAddressMap,
   runtimeERC20BalanceOf,
   greaterThanOrEqualTo,
-  type Trigger 
+  type Trigger,
+  getMEEVersion,
+  MEEVersion
 } from "@biconomy/abstractjs"
 import { getLifiQuote } from "./lifi-quote-service" // 👈 Import the service you just created
 import { base, optimism } from "viem/chains"
@@ -255,8 +257,18 @@ const aUSDCAddresses = createChainAddressMap([
 // Create orchestrator account
 const eoa = privateKeyToAccount(PRIVATE_KEY)
 const orchestrator = await toMultichainNexusAccount({
-  chains: [optimism, base],
-  transports: [http(), http('https://base.llamarpc.com')],
+  chainConfigurations: [
+    {
+      chain: optimism,
+      transport: http(),
+      version: getMEEVersion(MEEVersion.V2_1_0)
+    },
+    {
+      chain: base,
+      transport: http(),
+      version: getMEEVersion(MEEVersion.V2_1_0)
+    }
+  ],
   signer: eoa
 })
 

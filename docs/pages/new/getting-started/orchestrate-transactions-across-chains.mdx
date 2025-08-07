@@ -63,8 +63,18 @@ Below we highlight the critical parts of `supplyToMorpho.ts`. Full file lives in
 ```ts
 const oNexus = await toMultichainNexusAccount({
   signer: walletProvider,           // Embedded or EOA signer
-  chains: [arbitrum, base],
-  transports: [http(), http()],
+  chainConfigurations: [
+    {
+      chain: arbitrum,
+      transport: http(),
+      version: getMEEVersion(MEEVersion.V2_1_0)
+    },
+    {
+      chain: base,
+      transport: http(),
+      version: getMEEVersion(MEEVersion.V2_1_0)
+    }
+  ],
 });
 
 const meeClient = await createMeeClient({ account: oNexus });

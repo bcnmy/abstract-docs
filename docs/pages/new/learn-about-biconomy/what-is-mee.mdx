@@ -117,13 +117,28 @@ const strategy = async (ctx) => {
 ## Integration in 5 Minutes
 
 ```typescript
-import { createMeeClient, toMultichainNexusAccount } from "@biconomy/abstractjs"
+import { createMeeClient, toMultichainNexusAccount, getMEEVersion, MEEVersion } from "@biconomy/abstractjs"
 
 // 1. Create account
 const account = await toMultichainNexusAccount({
   signer: userWallet,
-  chains: [optimism, base, arbitrum],
-  transports: [http(), http(), http()]
+  chainConfigurations: [
+    {
+      chain: optimism,
+      transport: http(),
+      version: getMEEVersion(MEEVersion.V2_1_0)
+    },
+    {
+      chain: base,
+      transport: http(),
+      version: getMEEVersion(MEEVersion.V2_1_0)
+    },
+    {
+      chain: arbitrum,
+      transport: http(),
+      version: getMEEVersion(MEEVersion.V2_1_0)
+    }
+  ],
 })
 
 // 2. Create client

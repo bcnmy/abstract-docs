@@ -136,8 +136,18 @@ This demonstrates few key points of MEE:
 
 ```ts
 const orchestrator = await toMultichainNexusAccount({
-  chains: [optimismSepolia, baseSepolia],
-  transports: [http(), http()],
+  chainConfigurations: [
+    {
+      chain: optimismSepolia,
+      transport: http(),
+      version: getMEEVersion(MEEVersion.V2_1_0)
+    },
+    {
+      chain: baseSepolia,
+      transport: http(),
+      version: getMEEVersion(MEEVersion.V2_1_0)
+    }
+  ],
   signer: await wallet.getEthereumProvider(),
   accountAddress: wallet.address as Address,
 });
