@@ -66,13 +66,24 @@ type PaymentToken = {
 ### Basic Example
 
 ```typescript
-import { createMeeClient, toMultichainNexusAccount } from "@biconomy/abstractjs";
+import { createMeeClient, toMultichainNexusAccount, getMEEVersion, MEEVersion } from "@biconomy/abstractjs";
 import { http } from "viem";
 import { optimism, base } from "viem/chains";
 
 // Setup multichain account
 const mcNexus = await toMultichainNexusAccount({
-  chains: [optimism, base],
+  chainConfigurations: [
+    {
+      chain: optimism,
+      transport: http(),
+      version: getMEEVersion(MEEVersion.V2_1_0)
+    },
+    {
+      chain: base,
+      transport: http(),
+      version: getMEEVersion(MEEVersion.V2_1_0)
+    }
+  ],
   signer: eoaAccount,
   transports: [http(), http()]
 });
@@ -100,15 +111,35 @@ try {
 ### Checking Multiple Chains
 
 ```typescript
-import { createMeeClient, toMultichainNexusAccount, mcUSDC } from "@biconomy/abstractjs";
+import { createMeeClient, toMultichainNexusAccount, mcUSDC, getMEEVersion, MEEVersion } from "@biconomy/abstractjs";
 import { http } from "viem";
 import { mainnet, optimism, polygon, arbitrum } from "viem/chains";
 
 // Setup multichain account
 const mcNexus = await toMultichainNexusAccount({
-  chains: [mainnet, optimism, polygon, arbitrum],
   signer: eoaAccount,
-  transports: [http(), http(), http(), http()]
+  chainConfigurations: [
+    {
+      chain: mainnet,
+      transport: http(),
+      version: getMEEVersion(MEEVersion.V2_1_0)
+    },
+    {
+      chain: optimism,
+      transport: http(),
+      version: getMEEVersion(MEEVersion.V2_1_0)
+    },
+        {
+      chain: polygon,
+      transport: http(),
+      version: getMEEVersion(MEEVersion.V2_1_0)
+    },
+    {
+      chain: arbitrum,
+      transport: http(),
+      version: getMEEVersion(MEEVersion.V2_1_0)
+    }
+  ]
 });
 
 // Create MEE client

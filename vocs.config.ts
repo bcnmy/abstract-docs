@@ -280,6 +280,10 @@ export default defineConfig({
 			text: 'Resources 📦',
 			items: [
 				{
+					text: '📑 MEE versions',
+					link: '/mee-versions'
+				},
+				{
 					text: '📑 Contract Addresses & Audits',
 					link: '/contracts-and-audits'
 				},

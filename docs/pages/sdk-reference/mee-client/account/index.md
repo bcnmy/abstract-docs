@@ -17,7 +17,7 @@ A MultichainNexusAccount provides:
 To create a MultichainNexusAccount, use the `toMultichainNexusAccount` function:
 
 ```typescript
-import { toMultichainNexusAccount } from "@biconomy/abstractjs";
+import { toMultichainNexusAccount, getMEEVersion, MEEVersion } from "@biconomy/abstractjs";
 import { optimism, base } from "viem/chains";
 import { privateKeyToAccount } from "viem/accounts";
 import { http } from "viem";
@@ -26,9 +26,19 @@ import { http } from "viem";
 const eoaSigner = privateKeyToAccount("0x..." /* private key */);
 
 // Initialize multichain account
-const mcNexus = await toMultichainNexusAccount({
-  chains: [optimism, base],         // Which chains to support
-  transports: [http(), http()],     // Transport for each chain (must match chains array)
+const mcNexus = await toMultichainNexusAccount({  
+  chainConfigurations: [
+    {
+      chain: optimism, // Which chains to support
+      transport: http(), // Transport for each chain (must match chains array)
+      version: getMEEVersion(MEEVersion.V2_1_0) // MEE version
+    },
+    {
+      chain: base, // Which chains to support
+      transport: http(), // Transport for each chain (must match chains array)
+      version: getMEEVersion(MEEVersion.V2_1_0) // MEE version
+    }
+  ],
   signer: eoaSigner                 // The EOA that controls this account
 });
 ```

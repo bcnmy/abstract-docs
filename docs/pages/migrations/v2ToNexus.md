@@ -222,7 +222,7 @@ async function migrateToNexus(V2Account) {
 After migration, verify that your account works correctly by creating a test transaction:
 
 ```typescript
-import { createBicoBundlerClient, toNexusAccount } from "@biconomy/abstractjs";
+import { createBicoBundlerClient, toNexusAccount, getMEEVersion, MEEVersion } from "@biconomy/abstractjs";
 import { parseEther } from "viem";
 
 async function testMigratedAccount(accountAddress) {
@@ -232,8 +232,11 @@ async function testMigratedAccount(accountAddress) {
   const nexusAccount = createBicoBundlerClient({
     account: await toNexusAccount({
       signer: eoaAccount,
-      chain: config.chain,
-      transport: http(),
+      chainConfiguration: {
+        chain: config.chain,
+        transport: http(),
+        version: getMEEVersion(MEEVersion.V2_1_0)
+      },
       // IMPORTANT: Use the same address as your V2 account
       accountAddress: accountAddress,
     }),
@@ -269,8 +272,11 @@ const migratedAccountAddress = "YOUR_V2_ACCOUNT_ADDRESS";
 // Use this pattern for all future SDK interactions
 const nexusAccount = await toNexusAccount({
   signer: eoaAccount,
-  chain: base,
-  transport: http(),
+  chainConfiguration: {
+    chain: base,
+    transport: http(),
+    version: getMEEVersion(MEEVersion.V2_1_0)
+  },
   accountAddress: migratedAccountAddress
 });
 
@@ -448,8 +454,11 @@ async function main() {
     const nexusAccount = createBicoBundlerClient({
       account: await toNexusAccount({
         signer: eoaAccount,
-        chain: config.chain,
-        transport: http(),
+        chainConfiguration: {
+          chain: config.chain,
+          transport: http(),
+          version: getMEEVersion(MEEVersion.V2_1_0)
+        },
         // IMPORTANT: Use the same address as the V2 account
         accountAddress: V2AccountAddress,
       }),

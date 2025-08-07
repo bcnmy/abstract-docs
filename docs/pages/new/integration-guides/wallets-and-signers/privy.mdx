@@ -57,6 +57,8 @@ import {
   toMultichainNexusAccount,
   runtimeERC20BalanceOf,
   greaterThanOrEqualTo,
+  getMEEVersion,
+  MEEVersion
 } from "@biconomy/abstractjs";
 import { useWallets, useSignAuthorization } from "@privy-io/react-auth";
 
@@ -100,8 +102,18 @@ const authorization = await signAuthorization({
 
 ```ts
 const nexusAccount = await toMultichainNexusAccount({
-  chains: [optimism, base],
-  transports: [http(), http()],
+  chainConfigurations: [
+    {
+      chain: optimism,
+      transport: http(),
+      version: getMEEVersion(MEEVersion.V2_1_0)
+    },
+    {
+      chain: base,
+      transport: http(),
+      version: getMEEVersion(MEEVersion.V2_1_0)
+    }
+  ],
   signer: walletClient.account,
   accountAddress: embeddedWallet.address,
 });

@@ -49,7 +49,7 @@ When connecting to an account created with an older SDK version, you'll need you
 
 ```typescript
 import { privateKeyToAccount } from "viem/accounts";
-import { createBicoBundlerClient, toNexusAccount } from "@biconomy/abstractjs";
+import { createBicoBundlerClient, toNexusAccount, getMEEVersion, MEEVersion } from "@biconomy/abstractjs";
 import { baseSepolia } from "viem/chains";
 import { http } from "viem";
 
@@ -64,8 +64,11 @@ const existingAccountAddress = "YOUR_EXISTING_ACCOUNT_ADDRESS";
 // Connect to your existing account
 const nexusAccount = await toNexusAccount({
   signer: account,
-  chain: baseSepolia,
-  transport: http(),
+  chainConfiguration: {
+    chain: baseSepolia,
+    transport: http(),
+    version: getMEEVersion(MEEVersion.V2_1_0)
+  },
   accountAddress: existingAccountAddress // Use your existing account address
 });
 
@@ -177,7 +180,9 @@ Here's a full example that demonstrates the migration process:
 import { privateKeyToAccount } from "viem/accounts";
 import { 
   createBicoBundlerClient, 
-  toNexusAccount
+  toNexusAccount,
+  getMEEVersion,
+  MEEVersion
 } from "@biconomy/abstractjs";
 import { baseSepolia } from "viem/chains";
 import { http } from "viem";
@@ -194,8 +199,11 @@ async function migrateNexusAccount() {
   // Connect to your existing account
   const nexusAccount = await toNexusAccount({
     signer: account,
-    chain: baseSepolia,
-    transport: http(),
+    chainConfiguration: {
+      chain: baseSepolia,
+      transport: http(),
+      version: getMEEVersion(MEEVersion.V2_1_0)
+    },
     accountAddress: existingAccountAddress
   });
   
@@ -273,16 +281,22 @@ After migration, **ALL** future interactions with your account must use the `acc
 // CORRECT WAY to access your account after migration
 const nexusAccount = await toNexusAccount({
   signer: account,
-  chain: baseSepolia,
-  transport: http(),
+  chainConfiguration: {
+    chain: baseSepolia,
+    transport: http(),
+    version: getMEEVersion(MEEVersion.V2_1_0)
+  },
   accountAddress: "YOUR_STORED_ACCOUNT_ADDRESS" // This is essential
 });
 
 // INCORRECT WAY - this will create a new account, not access your existing one
 const incorrectAccount = await toNexusAccount({
   signer: account,
-  chain: baseSepolia,
-  transport: http()
+  chainConfiguration: {
+    chain: baseSepolia,
+    transport: http(),
+    version: getMEEVersion(MEEVersion.V2_1_0)
+  },
   // Missing accountAddress
 });
 ```
