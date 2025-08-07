@@ -41,6 +41,8 @@ import {
   getMeeScanLink,
   runtimeERC20BalanceOf,
   greaterThanOrEqualTo,
+  getMEEVersion,
+  MEEVersion
 } from "@biconomy/abstractjs";
 
 import { http, parseUnits } from "viem";
@@ -58,9 +60,19 @@ on top of this account.
 const eoa = privateKeyToAccount(Bun.env.PRIVATE_KEY as `0x${string}`);
 
 const orchestrator = await toMultichainNexusAccount({
-  chains: [optimism, base],
-  transports: [http(), http()],
-  signer: eoa,
+  chainConfigurations: [
+    {
+      chain: optimism,
+      transport: http(),
+      version: getMEEVersion(MEEVersion.V2_1_0)
+    },
+    {
+      chain: base,
+      transport: http(),
+      version: getMEEVersion(MEEVersion.V2_1_0)
+    }
+  ],
+  signer: eoa
 });
 ```
 

@@ -62,15 +62,25 @@ type SignOnChainQuotePayload = GetQuotePayload & {
 ### Basic Example
 
 ```typescript
-import { createMeeClient, toMultichainNexusAccount, mcUSDC } from "@biconomy/abstractjs";
+import { createMeeClient, toMultichainNexusAccount, mcUSDC, getMEEVersion, MEEVersion } from "@biconomy/abstractjs";
 import { http } from "viem";
 import { mainnet, optimism } from "viem/chains";
 
 // Setup multichain account
 const mcNexus = await toMultichainNexusAccount({
-  chains: [mainnet, optimism],
   signer: eoaAccount,
-  transports: [http(), http()]
+  chainConfigurations: [
+    {
+      chain: mainnet,
+      transport: http(),
+      version: getMEEVersion(MEEVersion.V2_1_0)
+    },
+    {
+      chain: optimism,
+      transport: http(),
+      version: getMEEVersion(MEEVersion.V2_1_0)
+    }
+  ]
 });
 
 // Create MEE client
@@ -135,16 +145,21 @@ try {
 ### Full Execution Flow Example
 
 ```typescript
-import { createMeeClient, toMultichainNexusAccount, mcUSDC } from "@biconomy/abstractjs";
+import { createMeeClient, toMultichainNexusAccount, mcUSDC, getMEEVersion, MEEVersion } from "@biconomy/abstractjs";
 import { http, parseUnits } from "viem";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { optimism } from "viem/chains";
 
 // Setup multichain account
 const mcNexus = await toMultichainNexusAccount({
-  chains: [optimism],
   signer: eoaAccount,
-  transports: [http()]
+  chainConfigurations: [
+    {
+      chain: optimism,
+      transport: http(),
+      version: getMEEVersion(MEEVersion.V2_1_0)
+    }
+  ]
 });
 
 // Create MEE client
@@ -227,15 +242,25 @@ console.log(`Recipient balance: ${recipientBalance}`);
 ### Using Custom Confirmations
 
 ```typescript
-import { createMeeClient, toMultichainNexusAccount, mcUSDC } from "@biconomy/abstractjs";
+import { createMeeClient, toMultichainNexusAccount, mcUSDC, getMEEVersion, MEEVersion } from "@biconomy/abstractjs";
 import { http } from "viem";
 import { optimism, base } from "viem/chains";
 
 // Setup multichain account
 const mcNexus = await toMultichainNexusAccount({
-  chains: [optimism, base],
   signer: eoaAccount,
-  transports: [http(), http()]
+  chainConfigurations: [
+    {
+      chain: optimism,
+      transport: http(),
+      version: getMEEVersion(MEEVersion.V2_1_0)
+    },
+    {
+      chain: base,
+      transport: http(),
+      version: getMEEVersion(MEEVersion.V2_1_0)
+    }
+  ]
 });
 
 // Create MEE client

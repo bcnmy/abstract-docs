@@ -40,15 +40,25 @@ type SignQuotePayload = GetQuotePayload & {
 ### Basic Example
 
 ```typescript
-import { createMeeClient, toMultichainNexusAccount, mcUSDC } from "@biconomy/abstractjs";
+import { createMeeClient, toMultichainNexusAccount, mcUSDC, getMEEVersion, MEEVersion } from "@biconomy/abstractjs";
 import { http, zeroAddress } from "viem";
 import { optimism, base } from "viem/chains";
 
 // Setup multichain account
 const mcNexus = await toMultichainNexusAccount({
-  chains: [optimism, base],
   signer: eoaAccount,
-  transports: [http(), http()]
+  chainConfigurations: [
+    {
+      chain: optimism,
+      transport: http(),
+      version: getMEEVersion(MEEVersion.V2_1_0)
+    },
+    {
+      chain: base,
+      transport: http(),
+      version: getMEEVersion(MEEVersion.V2_1_0)
+    }
+  ]
 });
 
 // Create MEE client
